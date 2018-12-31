@@ -15,6 +15,7 @@ A simple Spring Boot stack based application. I'm making this to learn Spring Bo
 * External login and register via OAUTH(Google and Facebook are primary targets),
 * CRUD operations(yeah... I still haven't implemented this),
 * Frontend React version
+* Internationalization
 
 ### Some of my learning resources:
 * https://app.pluralsight.com/library/courses/maven-fundamentals
