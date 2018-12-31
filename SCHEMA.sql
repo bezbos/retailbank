@@ -106,6 +106,12 @@ CREATE TABLE transactions(
 --     UNIQUE(username, auth_group)
 -- );
     
+CREATE TABLE application_logs(
+	uuid BINARY(16) PRIMARY KEY,
+	log_message VARCHAR(255),
+    	log_date DATETIME
+);
+    
 CREATE TABLE user_account(
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255),
