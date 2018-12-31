@@ -4,7 +4,6 @@ import com.codecentric.retailbank.persistence.dao.UserRepository;
 import com.codecentric.retailbank.persistence.model.Role;
 import com.codecentric.retailbank.persistence.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

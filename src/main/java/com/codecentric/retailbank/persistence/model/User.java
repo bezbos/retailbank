@@ -4,7 +4,9 @@ import com.codecentric.retailbank.validation.ValidPassword;
 import org.jboss.aerogear.security.otp.api.Base32;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 @Table(name = "user_account")
@@ -24,7 +26,7 @@ public class User {
     private String email;
 
     @Column(name = "user_password", length = 60)
-//    @ValidPassword
+    @ValidPassword
     private String password;
 
     private boolean enabled;
@@ -37,7 +39,6 @@ public class User {
     @JoinTable(name = "user_account_user_role", joinColumns = @JoinColumn(name = "user_account", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_role", referencedColumnName = "id"))
     private Collection<Role> roles;
 
-    //
 
     public User() {
         super();
@@ -117,6 +118,7 @@ public class User {
     public void setSecret(String secret) {
         this.secret = secret;
     }
+
 
     @Override
     public int hashCode() {

@@ -37,7 +37,6 @@ public class UserService implements IUserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //
 
     @Transactional
     @Override
@@ -116,7 +115,6 @@ public class UserService implements IUserService {
         return result;
     }
 
-    //
 
     private boolean emailExists(final String email) {
         return userRepository.findByEmail(email) != null;

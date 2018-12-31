@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.spring;
 
+import com.codecentric.retailbank.security.CustomLoginSuccessHandler;
+import com.codecentric.retailbank.security.CustomLogoutSuccessHandler;
 import com.codecentric.retailbank.security.MyUserDetailsService;
 import com.codecentric.retailbank.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -70,12 +74,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
                 .and()
                 .formLogin()
-                .loginPage("/account/login").permitAll()
+                .loginPage("/account/login").successHandler(loginSuccessHandler()).permitAll()
                 .and()
-                .logout().invalidateHttpSession(true)
-                .clearAuthentication(true)
+                .logout().invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID")
                 .logoutRequestMatcher(new AntPathRequestMatcher("/account/logout"))
-                .logoutSuccessUrl("/account/logout-success").permitAll();
+                .logoutSuccessUrl("/account/logout-success")
+                .logoutSuccessHandler(logoutSuccessHandler())
+                .permitAll();
     }
 
     @Bean
@@ -89,5 +94,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder(11);
+    }
+
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler(){
+        return new CustomLogoutSuccessHandler();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler loginSuccessHandler(){
+        return new CustomLoginSuccessHandler();
     }
 }
