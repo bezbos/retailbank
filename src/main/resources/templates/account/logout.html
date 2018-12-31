@@ -1,0 +1,9 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-info">
+            <h3>You have been successfully logged out.</h3>
+        </li>
+        <a th:href="@{~/home}">Return home</a>
+    </ul>
+</div>

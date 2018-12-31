@@ -1,0 +1,54 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <br/>
+
+    <h3>BankCentric User Login</h3>
+    <form th:action="@{/account/login}" method="post">
+        <div th:if="${param.error}">
+            <div class="alert alert-danger">
+                Invalid username or password.
+            </div>
+        </div>
+        <div name="loginForm" th:if="${param.error != null}" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}">error</div>
+        <div class="form-group row">
+            <label for="username" class="col-sm-2 col-form-label">Username</label>
+            <div class="col-sm-6">
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username"
+                       autofocus="autofocus">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="password" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-6">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                       autofocus="autofocus">
+                <a href="/account/forgotPassword"
+                   th:text="#{message.resetPassword}">Reset password</a>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary">Sign in</button>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        function validate() {
+            if (document.loginForm.username.value == "" && document.loginForm.password.value == "") {
+                alert("Username and password are required");
+                document.loginForm.username.focus();
+                return false;
+            }
+            if (document.loginForm.username.value == "") {
+                alert("Username is required");
+                document.loginForm.username.focus();
+                return false;
+            }
+            if (document.loginForm.password.value == "") {
+                alert("Password is required");
+                document.loginForm.password.focus();
+                return false;
+            }
+        }
+    </script>
+</div>

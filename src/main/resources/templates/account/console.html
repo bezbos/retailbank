@@ -1,0 +1,56 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+
+    <div th:if="${param.message != null}" class="alert alert-info" th:text="${param.message[0]}">message</div>
+
+    <h1>This is the landing page for the admin</h1>
+
+    <div sec:authorize="hasAuthority('READ_PRIVILEGE')">This text is only visible to a user</div>
+
+    <div sec:authorize="hasAuthority('WRITE_PRIVILEGE')"> This text is only visible to an admin</div>
+
+    <a class="btn btn-default" th:href="@{/account/admin.html}" th:text="#{label.pages.admin}">admin</a>
+    <br/>
+    <a class="btn btn-default" th:href="@{/account/changePassword.html}" th:text="#{message.changePassword}">change password</a>
+    <br/>
+    <br/>
+    <br/>
+
+    <div th:if="${#authentication.principal.using2FA}">
+        You are using Two-step authentication <a href="#" class="btn btn-primary" onclick="disable2FA()">Disable 2FA</a>
+    </div>
+
+    <div th:if="${!#authentication.principal.using2FA}">
+        You are not using Two-step authentication <a href="#" class="btn btn-primary" onclick="enable2FA()">Enable
+        2FA</a>
+    </div>
+
+    <br/>
+    <div id="qr" style="display:none;">
+        <p>Scan this Barcode using Google Authenticator app on your phone
+            <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Android</a>
+            and
+            <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605">iPhone</a>
+        </p>
+    </div>
+
+    <script type="text/javascript">
+        function enable2FA() {
+            set2FA(true);
+        }
+
+        function disable2FA() {
+            set2FA(false);
+        }
+
+        function set2FA(use2FA) {
+            $.post("/account/update/2fa", {use2FA: use2FA}, function (data) {
+                if (use2FA) {
+                    $("#qr").append('<img src="' + data.message + '" />').show();
+                } else {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+</div>
