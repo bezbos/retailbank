@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.registration;
+package com.codecentric.retailbank.events;
 
 import com.codecentric.retailbank.persistence.model.User;
 import org.springframework.context.ApplicationEvent;
@@ -10,8 +10,6 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent {
     private Locale locale;
     private User user;
 
-    //
-
 
     public OnRegistrationCompleteEvent(User user, Locale locale, String appUrl) {
         super(user);
@@ -20,8 +18,6 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent {
         this.locale = locale;
         this.appUrl = appUrl;
     }
-
-    //
 
 
     public String getAppUrl() {

@@ -1,5 +1,5 @@
 <div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
-     layout:decorate="~{shared/_layout}" layout:fragment="content">
+     layout:decorate="~{shared/_layout}" layout:fragment="content" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     <br/>
 
     <h3>BankCentric User Login</h3>
@@ -30,6 +30,7 @@
         </div>
         <br>
         <button type="submit" class="btn btn-primary">Sign in</button>
+        <button class="btn btn-primary">Facebook Login</button>
     </form>
     <script type="text/javascript">
         function validate() {

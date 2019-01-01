@@ -1,9 +1,10 @@
-package com.codecentric.retailbank.registration.listener;
+package com.codecentric.retailbank.events.listener;
 
+import com.codecentric.retailbank.events.OnRegistrationCompleteEvent;
 import com.codecentric.retailbank.persistence.model.User;
-import com.codecentric.retailbank.registration.OnRegistrationCompleteEvent;
 import com.codecentric.retailbank.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,6 +19,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private IUserService service;
 
+    @Qualifier("messageSource")
     @Autowired
     private MessageSource messages;
 

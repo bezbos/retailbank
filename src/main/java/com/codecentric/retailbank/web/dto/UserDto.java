@@ -9,8 +9,6 @@ import javax.validation.constraints.NotNull;
 
 @PasswordMatches
 public class UserDto {
-    // fields
-
     @NotNull
     @NotEmpty
     private String firstName;
@@ -33,7 +31,6 @@ public class UserDto {
 
     private boolean isUsing2FA;
 
-    // getters and setters
 
     public String getFirstName() {
         return firstName;

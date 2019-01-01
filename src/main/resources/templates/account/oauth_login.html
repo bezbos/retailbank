@@ -1,0 +1,7 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <h3>Login with:</h3>
+    <p th:each="url : ${urls}">
+        <a th:text="${url.key}" th:href="${url.value}">Client</a>
+    </p>
+</div>

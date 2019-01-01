@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,21 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private HttpServletRequest request;
+
+
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        // Helper flags
         boolean enabled = true;
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
 
+        // Handle user login
         try {
+            // Check if incoming user exists
             User user = userRepository.findByEmail(email);
             if (user == null)
                 throw new UsernameNotFoundException("No user found with this username/email: " + email);
@@ -51,6 +60,5 @@ public class MyUserDetailsService implements UserDetailsService {
         }
         return authorities;
     }
-
 
 }

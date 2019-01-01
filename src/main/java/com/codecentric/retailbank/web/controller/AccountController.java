@@ -1,9 +1,9 @@
 package com.codecentric.retailbank.web.controller;
 
+import com.codecentric.retailbank.events.OnRegistrationCompleteEvent;
 import com.codecentric.retailbank.persistence.model.PasswordResetToken;
 import com.codecentric.retailbank.persistence.model.User;
 import com.codecentric.retailbank.persistence.model.VerificationToken;
-import com.codecentric.retailbank.registration.OnRegistrationCompleteEvent;
 import com.codecentric.retailbank.services.UserService;
 import com.codecentric.retailbank.web.dto.PasswordDto;
 import com.codecentric.retailbank.web.dto.UserDto;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,7 +27,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,12 +39,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.awt.print.PrinterIOException;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/account")
@@ -70,13 +68,11 @@ public class AccountController {
     @Autowired
     private Environment env;
 
-    // constructors
 
     public AccountController() {
         super();
     }
 
-    // request handlers
 
     @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
     public String getHome(Model model,
@@ -267,7 +263,7 @@ public class AccountController {
 
     @RequestMapping(value = "/updateForgotPassword", method = RequestMethod.GET)
     public String showUpdatePasswordPage(Principal principal,
-                                         Model model){
+                                         Model model) {
         if (principal != null)
             model.addAttribute("username", principal.getName());
 
@@ -332,14 +328,46 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/passwordChangeSuccess", method = RequestMethod.GET)
-    public String showPasswordChangeSuccessPage(){
+    public String showPasswordChangeSuccessPage() {
         return CONTROLLER_NAME + "/passwordChangeSuccess";
     }
 
-    // helper methods
+
+    // ************ OAUTH2 ************** //
+    private static String authorizationRequestBaseUri = "../oauth2/authorization";
+
+    Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
+
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
+
+    @RequestMapping(value = "/oauth_login", method = RequestMethod.GET)
+    public String getLoginPage(Model model) {
+
+        Iterable<ClientRegistration> clientRegistrations = null;
+
+        ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository).as(Iterable.class);
+
+        if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+            clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+        }
+
+        for (ClientRegistration registration : clientRegistrations) {
+            oauth2AuthenticationUrls.put(
+                    registration.getClientName(),
+                    authorizationRequestBaseUri + "/" + registration.getRegistrationId()
+            );
+        }
+
+        model.addAttribute("urls", oauth2AuthenticationUrls);
+
+        return CONTROLLER_NAME + "/oauth_login";
+    }
+
 
     /**
      * Creates a new account in the DB.
+     *
      * @param accountDto Account information.
      * @return the newly created account if successful. Otherwise returns <code>null</code>.
      */
@@ -357,10 +385,11 @@ public class AccountController {
 
     /**
      * Used to construct a <code>SimpleMailMessage</code> object required to send an email. This one is used specifically for generating a email verification token resend.
+     *
      * @param contextPath Application domain link.
-     * @param locale Language to use.
-     * @param newToken Verification token object.
-     * @param user User to send the email to.
+     * @param locale      Language to use.
+     * @param newToken    Verification token object.
+     * @param user        User to send the email to.
      * @return a new instance of a <code>SimpleMailMessage</code> object.
      */
     private SimpleMailMessage constructResendVerificationTokenEmail(String contextPath,
@@ -381,10 +410,11 @@ public class AccountController {
 
     /**
      * Used to construct a <code>SimpleMailMessage</code> object required to send an email. This one is used specifically for generating a password reset email.
+     *
      * @param contextPath Application domain link.
-     * @param locale Language to use.
-     * @param token Password reset token value.
-     * @param user User to send the email to.
+     * @param locale      Language to use.
+     * @param token       Password reset token value.
+     * @param user        User to send the email to.
      * @return a new instance of a <code>SimpleMailMessage</code> object.
      */
     private SimpleMailMessage constructResetTokenEmail(String contextPath,
@@ -400,9 +430,10 @@ public class AccountController {
 
     /**
      * Used to construct a <code>SimpleMailMessage</code> object required to send an email.
+     *
      * @param subject Mail title.
-     * @param body Mail contents.
-     * @param user Mail receiver(takes the <code>email</code> property from the object).
+     * @param body    Mail contents.
+     * @param user    Mail receiver(takes the <code>email</code> property from the object).
      * @return a new instance of a <code>SimpleMailMessage</code> object.
      */
     private SimpleMailMessage constructEmail(String subject,
@@ -434,7 +465,7 @@ public class AccountController {
      * spring.mail.properties.mail.smtps.timeout=8000
      * </pre>
      *
-     * @param mail Represents an object containing mail information.
+     * @param mail       Represents an object containing mail information.
      * @param mailSender Represents the handler object that will be used to send the mail.
      */
     private void sendEmailMessage(SimpleMailMessage mail, JavaMailSender mailSender) {
