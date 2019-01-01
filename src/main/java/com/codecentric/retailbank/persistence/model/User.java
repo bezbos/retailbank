@@ -26,7 +26,6 @@ public class User {
     private String email;
 
     @Column(name = "user_password", length = 60)
-    @ValidPassword
     private String password;
 
     private boolean enabled;

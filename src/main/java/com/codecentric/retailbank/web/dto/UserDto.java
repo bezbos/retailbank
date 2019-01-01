@@ -2,6 +2,7 @@ package com.codecentric.retailbank.web.dto;
 
 import com.codecentric.retailbank.validation.PasswordMatches;
 import com.codecentric.retailbank.validation.ValidEmail;
+import com.codecentric.retailbank.validation.ValidPassword;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -20,7 +21,9 @@ public class UserDto {
 
     @NotNull
     @NotEmpty
+    @ValidPassword
     private String password;
+
     private String matchingPassword;
 
     @ValidEmail
