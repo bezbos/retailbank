@@ -13,7 +13,7 @@ A simple Spring Boot stack based application. I'm making this to learn Spring Bo
 ### TODO:
 * Two Factor Authentication(probably will use Twilio as provider),
 * External login and register via OAUTH(Google and Facebook are primary targets),
-* CRUD operations(yeah... I still haven't implemented this),
+* Domain models CRUD operations(yeah... I still haven't implemented this),
 * Frontend React version
 * Internationalization
 
