@@ -1,8 +1,6 @@
 package com.codecentric.retailbank.security;
 
 import com.codecentric.retailbank.services.LogService;
-import com.codecentric.retailbank.services.UserService;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;

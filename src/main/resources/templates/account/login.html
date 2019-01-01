@@ -3,34 +3,33 @@
     <br/>
 
     <h3>BankCentric User Login</h3>
-    <form th:action="@{/account/login}" method="post">
+    <form th:action="@{/account/login}" method="post" class="col-xl-6 col-md-6 col-lg-6 col-sm-12">
         <div th:if="${param.error}">
             <div class="alert alert-danger">
                 Invalid username or password.
             </div>
         </div>
-        <div name="loginForm" th:if="${param.error != null}" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}">error</div>
-        <div class="form-group row">
-            <label for="username" class="col-sm-2 col-form-label">Username</label>
-            <div class="col-sm-6">
-                <input type="text" id="username" name="username" class="form-control" placeholder="Username"
-                       autofocus="autofocus">
-            </div>
+        <div name="loginForm" th:if="${param.error != null}" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}">
+            error
         </div>
-        <div class="form-group row">
-            <label for="password" class="col-sm-2 col-form-label">Password</label>
-            <div class="col-sm-6">
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password"
-                       autofocus="autofocus">
-                <a href="/account/forgotPassword"
-                   th:text="#{message.resetPassword}">Reset password</a>
-            </div>
+        <div class="form-group">
+            <label for="username" class="col-form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username"
+                   autofocus="autofocus">
         </div>
-        <div class="form-group row">
-            <div class="col-sm-2">
-                <button type="submit" class="btn btn-primary">Sign in</button>
-            </div>
+        <div class="form-group">
+            <label for="password" class="col-form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                   autofocus="autofocus">
+            <a href="/account/forgotPassword"
+               th:text="#{message.resetPassword}">Reset password</a>
         </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" name="remember-me">
+            <label class="form-check-label" for="remember-me">Remember me</label>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Sign in</button>
     </form>
     <script type="text/javascript">
         function validate() {

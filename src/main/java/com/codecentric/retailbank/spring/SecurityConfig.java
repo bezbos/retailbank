@@ -79,8 +79,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID")
                 .logoutRequestMatcher(new AntPathRequestMatcher("/account/logout"))
                 .logoutSuccessUrl("/account/logout-success")
-                .logoutSuccessHandler(logoutSuccessHandler())
-                .permitAll();
+                .logoutSuccessHandler(logoutSuccessHandler()).permitAll()
+                .and()
+                .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400).userDetailsService(userDetailsService);
     }
 
     @Bean
