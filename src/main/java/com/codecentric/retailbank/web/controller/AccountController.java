@@ -97,8 +97,7 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public String showRegistrationForm(WebRequest request,
-                                       Model model) {
+    public String showRegistrationForm(Model model) {
         UserDto dto = new UserDto();
         model.addAttribute("user", dto);
         return CONTROLLER_NAME + "/registration";
