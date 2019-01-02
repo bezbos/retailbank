@@ -8,7 +8,6 @@ import com.codecentric.retailbank.services.UserService;
 import com.codecentric.retailbank.web.dto.PasswordDto;
 import com.codecentric.retailbank.web.dto.UserDto;
 import com.codecentric.retailbank.web.error.InvalidOldPasswordException;
-import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import com.codecentric.retailbank.web.error.UserNotFoundException;
 import com.codecentric.retailbank.web.util.GenericResponse;
 import org.slf4j.Logger;
@@ -32,19 +31,17 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.*;
 
 @Controller
 @RequestMapping("/account")
-public class AccountController {
+public class AccountController extends BaseController {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     /**
@@ -73,30 +70,28 @@ public class AccountController {
         super();
     }
 
+    public AccountController(Environment env, MessageSource messages, UserService userService) {
+        super(env, messages, userService);
+    }
+
 
     @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String getHome(Model model,
-                          Principal principal) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String getHomePage(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return CONTROLLER_NAME + "/index";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String getLoginPage(Model model,
-                               Principal principal) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String getLoginPage(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return CONTROLLER_NAME + "/login";
     }
 
     @RequestMapping(value = "/logout-success", method = RequestMethod.GET)
-    public String getLogoutPage(Model model,
-                                Principal principal) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String getLogoutPage(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return CONTROLLER_NAME + "/logout";
     }
@@ -112,13 +107,12 @@ public class AccountController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView registerUserAccount(@ModelAttribute("user") @Valid UserDto accountDto,
                                             BindingResult result,
-                                            WebRequest request,
-                                            Errors errors) {
+                                            WebRequest request) {
         User registered = null;
 
         if (!result.hasErrors()) {
             registered = new User();
-            registered = createUserAccount(accountDto, result);
+            registered = createUserAccount(accountDto);
         }
 
         if (registered == null)
@@ -192,10 +186,8 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-    public String showForgotPasswordPage(Principal principal,
-                                         Model model) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String showForgotPasswordPage(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return CONTROLLER_NAME + "/forgotPassword";
     }
@@ -228,11 +220,9 @@ public class AccountController {
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     public String showChangePasswordPage(Locale locale,
                                          Model model,
-                                         Principal principal,
                                          @RequestParam("id") long id,
                                          @RequestParam("token") String token) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         // Retrieve password reset token from DB, then retrieve token owner.
         PasswordResetToken passwordToken = userService.getPasswordResetToken(token);
@@ -262,10 +252,8 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/updateForgotPassword", method = RequestMethod.GET)
-    public String showUpdatePasswordPage(Principal principal,
-                                         Model model) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String showUpdatePasswordPage(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return CONTROLLER_NAME + "/updatePassword";
     }
@@ -293,10 +281,8 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/updatePassword", method = RequestMethod.GET)
-    public String showChangePasswordPageForAuthenticatedUser(Principal principal,
-                                                             Model model) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String showChangePasswordPageForAuthenticatedUser(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return CONTROLLER_NAME + "/changePassword";
     }
@@ -342,7 +328,7 @@ public class AccountController {
     private ClientRegistrationRepository clientRegistrationRepository;
 
     @RequestMapping(value = "/oauth_login", method = RequestMethod.GET)
-    public String getLoginPage(Model model) {
+    public String getOauthLoginPage(Model model) {
 
         Iterable<ClientRegistration> clientRegistrations = null;
 
@@ -364,117 +350,4 @@ public class AccountController {
         return CONTROLLER_NAME + "/oauth_login";
     }
 
-
-    /**
-     * Creates a new account in the DB.
-     *
-     * @param accountDto Account information.
-     * @return the newly created account if successful. Otherwise returns <code>null</code>.
-     */
-    private User createUserAccount(UserDto accountDto, BindingResult result) {
-        User registered = null;
-
-        try {
-            registered = userService.registerNewUserAccount(accountDto);
-        } catch (UserAlreadyExistsException ex) {
-            return null;
-        }
-
-        return registered;
-    }
-
-    /**
-     * Used to construct a <code>SimpleMailMessage</code> object required to send an email. This one is used specifically for generating a email verification token resend.
-     *
-     * @param contextPath Application domain link.
-     * @param locale      Language to use.
-     * @param newToken    Verification token object.
-     * @param user        User to send the email to.
-     * @return a new instance of a <code>SimpleMailMessage</code> object.
-     */
-    private SimpleMailMessage constructResendVerificationTokenEmail(String contextPath,
-                                                                    Locale locale,
-                                                                    VerificationToken newToken,
-                                                                    User user) {
-        String confirmationUrl = contextPath + "/account/registrationConfirm.html?token=" + newToken.getToken();
-
-        String message = messages.getMessage("message.resendToken", null, locale);
-
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setSubject("Resend Registration Token");
-        email.setText(message + " \r\n" + confirmationUrl);
-        email.setFrom(env.getProperty("support.email"));
-        email.setTo(user.getEmail());
-        return email;
-    }
-
-    /**
-     * Used to construct a <code>SimpleMailMessage</code> object required to send an email. This one is used specifically for generating a password reset email.
-     *
-     * @param contextPath Application domain link.
-     * @param locale      Language to use.
-     * @param token       Password reset token value.
-     * @param user        User to send the email to.
-     * @return a new instance of a <code>SimpleMailMessage</code> object.
-     */
-    private SimpleMailMessage constructResetTokenEmail(String contextPath,
-                                                       Locale locale,
-                                                       String token,
-                                                       User user) {
-        String url = contextPath + "/account/changePassword?id=" +
-                user.getId() + "&token=" + token;
-        String message = messages.getMessage("message.resetPassword",
-                null, locale);
-        return constructEmail("Reset Password", message + " \r\n" + url, user);
-    }
-
-    /**
-     * Used to construct a <code>SimpleMailMessage</code> object required to send an email.
-     *
-     * @param subject Mail title.
-     * @param body    Mail contents.
-     * @param user    Mail receiver(takes the <code>email</code> property from the object).
-     * @return a new instance of a <code>SimpleMailMessage</code> object.
-     */
-    private SimpleMailMessage constructEmail(String subject,
-                                             String body,
-                                             User user) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setSubject(subject);
-        email.setText(body);
-        email.setTo(user.getEmail());
-        email.setFrom(env.getProperty("support.email"));
-        return email;
-    }
-
-    /**
-     * Sends an email message.
-     * <br/>
-     * <br/>
-     * CONFIGURE YOUR "application.properties" USING YOUR CREDENTIALS:
-     * <pre>
-     * support.email=jonhdoe@gmail.com
-     * spring.mail.host=smtp.gmail.com
-     * spring.mail.port=465
-     * spring.mail.protocol=smtps
-     * spring.mail.username=jonhdoe@gmail.com
-     * spring.mail.password=YOUR_GOOGLE_APP_PASSWORD - "https://myaccount.google.com/apppasswords" Note: you must have 2FA activated to generate app passwords
-     * spring.mail.properties.mail.transport.protocol=smtps
-     * spring.mail.properties.mail.smtps.auth=true
-     * spring.mail.properties.mail.smtps.starttls.enable=true
-     * spring.mail.properties.mail.smtps.timeout=8000
-     * </pre>
-     *
-     * @param mail       Represents an object containing mail information.
-     * @param mailSender Represents the handler object that will be used to send the mail.
-     */
-    private void sendEmailMessage(SimpleMailMessage mail, JavaMailSender mailSender) {
-        try {
-            mailSender.send(mail);
-        } catch (MailAuthenticationException ex) {
-            LOGGER.debug("MailAuthenticationException", ex);
-        } catch (Exception ex) {
-            LOGGER.debug("Exception", ex);
-        }
-    }
 }

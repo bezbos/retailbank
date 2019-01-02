@@ -9,13 +9,12 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/")
-public class HomeController {
+public class HomeController extends BaseController {
 
     // GET: index
     @GetMapping(value = {"/", "/home", "/index", "/home/index"})
-    public String getHome(Model model, Principal principal) {
-        if (principal != null)
-            model.addAttribute("username", principal.getName());
+    public String getHome(Model model) {
+        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         return "home/index";
     }

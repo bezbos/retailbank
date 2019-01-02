@@ -30,7 +30,7 @@
         </div>
         <br>
         <button type="submit" class="btn btn-primary">Sign in</button>
-        <button class="btn btn-primary">Facebook Login</button>
+        <a th:href="@{/oauth2/authorization/google}" class="btn btn-outline-primary mr-2"><i class="fab fa-google"></i><span class=""></span> Sign in via Google</a>
     </form>
     <script type="text/javascript">
         function validate() {
