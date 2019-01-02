@@ -1,23 +1,28 @@
-A simple Spring Boot stack based application. I'm making this to learn Spring Boot and other Spring family frameworks.
+#### A simple Spring Boot stack based application. I'm making this to learn Spring Boot and other Spring family frameworks.
 
-### Working features:
-* MySQL database(see SCHEMA.sql and DATA.sql)
-* MySQL database connection
-* Basic Spring Security is configured
-* Registration
-* Login and logout
+### Implemented features:
+* MySQL schema
+* MySQL database connection via Spring JPA
+* Spring Security form login
+* Authentication, authorization and registration(BCrypt is used for hasing, 11 cycles)
 * Password reset
 * Password update
-* Passwords are hashed using BCrypt(11 cycles, because why not),
+* External login via Google
 
-### TODO:
-* Two Factor Authentication(probably will use Twilio as provider),
-* External login and register via OAUTH(Google and Facebook are primary targets),
+### TODO features:
+#### High priority
 * Domain models CRUD operations(yeah... I still haven't implemented this),
 * Frontend React version
 * Internationalization
+* Displaying errors(right now errors are very poorly displayed to the user)
 
-### Some of my learning resources:
+#### Low priority:
+* External login via Facebook, Github, etc.
+* Two Factor Authentication(my Twilio trial expired so I might not even bother, I'll see)
+
+## Dear reader. If you have any suggestions, please let me know.
+
+#### Some of my learning resources:
 * https://app.pluralsight.com/library/courses/maven-fundamentals
 * https://app.pluralsight.com/library/courses/spring-fundamentals
 * https://app.pluralsight.com/library/courses/spring-boot-first-application
@@ -25,5 +30,3 @@ A simple Spring Boot stack based application. I'm making this to learn Spring Bo
 * https://app.pluralsight.com/library/courses/build-web-app-spring-mvc-hibernate-bootstrap-rest-service
 * https://www.baeldung.com/security-spring
 * http://www.databaseanswers.org/data_models/retail_banks/
-
-Dear reader. Let me know if you have any suggestions.
