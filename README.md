@@ -9,7 +9,7 @@
 * Password update
 * External login via Google
 
-### TODO features:
+### Planned features:
 #### High priority
 * Domain models CRUD operations(yeah... I still haven't implemented this),
 * Frontend React version
