@@ -1,9 +1,9 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.events.OnRegistrationCompleteEvent;
-import com.codecentric.retailbank.persistence.model.PasswordResetToken;
-import com.codecentric.retailbank.persistence.model.User;
-import com.codecentric.retailbank.persistence.model.VerificationToken;
+import com.codecentric.retailbank.model.security.PasswordResetToken;
+import com.codecentric.retailbank.model.security.User;
+import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.services.UserService;
 import com.codecentric.retailbank.web.dto.PasswordDto;
 import com.codecentric.retailbank.web.dto.UserDto;
@@ -48,23 +48,6 @@ public class AccountController extends BaseController {
      * Represents the name of the current controller context.
      */
     private String CONTROLLER_NAME = "account";
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    @Qualifier("messageSource")
-    @Autowired
-    private MessageSource messages;
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private Environment env;
-
 
     public AccountController() {
         super();

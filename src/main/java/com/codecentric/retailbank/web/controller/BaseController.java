@@ -1,13 +1,16 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.constants.Constant;
-import com.codecentric.retailbank.persistence.model.User;
-import com.codecentric.retailbank.persistence.model.VerificationToken;
+import com.codecentric.retailbank.model.security.User;
+import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.services.UserService;
 import com.codecentric.retailbank.web.dto.UserDto;
 import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailAuthenticationException;
@@ -21,11 +24,22 @@ import java.util.Locale;
 public class BaseController {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private Environment env;
+    @Autowired
+    protected UserService userService;
 
-    private MessageSource messages;
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
-    private UserService userService;
+    @Qualifier("messageSource")
+    @Autowired
+    protected MessageSource messages;
+
+    @Autowired
+    protected JavaMailSender mailSender;
+
+    @Autowired
+    protected Environment env;
+
 
 
     public BaseController() {

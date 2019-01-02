@@ -4,15 +4,14 @@ import com.codecentric.retailbank.persistence.dao.PasswordResetTokenRepository;
 import com.codecentric.retailbank.persistence.dao.RoleRepository;
 import com.codecentric.retailbank.persistence.dao.TokenRepository;
 import com.codecentric.retailbank.persistence.dao.UserRepository;
-import com.codecentric.retailbank.persistence.model.PasswordResetToken;
-import com.codecentric.retailbank.persistence.model.User;
-import com.codecentric.retailbank.persistence.model.VerificationToken;
+import com.codecentric.retailbank.model.security.PasswordResetToken;
+import com.codecentric.retailbank.model.security.User;
+import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.web.dto.UserDto;
 import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;

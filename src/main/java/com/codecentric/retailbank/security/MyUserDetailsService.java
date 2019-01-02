@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.security;
 
 import com.codecentric.retailbank.persistence.dao.UserRepository;
-import com.codecentric.retailbank.persistence.model.Role;
-import com.codecentric.retailbank.persistence.model.User;
+import com.codecentric.retailbank.model.security.Role;
+import com.codecentric.retailbank.model.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

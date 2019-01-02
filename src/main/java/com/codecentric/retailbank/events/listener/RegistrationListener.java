@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.events.listener;
 
 import com.codecentric.retailbank.events.OnRegistrationCompleteEvent;
-import com.codecentric.retailbank.persistence.model.User;
+import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

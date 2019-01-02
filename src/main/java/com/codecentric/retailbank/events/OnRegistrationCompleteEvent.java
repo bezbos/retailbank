@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.events;
 
-import com.codecentric.retailbank.persistence.model.User;
+import com.codecentric.retailbank.model.security.User;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Locale;

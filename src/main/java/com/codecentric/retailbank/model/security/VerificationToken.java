@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.persistence.model;
+package com.codecentric.retailbank.model.security;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

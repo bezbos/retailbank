@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.services;
 
-import com.codecentric.retailbank.persistence.model.PasswordResetToken;
-import com.codecentric.retailbank.persistence.model.User;
-import com.codecentric.retailbank.persistence.model.VerificationToken;
+import com.codecentric.retailbank.model.security.PasswordResetToken;
+import com.codecentric.retailbank.model.security.User;
+import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.web.dto.UserDto;
 import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 

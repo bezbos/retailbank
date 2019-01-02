@@ -1,12 +1,9 @@
-package com.codecentric.retailbank.persistence.model;
+package com.codecentric.retailbank.model.security;
 
-import com.codecentric.retailbank.validation.ValidPassword;
 import org.jboss.aerogear.security.otp.api.Base32;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Date;
 
 @Entity
 @Table(name = "user_account")

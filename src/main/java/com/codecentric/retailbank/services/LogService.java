@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.services;
 
 import com.codecentric.retailbank.persistence.dao.LogRepository;
-import com.codecentric.retailbank.persistence.model.Log;
+import com.codecentric.retailbank.model.security.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
