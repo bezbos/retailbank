@@ -17,7 +17,7 @@
 * Displaying errors(right now errors are very poorly displayed to the user)
 
 #### Low priority:
-* External login via Facebook, Github, etc.
+* Additional external login providers(Facebook, Github, etc.)
 * Two Factor Authentication(my Twilio trial expired so I might not even bother, I'll see)
 
 ## Dear reader. If you have any suggestions, please let me know.
