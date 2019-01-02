@@ -1,8 +1,8 @@
-package com.codecentric.retailbank.web.dto;
+package com.codecentric.retailbank.model.dto;
 
-import com.codecentric.retailbank.validation.PasswordMatches;
-import com.codecentric.retailbank.validation.ValidEmail;
-import com.codecentric.retailbank.validation.ValidPassword;
+import com.codecentric.retailbank.model.validation.annotation.PasswordMatches;
+import com.codecentric.retailbank.model.validation.annotation.ValidEmail;
+import com.codecentric.retailbank.model.validation.annotation.ValidPassword;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

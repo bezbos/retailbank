@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.persistence.dao;
+package com.codecentric.retailbank.repository;
 
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;

@@ -1,5 +1,6 @@
-package com.codecentric.retailbank.validation;
+package com.codecentric.retailbank.model.validation;
 
+import com.codecentric.retailbank.model.validation.annotation.ValidPassword;
 import org.passay.*;
 
 import javax.validation.ConstraintValidator;
@@ -10,20 +11,19 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
-
     }
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
 
-         PasswordValidator validator = new PasswordValidator(Arrays.asList(
+        PasswordValidator validator = new PasswordValidator(Arrays.asList(
                 new LengthRule(8, 30),
                 new UppercaseCharacterRule(1),
                 new DigitCharacterRule(1),
                 new SpecialCharacterRule(1),
-                new NumericalSequenceRule(3,false),
-                new AlphabeticalSequenceRule(3,false),
-                new QwertySequenceRule(3,false),
+                new NumericalSequenceRule(3, false),
+                new AlphabeticalSequenceRule(3, false),
+                new QwertySequenceRule(3, false),
                 new WhitespaceRule()));
 
         RuleResult result = validator.validate(new PasswordData(password));

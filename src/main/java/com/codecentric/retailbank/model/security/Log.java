@@ -68,11 +68,11 @@ public class Log {
     }
 
 
-    public static Log generateLog(String message){
+    public static Log generateLog(String message) {
         return new Log(message);
     }
 
-    public static Log generateLog(Exception exception){
+    public static Log generateLog(Exception exception) {
         return new Log(exception);
     }
 }

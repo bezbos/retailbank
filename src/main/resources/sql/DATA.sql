@@ -1,24 +1,28 @@
 USE bankcentric;
 
-SET SQL_SAFE_UPDATES = 1;
+SET SQL_SAFE_UPDATES = 1; -- Just in case...
 
-INSERT INTO 
-banks(bank_details) 
-VALUES 
-('Industrial & Commercial Bank of China - ICBC'), 
-('China Construction Bank Corp.'), 
-('Agricultural Bank of China'), 
-('Bank of China'), 
-('HSBC Holdings'), 
-('JPMorgan Chase & Co.'), 
-('BNP Paribas'), 
-('Mitsubishi UFJ Financial Group'), 
-('Bank of America'), 
+
+-- DOMAIN
+
+
+INSERT INTO
+  banks(bank_details)
+VALUES
+('Industrial & Commercial Bank of China - ICBC'),
+('China Construction Bank Corp.'),
+('Agricultural Bank of China'),
+('Bank of China'),
+('HSBC Holdings'),
+('JPMorgan Chase & Co.'),
+('BNP Paribas'),
+('Mitsubishi UFJ Financial Group'),
+('Bank of America'),
 ('Credit Agricole Group');
-        
-INSERT INTO 
-addresses (line_1, line_2, town_city, zip_postcode, state_province_country, country, other_details) 
-VALUES 
+
+INSERT INTO
+  addresses (line_1, line_2, town_city, zip_postcode, state_province_country, country, other_details)
+VALUES
 ('691 Quincy Place', '4941 Westport Pass', 'El Paso', '79911', 'Texas', 'United States', 'Advanced intermediate time-frame'),
 ('06033 Sutherland Park', '032 Hoffman Parkway', 'Philadelphia', '19131', 'Pennsylvania', 'United States', 'Face to face intermediate function'),
 ('71 Dennis Terrace', '55888 Brickson Park Crossing', 'Columbus', '43231', 'Ohio', 'United States', 'Fully-configurable multi-tasking data-warehouse'),
@@ -40,19 +44,19 @@ VALUES
 ('37 Spaight Terrace', '1291 Shasta Place', 'El Paso', '79968', 'Texas', 'United States', 'Persistent tangible core'),
 ('92417 Annamark Drive', '63483 Almo Parkway', 'Albuquerque', '87190', 'New Mexico', 'United States', 'Seamless scalable ability');
 
-INSERT INTO 
-ref_branch_types (branch_type_code, branch_type_description,
-large_urban, -- 'Y' or 'N'
-small_rural, -- 'Y' or 'N'
-medium_suburban -- 'Y' or 'N'
+INSERT INTO
+  ref_branch_types (branch_type_code, branch_type_description,
+                    large_urban, -- 'Y' or 'N'
+                    small_rural, -- 'Y' or 'N'
+                    medium_suburban -- 'Y' or 'N'
 )
-VALUES 
+VALUES
 ('01-URB', 'Represents a large urban branch.', 'Y', 'N', 'N'),
 ('02-RUL', 'Represents a small rural branch', 'N', 'Y', 'N'),
 ('03-SUB', 'Represents a medium sub urban branch', 'N', 'N', 'Y');
 
-INSERT INTO 
-branches(address_id, bank_id, branch_type_code, branch_details)
+INSERT INTO
+  branches(address_id, bank_id, branch_type_code, branch_details)
 VALUES
 (1, 1, '01-URB', 'Lorem ipsum dolor sit amet.'),
 (2, 3, '01-URB', 'Lorem ipsum dolor sit amet.'),
@@ -63,7 +67,7 @@ VALUES
 (7, 6, '02-RUL', 'Lorem ipsum dolor sit amet.');
 
 INSERT INTO
-customers(address_id, branch_id, personal_details, contact_details)
+  customers(address_id, branch_id, personal_details, contact_details)
 VALUES
 (1, 1, 'Wyndham Fausch, wfausch0@blogspot.com, Male', 'nibh ligula nec sem duis aliquam convallis nunc proin at turpis a'),
 (2, 2, 'Clayson MacRinn, cmacrinn1@craigslist.org, Male', 'blandit ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing elit proin interdum mauris non ligula'),
@@ -72,13 +76,13 @@ VALUES
 (5, 5, 'Agretha Jakov, ajakov8@linkedin.com, Female', 'suscipit a feugiat et eros vestibulum ac est lacinia nisi venenatis tristique fusce congue'),
 (6, 3, 'Eulalie Featley, efeatley7@aol.com, Female', 'quisque ut erat curabitur gravida nisi at nibh in hac habitasse platea dictumst aliquam');
 
-INSERT INTO 
-ref_account_types(account_type_code, account_type_description, 
-checking, -- 'Y' or 'N'
-savings, -- 'Y' or 'N'
-certificate_of_deposit, -- 'Y' or 'N'
-money_market,-- 'Y' or 'N'
-individual_retirement -- 'Y' or 'N'
+INSERT INTO
+  ref_account_types(account_type_code, account_type_description,
+                    checking, -- 'Y' or 'N'
+                    savings, -- 'Y' or 'N'
+                    certificate_of_deposit, -- 'Y' or 'N'
+                    money_market,-- 'Y' or 'N'
+                    individual_retirement -- 'Y' or 'N'
 )
 VALUES
 ('01-CHK', ' A checking account offers easy access to your money for your daily transactional needs and helps keep your cash secure. Customers can use a debit card or checks to make purchases or pay bills.', 'Y', 'N', 'N', 'N', 'N'),
@@ -87,17 +91,17 @@ VALUES
 ('04-MMA', 'Money market accounts are similar to savings accounts, but they require you to maintain a higher balance to avoid a monthly service fee.', 'N', 'N', 'N', 'Y', 'N'),
 ('05-IRA', 'IRAs, or individual retirement accounts, allow you to save independently for your retirement.', 'N', 'N', 'N', 'N', 'Y');
 
-INSERT INTO 
-ref_account_status(account_status_code, account_status_description,
-active, -- 'Y' or 'N'
-closed -- 'Y' or 'N'
+INSERT INTO
+  ref_account_status(account_status_code, account_status_description,
+                     active, -- 'Y' or 'N'
+                     closed -- 'Y' or 'N'
 )
 VALUES
 ('01-ACT', 'The account is active and can be withdrawn from and receive deposits.', 'Y', 'N'),
 ('02-CLS', 'The account is closed and cannot be withdrawn from or receive deposits.', 'N', 'Y');
 
-INSERT INTO 
-accounts(account_status_code, account_type_code, customer_id, current_balance, other_details)
+INSERT INTO
+  accounts(account_status_code, account_type_code, customer_id, current_balance, other_details)
 VALUES
 ('01-ACT', '01-CHK', 1, 50000, 'No additional details.'),
 ('02-CLS', '04-MMA', 2, 0, 'Account closed due to being inactive for 2 years.'),
@@ -107,7 +111,7 @@ VALUES
 ('02-CLS', '01-CHK', 6, 9000000, 'Account closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
 
 INSERT INTO
-merchants(merchant_details)
+  merchants(merchant_details)
 VALUES
 ('Barings Bank'),
 ('Berenberg Bank'),
@@ -116,9 +120,9 @@ VALUES
 ('Kuhn, Loeb & Co.');
 
 INSERT INTO
-ref_transaction_types(transaction_type_code, transaction_type_description, 
-deposit,  -- 'Y' or 'N'
-withdrawal -- 'Y' or 'N'
+  ref_transaction_types(transaction_type_code, transaction_type_description,
+                        deposit,  -- 'Y' or 'N'
+                        withdrawal -- 'Y' or 'N'
 )
 VALUES
 ('01-WTH', 'Represents a withdrawal transaction.', 'N', 'Y'),
@@ -126,46 +130,32 @@ VALUES
 
 
 INSERT INTO
-transactions(account_number, merchant_id, transaction_type_code, transaction_date_time, transaction_amount, other_details)
+  transactions(account_number, merchant_id, transaction_type_code, transaction_date_time, transaction_amount, other_details)
 VALUES
 (1, 1, '01-WTH', NOW(), 250, 'No additional details.'),
 (3, 3, '01-WTH', NOW(), 2500, 'No additional details.'),
 (4, 4, '02-DEP', NOW(), 555, 'No additional details.'),
 (5, 1, '01-WTH', NOW(), 25000, 'No additional details.');
 
--- INSERT INTO
--- application_user(user_username, user_password)
--- VALUES
--- -- PLAIN TEXT PASSWORDS
--- -- ('root', 'root'),
--- -- ('user', 'user');
 
--- -- BCRYPT PASSWORDS(10 CYCLES)
--- ('root', '$2a$10$PqheN9bGdQfc5PV7DrgvyeiUPg7QiAvYGZV1GI38RErgiIQU4.vLa'),
--- ('user', '$2a$10$14eEzKj7P9NRfrh.kA.xGuunwKEnUxe7EsddHMZLwk//KeHaebYPC');
+-- SPRING SECURITY
 
--- INSERT INTO 
--- application_auth_user_group(username, auth_group)
--- VALUES
--- ('root', 'ADMIN'),
--- ('root', 'USER'),
--- ('user', 'USER');
 
 INSERT INTO
-user_role(role_name)
+  user_role(role_name)
 VALUES
 ('ROLE_ADMIN'),
 ('ROLE_USER');
 
 INSERT INTO
-role_privilege(privilege_name)
+  role_privilege(privilege_name)
 VALUES
 ('READ_PRIVILEGE'),
 ('WRITE_PRIVILEGE'),
 ('CHANGE_PASSWORD_PRIVILEGE');
 
-INSERT INTO 
-user_role_role_privilege(user_role, role_privilege)
+INSERT INTO
+  user_role_role_privilege(user_role, role_privilege)
 VALUES
 (1,1), -- (ROLE_ADMIN, READ_PRIVILEGE)
 (1,2), -- (ROLE_ADMIN, WRITE_PRIVILEGE)
@@ -174,30 +164,27 @@ VALUES
 (2,3); -- (ROLE_USER, CHANGE_PASSWORD_PRIVILEGE)
 
 INSERT INTO
-user_account(first_name, last_name, email, user_password, enabled, is_using2fa, secret)
+  user_account(first_name, last_name, email, user_password, enabled, is_using2fa, secret)
 VALUES
 ('admin', -- last_name
-'admin', -- first_name
-'admin@gmail.com', -- email
-'$2a$11$Jte0g5qCiNIu0VQQZPWeDuFjryXj/b/YSv4RMde0GS.9ktweN91k.', -- BCRYPT(11 cycles)
-true, -- enabled(by default new accounts are disabled until verified by email)
-false, -- is_using2fa(disabled by default)
-'C5J6UUBED5TQ8WK1EHQQ4' -- secret(by default receives a random Base32 value)
+ 'admin', -- first_name
+ 'admin@gmail.com', -- email
+ '$2a$11$Jte0g5qCiNIu0VQQZPWeDuFjryXj/b/YSv4RMde0GS.9ktweN91k.', -- BCRYPT(11 cycles)
+ true, -- enabled(by default new accounts are disabled until verified by email)
+ false, -- is_using2fa(disabled by default)
+ 'C5J6UUBED5TQ8WK1EHQQ4' -- secret(by default receives a random Base32 value)
 ),
 ('test', -- last_name
-'test', -- first_name
-'test@gmail.com', -- email
-'$2a$11$Jte0g5qCiNIu0VQQZPWeDuFjryXj/b/YSv4RMde0GS.9ktweN91k.', -- BCRYPT(11 cycles)
-true, -- enabled(by default new accounts are disabled until verified by email)
-false, -- is_using2fa(disabled by default)
-'EAOQNUFDCX4FVH4P' -- secret(by default receives a random Base32 value)
+ 'test', -- first_name
+ 'test@gmail.com', -- email
+ '$2a$11$Jte0g5qCiNIu0VQQZPWeDuFjryXj/b/YSv4RMde0GS.9ktweN91k.', -- BCRYPT(11 cycles)
+ true, -- enabled(by default new accounts are disabled until verified by email)
+ false, -- is_using2fa(disabled by default)
+ 'EAOQNUFDCX4FVH4P' -- secret(by default receives a random Base32 value)
 );
 
--- $2a$11$Jte0g5qCiNIu0VQQZPWeDuFjryXj/b/YSv4RMde0GS.9ktweN91k.
--- $2a$11$yF8TV7RXiW3Bl9ARr7pkk.QPQP4NuimvCKy3VdYpTtIX48Cl0Qn8q
-
 INSERT INTO
-user_account_user_role(user_account, user_role)
+  user_account_user_role(user_account, user_role)
 VALUES
 (1, 1), -- admin, ROLE_ADMIN
 (1, 2),	-- admin, ROLE_USER

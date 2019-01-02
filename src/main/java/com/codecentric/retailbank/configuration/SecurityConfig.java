@@ -1,9 +1,10 @@
-package com.codecentric.retailbank.spring;
+package com.codecentric.retailbank.configuration;
 
+import com.codecentric.retailbank.constants.Constant;
 import com.codecentric.retailbank.security.CustomLoginSuccessHandler;
 import com.codecentric.retailbank.security.CustomLogoutSuccessHandler;
 import com.codecentric.retailbank.security.MyUserDetailsService;
-import com.codecentric.retailbank.services.UserService;
+import com.codecentric.retailbank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -105,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder(11);
+        return new BCryptPasswordEncoder(Constant.BCRYPT_HASH_CYCLES);
     }
 
     @Bean

@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.constants.Constant;
+import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
-import com.codecentric.retailbank.services.UserService;
-import com.codecentric.retailbank.web.dto.UserDto;
+import com.codecentric.retailbank.service.UserService;
 import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,6 @@ public class BaseController {
 
     @Autowired
     protected Environment env;
-
 
 
     public BaseController() {

@@ -8,9 +8,8 @@ import java.util.Date;
 @Entity
 @Table(name = "verification_token")
 public class VerificationToken {
-    private static final int EXPIRATION = 60 * 24;
+    private static int EXPIRATION = 60 * 24;
 
-    //
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,40 +18,36 @@ public class VerificationToken {
     private String token;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name="user_id")
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
     private Date expiryDate;
-
-    //
 
 
     public VerificationToken() {
         super();
     }
 
-    public VerificationToken(final String token) {
+    public VerificationToken(String token) {
         super();
 
         this.token = token;
     }
 
-    public VerificationToken(final String token, final User user) {
+    public VerificationToken(String token, User user) {
         super();
 
         this.token = token;
         this.user = user;
     }
 
-    public VerificationToken(final String token, final User user, final Date expiryDate) {
+    public VerificationToken(String token, User user, Date expiryDate) {
         super();
 
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
     }
-
-    //
 
 
     public static int getEXPIRATION() {
@@ -91,8 +86,6 @@ public class VerificationToken {
         this.expiryDate = expiryDate;
     }
 
-    //
-
 
     @org.jetbrains.annotations.NotNull
     @org.jetbrains.annotations.Contract("_ -> new")
@@ -103,16 +96,15 @@ public class VerificationToken {
         return new Date(cal.getTime().getTime());
     }
 
-    public void updateToken(final String token) {
+    public void updateToken(String token) {
         this.token = token;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    //
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + ((expiryDate == null) ? 0 : expiryDate.hashCode());
         result = prime * result + ((token == null) ? 0 : token.hashCode());
@@ -121,7 +113,7 @@ public class VerificationToken {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -131,7 +123,7 @@ public class VerificationToken {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final VerificationToken other = (VerificationToken) obj;
+        VerificationToken other = (VerificationToken) obj;
         if (expiryDate == null) {
             if (other.expiryDate != null) {
                 return false;
@@ -158,7 +150,7 @@ public class VerificationToken {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         builder.append("Token [String=").append(token).append("]").append("[Expires").append(expiryDate).append("]");
         return builder.toString();
     }

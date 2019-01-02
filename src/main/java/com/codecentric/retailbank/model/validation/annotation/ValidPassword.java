@@ -1,4 +1,6 @@
-package com.codecentric.retailbank.validation;
+package com.codecentric.retailbank.model.validation.annotation;
+
+import com.codecentric.retailbank.model.validation.PasswordConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -16,7 +18,7 @@ import static java.lang.annotation.ElementType.*;
 public @interface ValidPassword {
     String message() default "Invalid Password";
 
-    Class<?> [] groups() default {};
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

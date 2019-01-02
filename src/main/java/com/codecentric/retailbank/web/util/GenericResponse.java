@@ -10,8 +10,6 @@ public class GenericResponse {
     private String message;
     private String error;
 
-    //
-
 
     public GenericResponse(String message) {
         super();
@@ -35,8 +33,6 @@ public class GenericResponse {
         }).collect(Collectors.joining(","));
         this.message = "[" + temp + "]";
     }
-
-    //
 
 
     public String getMessage() {

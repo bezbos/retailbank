@@ -1,26 +1,23 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.events.OnRegistrationCompleteEvent;
+import com.codecentric.retailbank.model.dto.PasswordDto;
+import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
-import com.codecentric.retailbank.services.UserService;
-import com.codecentric.retailbank.web.dto.PasswordDto;
-import com.codecentric.retailbank.web.dto.UserDto;
+import com.codecentric.retailbank.service.UserService;
 import com.codecentric.retailbank.web.error.InvalidOldPasswordException;
 import com.codecentric.retailbank.web.error.UserNotFoundException;
 import com.codecentric.retailbank.web.util.GenericResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,6 +45,7 @@ public class AccountController extends BaseController {
      * Represents the name of the current controller context.
      */
     private String CONTROLLER_NAME = "account";
+
 
     public AccountController() {
         super();
@@ -301,10 +299,11 @@ public class AccountController extends BaseController {
     }
 
 
-    // ************ OAUTH2 ************** //
+    // OAuth2
+
     private static String authorizationRequestBaseUri = "../oauth2/authorization";
 
-    Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
+    private Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;

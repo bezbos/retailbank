@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.persistence.dao;
+package com.codecentric.retailbank.repository;
 
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,6 @@
-package com.codecentric.retailbank.validation;
+package com.codecentric.retailbank.model.validation.annotation;
+
+import com.codecentric.retailbank.model.validation.EmailValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

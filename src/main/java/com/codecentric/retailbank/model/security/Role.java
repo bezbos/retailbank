@@ -21,7 +21,6 @@ public class Role {
     @Column(name = "role_name")
     private String name;
 
-    //
 
     public Role() {
         super();
@@ -31,6 +30,7 @@ public class Role {
         super();
         this.name = name;
     }
+
 
     public Long getId() {
         return id;
@@ -64,6 +64,7 @@ public class Role {
         this.privileges = privileges;
     }
 
+    
     @Override
     public int hashCode() {
         final int prime = 31;
