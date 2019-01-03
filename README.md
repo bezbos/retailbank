@@ -8,15 +8,12 @@
 * Password reset
 * Password update
 * External login via Google
+* Basic domain CRUD operations
 
 ### Planned features:
-#### High priority
-* Domain models CRUD operations(yeah... I still haven't implemented this),
 * Frontend React version
 * Internationalization
-* Displaying errors(right now errors are very poorly displayed to the user)
-
-#### Low priority:
+* Better errors display(right now errors are very poorly displayed to the user)
 * Additional external login providers(Facebook, Github, etc.)
 * Two Factor Authentication(my Twilio trial expired so I might not even bother, I'll see)
 
