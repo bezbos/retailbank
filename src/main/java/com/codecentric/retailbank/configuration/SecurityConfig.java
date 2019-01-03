@@ -54,6 +54,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             "/bank/*",
                             "/branch*",
                             "/branch/*",
+                            "/customer*",
+                            "/customer/*",
+                            "/refTypes*",
+                            "/refTypes/*",
 
                             "/error",
                             "/home/*",

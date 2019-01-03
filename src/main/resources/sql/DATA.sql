@@ -97,14 +97,14 @@ VALUES
 ('02-CLS', 'The account is closed and cannot be withdrawn from or receive deposits.', 'N', 'Y');
 
 INSERT INTO
-accounts(account_status_code, account_type_code, customer_id, current_balance, other_details)
+accounts(account_status_id, account_type_id, customer_id, current_balance, other_details)
 VALUES
-('01-ACT', '01-CHK', 1, 50000, 'No additional details.'),
-('02-CLS', '04-MMA', 2, 0, 'Account closed due to being inactive for 2 years.'),
-('01-ACT', '02-SAV', 3, 9000, 'No additional details.'),
-('01-ACT', '03-COD', 4, 23500, 'No additional details.'),
-('01-ACT', '05-IRA', 5, 100000, 'No additional details.'),
-('02-CLS', '01-CHK', 6, 9000000, 'Account closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
+(1, 1, 1, 50000, 'No additional details.'),
+(2, 4, 2, 0, 'Account closed due to being inactive for 2 years.'),
+(1, 2, 3, 9000, 'No additional details.'),
+(1, 3, 4, 23500, 'No additional details.'),
+(1, 5, 5, 100000, 'No additional details.'),
+(2, 1, 6, 9000000, 'Account closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
 
 INSERT INTO
 merchants(merchant_details)
@@ -126,12 +126,13 @@ VALUES
 
 
 INSERT INTO
-transactions(account_number, merchant_id, transaction_type_code, transaction_date_time, transaction_amount, other_details)
+transactions(account_number, merchant_id, transaction_type_id, transaction_date_time, transaction_amount, other_details)
 VALUES
-(1, 1, '01-WTH', NOW(), 250, 'No additional details.'),
-(3, 3, '01-WTH', NOW(), 2500, 'No additional details.'),
-(4, 4, '02-DEP', NOW(), 555, 'No additional details.'),
-(5, 1, '01-WTH', NOW(), 25000, 'No additional details.');
+(1, 1, 1, NOW(), 250, 'No additional details.'),
+(3, 3, 1, NOW(), 2500, 'No additional details.'),
+(4, 4, 2, NOW(), 555, 'No additional details.'),
+(5, 1, 1, NOW(), 25000, 'No additional details.');
+
 
 INSERT INTO
 user_role(role_name)
@@ -175,8 +176,6 @@ false, -- is_using2fa(disabled by default)
 'EAOQNUFDCX4FVH4P' -- secret(by default receives a random Base32 value)
 );
 
--- $2a$11$Jte0g5qCiNIu0VQQZPWeDuFjryXj/b/YSv4RMde0GS.9ktweN91k.
--- $2a$11$yF8TV7RXiW3Bl9ARr7pkk.QPQP4NuimvCKy3VdYpTtIX48Cl0Qn8q
 
 INSERT INTO
 user_account_user_role(user_account, user_role)

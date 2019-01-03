@@ -46,7 +46,8 @@ CREATE TABLE customers(
 );
 
 CREATE TABLE ref_account_types(
-	account_type_code CHAR(15) PRIMARY KEY,
+	account_type_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	account_type_code CHAR(15),
     account_type_description VARCHAR(255),
     checking CHAR(1),
     savings CHAR(1),
@@ -56,7 +57,8 @@ CREATE TABLE ref_account_types(
 );
 
 CREATE TABLE ref_account_status(
-	account_status_code CHAR(15) PRIMARY KEY,
+	account_status_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	account_status_code CHAR(15),
     account_status_description VARCHAR(255),
     active CHAR(1),
     closed CHAR(1)
@@ -64,8 +66,8 @@ CREATE TABLE ref_account_status(
 
 CREATE TABLE accounts(
 	account_number BIGINT AUTO_INCREMENT PRIMARY KEY,
-    account_status_code CHAR(15) NOT NULL, FOREIGN KEY (account_status_code) REFERENCES ref_account_status(account_status_code),
-    account_type_code CHAR(15) NOT NULL, FOREIGN KEY (account_type_code) REFERENCES ref_account_types(account_type_code),
+    account_status_id BIGINT NOT NULL, FOREIGN KEY (account_status_id) REFERENCES ref_account_status(account_status_id),
+    account_type_id BIGINT NOT NULL, FOREIGN KEY (account_type_id) REFERENCES ref_account_types(account_type_id),
     customer_id BIGINT NOT NULL, FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
     current_balance DECIMAL(65,5) NOT NULL,
     other_details VARCHAR(255)
@@ -77,7 +79,8 @@ CREATE TABLE merchants(
 );
 
 CREATE TABLE ref_transaction_types(
-	transaction_type_code CHAR(15) PRIMARY KEY,
+	transaction_type_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+	transaction_type_code CHAR(15),
     transaction_type_description VARCHAR(255),
     deposit CHAR(1),
     withdrawal CHAR(1)
@@ -87,11 +90,12 @@ CREATE TABLE transactions(
 	transaction_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     account_number BIGINT NOT NULL, FOREIGN KEY (account_number) REFERENCES accounts(account_number),
     merchant_id BIGINT NOT NULL, FOREIGN KEY (merchant_id) REFERENCES merchants(merchant_id),
-    transaction_type_code CHAR(15) NOT NULL, FOREIGN KEY (transaction_type_code) REFERENCES ref_transaction_types(transaction_type_code),
+    transaction_type_id BIGINT NOT NULL, FOREIGN KEY (transaction_type_id) REFERENCES ref_transaction_types(transaction_type_id),
     transaction_date_time DATETIME NOT NULL,
     transaction_amount DECIMAL(65,5) NOT NULL,
     other_details VARCHAR(255)
 );
+
 
 CREATE TABLE application_logs(
 	uuid BINARY(16) PRIMARY KEY,
