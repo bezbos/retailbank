@@ -13,7 +13,6 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-
     @NotNull
     @Length(max = 255)
     @Column(name = "line_1")

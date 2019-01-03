@@ -1,0 +1,12 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <br>
+    <h2>Branch details:</h2>
+    <ul th:each="branch : ${branches}" class="list-group">
+        <li th:text="'Details:' + ${branch.getBranchDetails()}" class="list-group-item">Client</li>
+        <li th:text="'Address - Line 1:' + ${branch.getAddress().getLine1()}" class="list-group-item">Client</li>
+        <li th:text="'Address - Line 1:' + ${branch.getBank().getBankDetails()}" class="list-group-item">Client</li>
+        <!--<li th:text="'Address - Line 1:' + ${branch.getBranchTypeCode().getCode()}" class="list-group-item">Client</li>-->
+    </ul>
+
+</div>

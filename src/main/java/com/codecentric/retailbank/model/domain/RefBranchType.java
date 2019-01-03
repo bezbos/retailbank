@@ -2,6 +2,7 @@ package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
 
+import javax.naming.Name;
 import javax.persistence.*;
 
 @Entity
@@ -9,10 +10,14 @@ import javax.persistence.*;
 public class RefBranchType {
 
     @Id
-    @Column(name = "branch_type_code")
+    @Column(name = "branch_type_id")
+    private Long id;
+
+    @Column(name = "branch_type_code", nullable = false, unique = true)
     private String code;
 
     @Length(max = 255)
+    @Column(name = "branch_type_description")
     private String description;
 
     @Length(max = 1)
@@ -64,4 +69,5 @@ public class RefBranchType {
     public void setMediumSuburban(String mediumSuburban) {
         this.mediumSuburban = mediumSuburban;
     }
+
 }
