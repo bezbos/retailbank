@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "banks")
+@Cacheable(false)
 public class Bank {
     @Id
     @Column(name = "bank_id")

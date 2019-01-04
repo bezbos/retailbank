@@ -5,7 +5,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ref_account_types")
-public class RefAccountTypes {
+@Cacheable(false)
+public class RefAccountType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

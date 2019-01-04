@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "customers")
+@Cacheable(false)
 public class Customer {
 
     @Id

@@ -50,14 +50,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                     .antMatchers("/",
 
-                            "/bank*",
-                            "/bank/*",
+                            "/bank",
+                            "/bank/",
                             "/branch*",
                             "/branch/*",
                             "/customer*",
                             "/customer/*",
                             "/refTypes*",
                             "/refTypes/*",
+                            "/bankAccount",
+                            "/bankAccount/",
 
                             "/error",
                             "/home/*",

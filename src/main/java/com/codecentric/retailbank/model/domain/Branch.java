@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "branches")
+@Cacheable(false)
 public class Branch {
 
     @Id
@@ -16,17 +17,17 @@ public class Branch {
 
     @NotNull
     @OneToOne(targetEntity = Address.class)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @NotNull
     @OneToOne(targetEntity = Bank.class)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "bank_id")
     private Bank bank;
 
     @NotNull
     @OneToOne(targetEntity = RefBranchType.class)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "branch_type_id")
     private RefBranchType type;
 
     @Length(max = 255)

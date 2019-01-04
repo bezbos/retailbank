@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.RefAccountStatus;
-import com.codecentric.retailbank.model.domain.RefAccountTypes;
+import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.repository.RefAccountStatusRepository;
 import com.codecentric.retailbank.repository.RefAccountTypesRepository;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class RefTypesController {
 
     @RequestMapping(value = {"", "/", "/index"})
     public String getIndexPage(Model model){
-        List<RefAccountTypes> refAccountTypes = refAccountTypesRepository.findAll();
+        List<RefAccountType> refAccountTypes = refAccountTypesRepository.findAll();
         List<RefAccountStatus> refAccountStatuses = refAccountStatusRepository.findAll();
 
         model.addAttribute("refAccountTypes", refAccountTypes);
