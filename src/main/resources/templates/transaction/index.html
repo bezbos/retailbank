@@ -1,0 +1,12 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <ul th:each="transaction : ${transactions}" class="list-group">
+        <li th:text="'Id: ' + ${transaction.getId()}" class="list-group-item">Client</li>
+        <li th:text="'Details: ' + ${transaction.getDetails()}" class="list-group-item">Client</li>
+        <li th:text="'Account: ' + ${transaction.getAccount().getCustomer().getPersonalDetails()}" class="list-group-item">Client</li>
+        <li th:text="'Merchant: ' + ${transaction.getMerchant().getDetails()}" class="list-group-item">Client</li>
+        <li th:text="'Type: ' + ${transaction.getType().getCode()}" class="list-group-item">Client</li>
+        <li th:text="'DateTime: ' + ${transaction.getDate().toString()}" class="list-group-item">Client</li>
+        <li th:text="'Amount: ' + ${transaction.getAmount()}" class="list-group-item">Client</li>
+    </ul>
+</div>

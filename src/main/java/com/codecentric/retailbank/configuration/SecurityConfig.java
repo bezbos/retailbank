@@ -63,6 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             "/bankAccount/*",
                             "/merchant*",
                             "/merchant/*",
+                            "/transaction*",
+                            "/transaction/*",
                             //
 
                             "/error",
