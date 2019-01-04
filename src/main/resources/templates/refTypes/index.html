@@ -13,4 +13,11 @@
         <li th:text="'Code: ' + ${refAccountStatus.getCode()}" class="list-group-item">Client</li>
         <li th:text="'Description: ' + ${refAccountStatus.getDescription()}" class="list-group-item">Client</li>
     </ul>
+
+    <br>
+    <h2>Ref Transaction Types</h2>
+    <ul th:each="refTransactionType : ${refTransactionTypes}" class="list-group">
+        <li th:text="'Code: ' + ${refTransactionType.getCode()}" class="list-group-item">Client</li>
+        <li th:text="'Description: ' + ${refTransactionType.getDescription()}" class="list-group-item">Client</li>
+    </ul>
 </div>

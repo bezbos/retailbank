@@ -1,11 +1,9 @@
 package com.codecentric.retailbank.model.domain;
 
+import org.attoparser.trace.MarkupTraceEvent;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "merchants")

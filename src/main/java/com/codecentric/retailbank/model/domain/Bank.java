@@ -9,7 +9,6 @@ import javax.persistence.*;
 public class Bank {
     @Id
     @Column(name = "bank_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Length(max = 255)

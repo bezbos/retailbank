@@ -2,8 +2,10 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.RefAccountStatus;
 import com.codecentric.retailbank.model.domain.RefAccountType;
+import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.repository.RefAccountStatusRepository;
 import com.codecentric.retailbank.repository.RefAccountTypesRepository;
+import com.codecentric.retailbank.repository.RefTransactionTypeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,10 @@ public class RefTypesController {
 
     @Autowired
     private RefAccountTypesRepository refAccountTypesRepository;
-
     @Autowired
     private RefAccountStatusRepository refAccountStatusRepository;
+    @Autowired
+    private RefTransactionTypeRepository refTransactionTypeRepository;
 
     public RefTypesController(){super();}
 
@@ -36,9 +39,11 @@ public class RefTypesController {
     public String getIndexPage(Model model){
         List<RefAccountType> refAccountTypes = refAccountTypesRepository.findAll();
         List<RefAccountStatus> refAccountStatuses = refAccountStatusRepository.findAll();
+        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.findAll();
 
         model.addAttribute("refAccountTypes", refAccountTypes);
         model.addAttribute("refAccountStatuses", refAccountStatuses);
+        model.addAttribute("refTransactionTypes", refTransactionTypes);
         return CONTROLLER_NAME + "/index";
     }
 }

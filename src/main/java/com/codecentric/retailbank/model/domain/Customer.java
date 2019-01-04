@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "customer_id")
     private Long id;
 

@@ -11,7 +11,6 @@ public class Branch {
 
     @Id
     @Column(name = "branch_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull

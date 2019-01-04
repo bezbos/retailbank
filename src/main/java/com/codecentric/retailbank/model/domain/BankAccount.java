@@ -15,7 +15,7 @@ public class BankAccount {
     private Long id;
 
     @NotNull
-    @OneToOne(targetEntity = RefAccountStatus.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = RefAccountStatus.class)
     @JoinColumn(name = "account_status_id")
     private RefAccountStatus status;
 

@@ -3,30 +3,31 @@ package com.codecentric.retailbank.model.domain;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 
 @Entity
-@Table(name = "ref_account_status")
-public class RefAccountStatus {
+@Table(name = "ref_transaction_types")
+public class RefTransactionType {
 
     @Id
-    @Column(name = "account_status_id")
+    @Column(name = "transaction_type_id")
     private Long id;
 
     @Length(max = 15)
-    @Column(name = "account_status_code", nullable = false, unique = true)
+    @Column(name = "transaction_type_code", nullable = false, unique = true)
     private String code;
 
     @Length(max = 255)
-    @Column(name = "account_status_description")
+    @Column(name = "transaction_type_description")
     private String description;
 
     @Length(max = 1)
-    @Column(name = "active")
-    private String isActive;
+    @Column(name = "deposit")
+    private String isDeposit;
 
     @Length(max = 1)
-    @Column(name = "closed")
-    private String isClosed;
+    @Column(name = "withdrawal")
+    private String isWithdrawal;
 
 
     public Long getId() {
@@ -53,19 +54,19 @@ public class RefAccountStatus {
         this.description = description;
     }
 
-    public String getIsActive() {
-        return isActive;
+    public String getIsDeposit() {
+        return isDeposit;
     }
 
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
+    public void setIsDeposit(String isDeposit) {
+        this.isDeposit = isDeposit;
     }
 
-    public String getIsClosed() {
-        return isClosed;
+    public String getIsWithdrawal() {
+        return isWithdrawal;
     }
 
-    public void setIsClosed(String isClosed) {
-        this.isClosed = isClosed;
+    public void setIsWithdrawal(String isWithdrawal) {
+        this.isWithdrawal = isWithdrawal;
     }
 }

@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 public class Address {
     @Id
     @Column(name = "address_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull

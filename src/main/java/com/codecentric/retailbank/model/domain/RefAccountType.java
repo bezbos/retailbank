@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 public class RefAccountType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "account_type_id")
     private Long id;
 
