@@ -4,8 +4,6 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "branches")
@@ -29,10 +27,11 @@ public class Branch {
     @NotNull
     @OneToOne(targetEntity = RefBranchType.class)
     @PrimaryKeyJoinColumn
-    private RefBranchType branchType;
+    private RefBranchType type;
 
     @Length(max = 255)
-    private String branchDetails;
+    @Column(name = "branch_details")
+    private String details;
 
 
     public Long getId() {
@@ -59,19 +58,19 @@ public class Branch {
         this.bank = bank;
     }
 
-    public RefBranchType getBranchType() {
-        return branchType;
+    public RefBranchType getType() {
+        return type;
     }
 
-    public void setBranchType(RefBranchType branchTypeCode) {
-        this.branchType = branchTypeCode;
+    public void setType(RefBranchType branchTypeCode) {
+        this.type = branchTypeCode;
     }
 
-    public String getBranchDetails() {
-        return branchDetails;
+    public String getDetails() {
+        return details;
     }
 
-    public void setBranchDetails(String branchDetails) {
-        this.branchDetails = branchDetails;
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

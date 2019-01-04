@@ -21,13 +21,16 @@ public class RefBranchType {
     private String description;
 
     @Length(max = 1)
-    private String largeUrban;  // Y or N
+    @Column(name = "large_urban")
+    private String isLargeUrban;  // Y or N
 
     @Length(max = 1)
-    private String smallRural;  // Y or N
+    @Column(name = "small_rural")
+    private String isSmallRural;  // Y or N
 
     @Length(max = 1)
-    private String mediumSuburban;  // Y or N
+    @Column(name = "medium_suburban")
+    private String isMediumSuburban;  // Y or N
 
 
     public String getCode() {
@@ -47,27 +50,27 @@ public class RefBranchType {
     }
 
     public String getLargeUrban() {
-        return largeUrban;
+        return isLargeUrban;
     }
 
     public void setLargeUrban(String largeUrban) {
-        this.largeUrban = largeUrban;
+        this.isLargeUrban = largeUrban;
     }
 
     public String getSmallRural() {
-        return smallRural;
+        return isSmallRural;
     }
 
     public void setSmallRural(String smallRural) {
-        this.smallRural = smallRural;
+        this.isSmallRural = smallRural;
     }
 
     public String getMediumSuburban() {
-        return mediumSuburban;
+        return isMediumSuburban;
     }
 
     public void setMediumSuburban(String mediumSuburban) {
-        this.mediumSuburban = mediumSuburban;
+        this.isMediumSuburban = mediumSuburban;
     }
 
 }

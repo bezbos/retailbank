@@ -100,11 +100,11 @@ INSERT INTO
 accounts(account_status_id, account_type_id, customer_id, current_balance, other_details)
 VALUES
 (1, 1, 1, 50000, 'No additional details.'),
-(2, 4, 2, 0, 'Account closed due to being inactive for 2 years.'),
+(2, 4, 2, 0, 'RefAccountStatus closed due to being inactive for 2 years.'),
 (1, 2, 3, 9000, 'No additional details.'),
 (1, 3, 4, 23500, 'No additional details.'),
 (1, 5, 5, 100000, 'No additional details.'),
-(2, 1, 6, 9000000, 'Account closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
+(2, 1, 6, 9000000, 'RefAccountStatus closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
 
 INSERT INTO
 merchants(merchant_details)

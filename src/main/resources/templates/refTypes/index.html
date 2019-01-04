@@ -1,8 +1,16 @@
 <div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
      layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <br>
     <h2>Ref Account Types</h2>
     <ul th:each="refAccountType : ${refAccountTypes}" class="list-group">
         <li th:text="'Code: ' + ${refAccountType.getCode()}" class="list-group-item">Client</li>
         <li th:text="'Description: ' + ${refAccountType.getDescription()}" class="list-group-item">Client</li>
+    </ul>
+
+    <br>
+    <h2>Ref Account Statuses</h2>
+    <ul th:each="refAccountStatus : ${refAccountStatuses}" class="list-group">
+        <li th:text="'Code: ' + ${refAccountStatus.getCode()}" class="list-group-item">Client</li>
+        <li th:text="'Description: ' + ${refAccountStatus.getDescription()}" class="list-group-item">Client</li>
     </ul>
 </div>

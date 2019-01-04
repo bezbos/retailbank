@@ -56,7 +56,7 @@ public class BaseController {
     /**
      * Creates a new account in the DB.
      *
-     * @param accountDto Account information.
+     * @param accountDto RefAccountStatus information.
      * @return the newly created account if successful. Otherwise returns <code>null</code>.
      */
     protected User createUserAccount(UserDto accountDto) {

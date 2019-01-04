@@ -1,7 +1,6 @@
 package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 
 import javax.persistence.*;
 
@@ -15,7 +14,7 @@ public class Bank {
 
     @Length(max = 255)
     @Column(name = "bank_details")
-    private String bankDetails;
+    private String details;
 
 
     public Long getId() {
@@ -26,11 +25,11 @@ public class Bank {
         this.id = id;
     }
 
-    public String getBankDetails() {
-        return bankDetails;
+    public String getDetails() {
+        return details;
     }
 
-    public void setBankDetails(String bankDetails) {
-        this.bankDetails = bankDetails;
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

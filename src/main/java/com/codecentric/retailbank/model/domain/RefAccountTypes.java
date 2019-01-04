@@ -13,7 +13,7 @@ public class RefAccountTypes {
     private Long id;
 
     @NotNull
-    @Column(name = "account_type_code")
+    @Column(name = "account_type_code", nullable = false, unique = true)
     private String code;
 
     @Column(name = "account_type_description")
