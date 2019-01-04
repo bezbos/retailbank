@@ -50,16 +50,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                     .antMatchers("/",
 
-                            "/bank",
-                            "/bank/",
+                            // Allowing anonymous access for testing purposes.
+                            "/bank*",
+                            "/bank/*",
                             "/branch*",
                             "/branch/*",
                             "/customer*",
                             "/customer/*",
                             "/refTypes*",
                             "/refTypes/*",
-                            "/bankAccount",
-                            "/bankAccount/",
+                            "/bankAccount*",
+                            "/bankAccount/*",
+                            "/merchant*",
+                            "/merchant/*",
+                            //
 
                             "/error",
                             "/home/*",

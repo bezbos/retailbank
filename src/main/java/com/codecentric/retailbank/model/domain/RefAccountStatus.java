@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ref_account_status")
-@Cacheable(false)
 public class RefAccountStatus {
 
     @Id

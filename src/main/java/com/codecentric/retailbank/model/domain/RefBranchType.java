@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ref_branch_types")
-@Cacheable(false)
 public class RefBranchType {
 
     @Id

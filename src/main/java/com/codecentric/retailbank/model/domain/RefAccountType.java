@@ -5,7 +5,6 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ref_account_types")
-@Cacheable(false)
 public class RefAccountType {
 
     @Id

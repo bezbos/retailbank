@@ -2,18 +2,21 @@ package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "banks")
-public class Bank {
+@Table(name = "merchants")
+public class Merchant {
+
     @Id
-    @Column(name = "bank_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "merchant_id")
     private Long id;
 
     @Length(max = 255)
-    @Column(name = "bank_details")
+    @Column(name = "merchant_details")
     private String details;
 
 

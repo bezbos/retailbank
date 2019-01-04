@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "accounts")
-@Cacheable(false)
 public class BankAccount {
 
     @Id

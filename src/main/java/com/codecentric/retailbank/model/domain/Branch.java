@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "branches")
-@Cacheable(false)
 public class Branch {
 
     @Id
