@@ -53,6 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             // Allowing anonymous access for testing purposes.
                             "/bank*",
                             "/bank/*",
+                            "/address*",
+                            "/address/*",
                             "/branch*",
                             "/branch/*",
                             "/customer*",

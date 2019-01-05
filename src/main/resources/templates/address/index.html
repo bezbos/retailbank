@@ -1,0 +1,6 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <ul th:each="address : ${addresses}" class="list-group">
+        <li th:text="'Line 1: ' + ${address.getLine1()}" class="list-group-item">Client</li>
+    </ul>
+</div>

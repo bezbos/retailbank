@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.service.BankService;
+import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.service.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @Controller
-@RequestMapping("/bank")
-public class BankController {
+@RequestMapping("/address")
+public class AddressController {
 
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     /**
      * Represents the name of the current controller context.
      */
-    private String CONTROLLER_NAME = "bank";
+    private String CONTROLLER_NAME = "address";
 
     @Autowired
-    private BankService bankService;
+    private AddressService addressService;
 
 
-    public BankController() {
+    public AddressController() {
         super();
     }
 
@@ -40,45 +40,53 @@ public class BankController {
         boolean deleteWorks = true;
 
         try {
-            List<Bank> banks = bankService.getAllBanks();
-            Bank bank = bankService.getById(1L);
+            List<Address> banks = addressService.getAllAddress();
+            Address bank = addressService.getById(1L);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
             readWorks = false;
         }
-        LOGGER.info("LOG: getAllBanks() completed successfully.");
+        LOGGER.info("LOG: getAllAddresses() completed successfully.");
         LOGGER.info("LOG: getById(1L) completed successfully.");
 
         try {
-            Bank testBank = new Bank();
-            testBank.setDetails("TEST");
+            Address testAddress = new Address();
+            testAddress.setLine1("TEST");
+            testAddress.setTownCity("TEST");
+            testAddress.setZipPostcode("TEST");
+            testAddress.setStateProvinceCountry("TEST");
+            testAddress.setCountry("TEST");
 
-            bankService.addBank(testBank);
-            Bank result = bankService.getByDetails("TEST");
+            addressService.addAddress(testAddress);
+            Address result = addressService.getByLine1("TEST");
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
             addWorks = false;
         }
-        LOGGER.info("LOG: addBank(testBank) completed successfully.");
+        LOGGER.info("LOG: addAddress(testAddress) completed successfully.");
 
 
-        Bank existingBank = bankService.getByDetails("TEST");
+        Address existingAddress = addressService.getByLine1("TEST");
         try {
-            existingBank.setDetails("TEST UPDATED");
-            Bank result = bankService.updateBank(existingBank);
+            existingAddress.setLine1("TEST UPDATED");
+            existingAddress.setTownCity("TEST UPDATED");
+            existingAddress.setZipPostcode("TEST UPDATED");
+            existingAddress.setStateProvinceCountry("TEST UPDATED");
+            existingAddress.setCountry("TEST UPDATED");
+            Address result = addressService.updateAddress(existingAddress);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
             updateWorks = false;
         }
-        LOGGER.info("LOG: updateBank(existing) completed successfully.");
+        LOGGER.info("LOG: updateAddress(existing) completed successfully.");
 
         try {
-            bankService.deleteBank(existingBank);
+            addressService.deleteAddress(existingAddress);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
             deleteWorks = false;
         }
-        LOGGER.info("LOG: deleteBank(existingBank) completed successfully.");
+        LOGGER.info("LOG: deleteAddress(existingAddress) completed successfully.");
 
         model.addAttribute("readWorks", readWorks);
         model.addAttribute("addWorks", addWorks);
@@ -90,9 +98,9 @@ public class BankController {
 
     @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
     public String getIndexPage(Model model) {
-        List<Bank> banks = bankService.getAllBanks();
+        List<Address> addresses = addressService.getAllAddress();
 
-        model.addAttribute("banks", banks);
+        model.addAttribute("addresses", addresses);
         return CONTROLLER_NAME + "/index";
     }
 }

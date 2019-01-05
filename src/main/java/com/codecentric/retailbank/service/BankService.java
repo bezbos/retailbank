@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional
 public class BankService implements IBankService {
 
-    Logger LOGGER = LoggerFactory.getLogger(getClass());
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private BankRepository repo;
