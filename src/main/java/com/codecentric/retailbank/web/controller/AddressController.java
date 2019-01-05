@@ -40,8 +40,8 @@ public class AddressController {
         boolean deleteWorks = true;
 
         try {
-            List<Address> banks = addressService.getAllAddress();
-            Address bank = addressService.getById(1L);
+            List<Address> addresses = addressService.getAllAddress();
+            Address address = addressService.getById(1L);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
             readWorks = false;
