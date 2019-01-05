@@ -16,12 +16,12 @@ public class Customer {
 
     @NotNull
     @OneToOne(targetEntity = Address.class)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @NotNull
     @OneToOne(targetEntity = Branch.class)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "branch_id")
     private Branch branch;
 
     @NotNull
