@@ -10,6 +10,7 @@ public class RefAccountStatus {
 
     @Id
     @Column(name = "account_status_id")
+    @GeneratedValue
     private Long id;
 
     @Length(max = 15)

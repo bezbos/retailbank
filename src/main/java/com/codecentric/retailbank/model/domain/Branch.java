@@ -11,6 +11,7 @@ public class Branch {
 
     @Id
     @Column(name = "branch_id")
+    @GeneratedValue
     private Long id;
 
     @NotNull

@@ -9,6 +9,7 @@ import javax.persistence.*;
 public class Bank {
     @Id
     @Column(name = "bank_id")
+    @GeneratedValue
     private Long id;
 
     @Length(max = 255)

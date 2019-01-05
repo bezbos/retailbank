@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 public class Address {
     @Id
     @Column(name = "address_id")
+    @GeneratedValue
     private Long id;
 
     @NotNull

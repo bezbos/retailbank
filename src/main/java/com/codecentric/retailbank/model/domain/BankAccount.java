@@ -12,6 +12,7 @@ public class BankAccount {
 
     @Id
     @Column(name = "account_number")
+    @GeneratedValue
     private Long id;
 
     @NotNull

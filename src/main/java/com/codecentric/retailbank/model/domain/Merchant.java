@@ -11,6 +11,7 @@ public class Merchant {
 
     @Id
     @Column(name = "merchant_id")
+    @GeneratedValue
     private Long id;
 
     @Length(max = 255)

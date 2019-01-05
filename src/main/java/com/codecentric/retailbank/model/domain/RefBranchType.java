@@ -11,6 +11,7 @@ public class RefBranchType {
 
     @Id
     @Column(name = "branch_type_id")
+    @GeneratedValue
     private Long id;
 
     @Column(name = "branch_type_code", nullable = false, unique = true)

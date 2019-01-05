@@ -11,6 +11,7 @@ public class Customer {
 
     @Id
     @Column(name = "customer_id")
+    @GeneratedValue
     private Long id;
 
     @NotNull

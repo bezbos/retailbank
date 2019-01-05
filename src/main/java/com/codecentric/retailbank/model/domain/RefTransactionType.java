@@ -11,6 +11,7 @@ public class RefTransactionType {
 
     @Id
     @Column(name = "transaction_type_id")
+    @GeneratedValue
     private Long id;
 
     @Length(max = 15)

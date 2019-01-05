@@ -13,6 +13,7 @@ public class Transaction {
 
     @Id
     @Column(name = "transaction_id")
+    @GeneratedValue
     private Long id;
 
     @NotNull

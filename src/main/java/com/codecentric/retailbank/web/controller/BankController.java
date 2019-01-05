@@ -1,13 +1,14 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.repository.BankRepository;
+import com.codecentric.retailbank.service.BankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
@@ -22,15 +23,63 @@ public class BankController {
     private String CONTROLLER_NAME = "bank";
 
     @Autowired
-    private BankRepository bankRepository;
+    private BankService bankService;
 
 
-    public BankController(){super();}
+    public BankController() {
+        super();
+    }
 
 
-    @RequestMapping(value = {"", "/", "/index"})
-    public String getIndexPage(Model model){
-        List<Bank> banks = bankRepository.findAll();
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String getTestPage(Model model) {
+        boolean readWorks = true;
+        boolean addWorks = true;
+        boolean updateWorks = true;
+        boolean deleteWorks = true;
+
+        try {
+            List<Bank> banks = bankService.getAllBanks();
+            Bank bank = bankService.getById(1L);
+        } catch (Exception ex) {
+            readWorks = false;
+        }
+
+        try {
+            Bank testBank = new Bank();
+            testBank.setDetails("TEST");
+
+            bankService.addBank(testBank);
+            Bank result = bankService.getByDetails("TEST");
+        } catch (Exception ex) {
+            addWorks = false;
+        }
+
+        Bank existingBank = bankService.getByDetails("TEST");
+        try {
+            existingBank.setDetails("TEST UPDATED");
+            Bank result = bankService.updateBank(existingBank);
+        } catch (Exception ex) {
+            updateWorks = false;
+        }
+
+        try {
+            bankService.deleteBank(existingBank);
+        } catch (Exception ex) {
+            deleteWorks = false;
+        }
+
+        model.addAttribute("readWorks", readWorks);
+        model.addAttribute("addWorks", addWorks);
+        model.addAttribute("updateWorks", updateWorks);
+        model.addAttribute("deleteWorks", deleteWorks);
+
+        return CONTROLLER_NAME + "/test";
+    }
+
+    @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
+    public String getIndexPage(Model model) {
+        List<Bank> banks = bankService.getAllBanks();
 
         model.addAttribute("banks", banks);
         return CONTROLLER_NAME + "/index";

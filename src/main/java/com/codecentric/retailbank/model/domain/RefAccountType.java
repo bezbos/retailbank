@@ -9,6 +9,7 @@ public class RefAccountType {
 
     @Id
     @Column(name = "account_type_id")
+    @GeneratedValue
     private Long id;
 
     @NotNull
