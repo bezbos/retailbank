@@ -32,6 +32,15 @@ public class AddressController {
     }
 
 
+    @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
+    public String getIndexPage(Model model) {
+        List<Address> addresses = addressService.getAllAddress();
+
+        model.addAttribute("addresses", addresses);
+        return CONTROLLER_NAME + "/index";
+    }
+
+    // ############ TESTS ############ //
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String getTestPage(Model model) {
         boolean readWorks = true;
@@ -96,11 +105,4 @@ public class AddressController {
         return CONTROLLER_NAME + "/test";
     }
 
-    @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
-    public String getIndexPage(Model model) {
-        List<Address> addresses = addressService.getAllAddress();
-
-        model.addAttribute("addresses", addresses);
-        return CONTROLLER_NAME + "/index";
-    }
 }
