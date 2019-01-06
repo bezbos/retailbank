@@ -4,9 +4,8 @@ import com.codecentric.retailbank.model.domain.RefAccountStatus;
 import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
-import com.codecentric.retailbank.repository.RefAccountStatusRepository;
-import com.codecentric.retailbank.repository.RefAccountTypeRepository;
 import com.codecentric.retailbank.repository.RefTransactionTypeRepository;
+import com.codecentric.retailbank.service.RefAccountStatusService;
 import com.codecentric.retailbank.service.RefAccountTypeService;
 import com.codecentric.retailbank.service.RefBranchTypeService;
 import org.slf4j.Logger;
@@ -34,12 +33,28 @@ public class RefTypesController {
     @Autowired
     private RefAccountTypeService refAccountTypeService;
     @Autowired
-    private RefAccountStatusRepository refAccountStatusRepository;
+    private RefAccountStatusService refAccountStatusService;
     @Autowired
     private RefTransactionTypeRepository refTransactionTypeRepository;
 
-    public RefTypesController(){super();}
+    public RefTypesController() {
+        super();
+    }
 
+    @RequestMapping(value = {"", "/", "/index"})
+    public String getIndexPage(Model model) {
+        List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
+        List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
+        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.findAll();
+
+        model.addAttribute("refAccountTypes", refAccountTypes);
+        model.addAttribute("refAccountStatuses", refAccountStatuses);
+        model.addAttribute("refTransactionTypes", refTransactionTypes);
+        return CONTROLLER_NAME + "/index";
+    }
+
+
+    // ############ TESTS ############ //
     @RequestMapping(value = "/testRefBranchType", method = RequestMethod.GET)
     public String getRefBranchTypeTestPage(Model model) {
         boolean readWorks = true;
@@ -152,16 +167,59 @@ public class RefTypesController {
         return CONTROLLER_NAME + "/testRefAccountType";
     }
 
+    @RequestMapping(value = "/testRefAccountStatus", method = RequestMethod.GET)
+    public String getRefAccountStatusTestPage(Model model) {
+        boolean readWorks = true;
+        boolean addWorks = true;
+        boolean updateWorks = true;
+        boolean deleteWorks = true;
 
-    @RequestMapping(value = {"", "/", "/index"})
-    public String getIndexPage(Model model){
-        List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
-        List<RefAccountStatus> refAccountStatuses = refAccountStatusRepository.findAll();
-        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.findAll();
+        try {
+            List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
+            RefAccountStatus refAccountStatus = refAccountStatusService.getById(1L);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            readWorks = false;
+        }
+        LOGGER.info("LOG: getAllRefAccountStatuss() completed successfully.");
+        LOGGER.info("LOG: getById(1L) completed successfully.");
 
-        model.addAttribute("refAccountTypes", refAccountTypes);
-        model.addAttribute("refAccountStatuses", refAccountStatuses);
-        model.addAttribute("refTransactionTypes", refTransactionTypes);
-        return CONTROLLER_NAME + "/index";
+        try {
+            RefAccountStatus testRefAccountStatus = new RefAccountStatus();
+            testRefAccountStatus.setCode("TEST");
+
+            refAccountStatusService.addRefAccountStatus(testRefAccountStatus);
+            RefAccountStatus result = refAccountStatusService.getByCode("TEST");
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            addWorks = false;
+        }
+        LOGGER.info("LOG: addRefAccountStatus(testRefAccountStatus) completed successfully.");
+
+
+        RefAccountStatus existingRefAccountStatus = refAccountStatusService.getByCode("TEST");
+        try {
+            existingRefAccountStatus.setCode("TEST UPDATED");
+            RefAccountStatus result = refAccountStatusService.updateRefAccountStatus(existingRefAccountStatus);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            updateWorks = false;
+        }
+        LOGGER.info("LOG: updateRefAccountStatus(existing) completed successfully.");
+
+        try {
+            refAccountStatusService.deleteRefAccountStatus(existingRefAccountStatus);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            deleteWorks = false;
+        }
+        LOGGER.info("LOG: deleteRefAccountStatus(existingRefAccountStatus) completed successfully.");
+
+        model.addAttribute("readWorks", readWorks);
+        model.addAttribute("addWorks", addWorks);
+        model.addAttribute("updateWorks", updateWorks);
+        model.addAttribute("deleteWorks", deleteWorks);
+
+        return CONTROLLER_NAME + "/testRefAccountStatus";
     }
 }

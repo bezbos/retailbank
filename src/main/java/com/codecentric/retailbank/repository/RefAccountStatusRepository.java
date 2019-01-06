@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RefAccountStatusRepository extends JpaRepository<RefAccountStatus, Long> {
+    RefAccountStatus getByCode(String code);
 }
