@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 DROP DATABASE bankcentric;
 
 CREATE DATABASE bankcentric;
