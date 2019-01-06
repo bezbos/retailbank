@@ -8,6 +8,7 @@ import com.codecentric.retailbank.repository.RefTransactionTypeRepository;
 import com.codecentric.retailbank.service.RefAccountStatusService;
 import com.codecentric.retailbank.service.RefAccountTypeService;
 import com.codecentric.retailbank.service.RefBranchTypeService;
+import com.codecentric.retailbank.service.RefTransactionTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class RefTypesController {
     @Autowired
     private RefAccountStatusService refAccountStatusService;
     @Autowired
-    private RefTransactionTypeRepository refTransactionTypeRepository;
+    private RefTransactionTypeService refTransactionTypeService;
 
     public RefTypesController() {
         super();
@@ -45,7 +46,7 @@ public class RefTypesController {
     public String getIndexPage(Model model) {
         List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
         List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
-        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.findAll();
+        List<RefTransactionType> refTransactionTypes = refTransactionTypeService.getAllRefTransactionTypes();
 
         model.addAttribute("refAccountTypes", refAccountTypes);
         model.addAttribute("refAccountStatuses", refAccountStatuses);
@@ -221,5 +222,61 @@ public class RefTypesController {
         model.addAttribute("deleteWorks", deleteWorks);
 
         return CONTROLLER_NAME + "/testRefAccountStatus";
+    }
+
+    @RequestMapping(value = "/testRefTransactionType", method = RequestMethod.GET)
+    public String getRefTransactionTypeTestPage(Model model) {
+        boolean readWorks = true;
+        boolean addWorks = true;
+        boolean updateWorks = true;
+        boolean deleteWorks = true;
+
+        try {
+            List<RefTransactionType> refAccountStatuses = refTransactionTypeService.getAllRefTransactionTypes();
+            RefTransactionType refAccountStatus = refTransactionTypeService.getById(1L);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            readWorks = false;
+        }
+        LOGGER.info("LOG: getAllTransactionTypes() completed successfully.");
+        LOGGER.info("LOG: getById(1L) completed successfully.");
+
+        try {
+            RefTransactionType testRefTransactionType = new RefTransactionType();
+            testRefTransactionType.setCode("TEST");
+
+            refTransactionTypeService.addRefTransactionType(testRefTransactionType);
+            RefTransactionType result = refTransactionTypeService.getByCode("TEST");
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            addWorks = false;
+        }
+        LOGGER.info("LOG: addRefTransactionType(testRefTransactionType) completed successfully.");
+
+
+        RefTransactionType existingRefTransactionType = refTransactionTypeService.getByCode("TEST");
+        try {
+            existingRefTransactionType.setCode("TEST UPDATED");
+            RefTransactionType result = refTransactionTypeService.updateRefTransactionType(existingRefTransactionType);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            updateWorks = false;
+        }
+        LOGGER.info("LOG: updateRefTransactionType(existing) completed successfully.");
+
+        try {
+            refTransactionTypeService.deleteRefTransactionType(existingRefTransactionType);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            deleteWorks = false;
+        }
+        LOGGER.info("LOG: deleteRefTransactionType(existingRefTransactionType) completed successfully.");
+
+        model.addAttribute("readWorks", readWorks);
+        model.addAttribute("addWorks", addWorks);
+        model.addAttribute("updateWorks", updateWorks);
+        model.addAttribute("deleteWorks", deleteWorks);
+
+        return CONTROLLER_NAME + "/testRefTransactionType";
     }
 }

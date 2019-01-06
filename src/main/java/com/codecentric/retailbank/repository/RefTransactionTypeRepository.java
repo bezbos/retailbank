@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RefTransactionTypeRepository extends JpaRepository<RefTransactionType, Long> {
+    RefTransactionType findByCode(String code);
 }
