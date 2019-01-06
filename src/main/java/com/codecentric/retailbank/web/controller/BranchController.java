@@ -1,7 +1,6 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Branch;
-import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BankService;
 import com.codecentric.retailbank.service.BranchService;
