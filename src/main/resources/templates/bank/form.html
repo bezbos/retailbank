@@ -1,0 +1,16 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <br>
+    <h2>Bank Form:</h2>
+    <form th:action="@{~/bank/formSubmit}" th:object="${bankDto}" method="POST" enctype="utf8">
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" aria-describedby="bankDescription"
+                   placeholder="Name of the bank" th:field="*{details}"/>
+            <p th:each="error: ${#fields.errors('details')}"
+               th:text="${error}">Validation error</p>
+        </div>
+        <input type="hidden" th:field="*{id}">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

@@ -1,26 +1,22 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.dto;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "banks")
-public class Bank {
-    @Id
-    @Column(name = "bank_id")
-    @GeneratedValue
+public class BankDto {
+
     private Long id;
 
     @Length(max = 255)
-    @Column(name = "bank_details")
     private String details;
 
-    public Bank() {
+    public BankDto() {
         super();
     }
 
-    public Bank(String details) {
+    public BankDto(Long id, String details) {
+        this.id = id;
         this.details = details;
     }
 
