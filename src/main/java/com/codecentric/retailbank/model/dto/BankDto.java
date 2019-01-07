@@ -2,13 +2,11 @@ package com.codecentric.retailbank.model.dto;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
-
 public class BankDto {
 
     private Long id;
 
-    @Length(max = 255)
+    @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     private String details;
 
     public BankDto() {

@@ -12,7 +12,7 @@ public class Bank {
     @GeneratedValue
     private Long id;
 
-    @Length(max = 255)
+    @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     @Column(name = "bank_details")
     private String details;
 
