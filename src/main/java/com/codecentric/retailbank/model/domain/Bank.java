@@ -24,6 +24,10 @@ public class Bank {
         this.details = details;
     }
 
+    public Bank(Long id) {
+        this.id = id;
+    }
+
 
     public Long getId() {
         return id;

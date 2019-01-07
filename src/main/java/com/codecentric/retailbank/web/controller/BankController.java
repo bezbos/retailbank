@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/bank")
@@ -47,11 +48,11 @@ public class BankController {
         return CONTROLLER_NAME + "/list";
     }
 
-    @RequestMapping(value = {"/edit/{id}", "/create/{id}", "/form/{id}"}, method = RequestMethod.GET)
-    public ModelAndView getEditPage(@PathVariable("id") Long id,
-                                    Model model){
+    @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
+    public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id){
 
-        Bank bank = bankService.getById(id);
+        Bank bank = id.isPresent() ?
+                bankService.getById(id.get()) : new Bank(0L);
 
         BankDto bankDto = new BankDto(bank.getId(), bank.getDetails());
 
@@ -68,7 +69,7 @@ public class BankController {
 
         // Try adding/updating bank
         try {
-            if(bankDto.getId() != null){
+            if(bankDto.getId() != null && bankDto.getId() != 0){
                 Bank updatedBank = bankService.getById(bankDto.getId());
                 updatedBank.setDetails(bankDto.getDetails());
                 bankService.updateBank(updatedBank);

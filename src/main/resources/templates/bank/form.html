@@ -3,6 +3,7 @@
     <br>
     <h2>Bank Form:</h2>
     <form th:action="@{~/bank/formSubmit}" th:object="${bankDto}" method="POST" enctype="utf8">
+        <!-- Errors -->
         <div th:if="${#fields.hasErrors()}">
             <h4>Error summary: </h4>
             <ul class="list-group">
@@ -12,12 +13,18 @@
             </ul>
             <br>
         </div>
+        <!-- /errors -->
+
+        <!-- ID -->
+        <input type="hidden" th:field="*{id}">
+
+        <!-- Details -->
         <div class="form-group">
             <label for="description">Details</label>
             <input type="text" class="form-control" id="description" aria-describedby="bankDescription"
                    placeholder="Name of the bank" th:field="*{details}"/>
         </div>
-        <input type="hidden" th:field="*{id}">
+
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>

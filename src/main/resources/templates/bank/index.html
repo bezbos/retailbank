@@ -1,6 +1,0 @@
-<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
-           layout:decorate="~{shared/_layout}" layout:fragment="content">
-    <ul th:each="bank : ${banks}" class="list-group">
-        <li th:text="${bank.getDetails()}" class="list-group-item">Client</li>
-    </ul>
-</div>

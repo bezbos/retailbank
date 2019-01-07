@@ -2,6 +2,7 @@
      layout:decorate="~{shared/_layout}" layout:fragment="content">
     <br>
     <h2>Bank list: </h2>
+    <a th:href="@{~/bank/form}" class="btn btn-primary">Add New</a>
     <table th:unless="${#lists.isEmpty(banks)}" class="table table-striped">
         <thead>
         <tr>
@@ -15,7 +16,7 @@
         <tr th:each="bank : ${banks}">
             <th th:text="${bank.getId()}" scope="row">id</th>
             <td th:text="${bank.getDetails()}">details</td>
-            <td><a th:href="${'/bank/edit/' + bank.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+            <td><a th:href="${'/bank/form/' + bank.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
             <td><a th:href="${'/bank/delete/' + bank.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
         </tr>
         </tbody>
