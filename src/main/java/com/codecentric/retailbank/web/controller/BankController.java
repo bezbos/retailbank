@@ -1,7 +1,6 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.BankAccount;
 import com.codecentric.retailbank.model.dto.BankDto;
 import com.codecentric.retailbank.service.BankService;
 import org.slf4j.Logger;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class BankController {
     }
 
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
-    public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id){
+    public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
 
         Bank bank = id.isPresent() ?
                 bankService.getById(id.get()) : new Bank(0L);
@@ -61,23 +61,23 @@ public class BankController {
 
     @RequestMapping(value = "/formSubmit", method = RequestMethod.POST)
     public ModelAndView onFormSubmit(@ModelAttribute("bankDto") @Valid BankDto bankDto,
-                                     BindingResult result){
+                                     BindingResult result) {
 
         // Check if valid
-        if(bankDto == null || result.hasErrors())
+        if (bankDto == null || result.hasErrors())
             return new ModelAndView(CONTROLLER_NAME + "/form", "bankDto", bankDto);
 
         // Try adding/updating bank
         try {
-            if(bankDto.getId() != null && bankDto.getId() != 0){
+            if (bankDto.getId() != null && bankDto.getId() != 0) {
                 Bank updatedBank = bankService.getById(bankDto.getId());
                 updatedBank.setDetails(bankDto.getDetails());
                 bankService.updateBank(updatedBank);
-            }else{
+            } else {
                 Bank newBank = new Bank(bankDto.getDetails());
                 bankService.addBank(newBank);
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
 
             // If we get here something went wrong
@@ -85,6 +85,20 @@ public class BankController {
         }
 
         return new ModelAndView("redirect:/" + CONTROLLER_NAME + "/list");
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public ModelAndView onDeleteSubmit(@PathVariable("id") Long id) {
+        try {
+            bankService.deleteBank(id);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+
+            // Something went wrong.
+            return new ModelAndView("redirect:/" + CONTROLLER_NAME + "/list", "errors", Arrays.asList(ex.getMessage()));
+        }
+
+        return new ModelAndView("redirect:/" + CONTROLLER_NAME + "/list", "messages", Arrays.asList("Successfully deleted bank with ID " + id));
     }
 
     // ############ TESTS ############ //

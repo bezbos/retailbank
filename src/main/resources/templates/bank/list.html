@@ -3,6 +3,29 @@
     <br>
     <h2>Bank list: </h2>
     <a th:href="@{~/bank/form}" class="btn btn-primary">Add New</a>
+
+    <!-- Messages & Errors -->
+    <div th:if="${errors != null}">
+        <h4>Error summary: </h4>
+        <ul class="list-group">
+            <li class="list-group-item-danger" th:each="error: ${errors}"
+                th:text="${error}">
+            </li>
+        </ul>
+        <br>
+    </div>
+    <div th:if="${messages != null}">
+        <h4>Messages: </h4>
+        <ul class="list-group">
+            <li class="list-group-item-info" th:each="message: ${messages}"
+                th:text="${message}">
+            </li>
+        </ul>
+        <br>
+    </div>
+    <!-- /messages & errors -->
+
+    <!-- List of Banks -->
     <table th:unless="${#lists.isEmpty(banks)}" class="table table-striped">
         <thead>
         <tr>
@@ -21,5 +44,6 @@
         </tr>
         </tbody>
     </table>
+    <!-- /list of banks -->
 
 </div>
