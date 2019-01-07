@@ -1,0 +1,24 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <br>
+    <h2>Bank list: </h2>
+    <table th:unless="${#lists.isEmpty(banks)}" class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Details</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="bank : ${banks}">
+            <th th:text="${bank.getId()}" scope="row">id</th>
+            <td th:text="${bank.getDetails()}">details</td>
+            <td><a th:href="${'/bank/edit/' + bank.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+            <td><a th:href="${'/bank/delete/' + bank.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>

@@ -88,11 +88,11 @@ public class BankController {
         return CONTROLLER_NAME + "/test";
     }
 
-    @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/", "/index", "/list"}, method = RequestMethod.GET)
     public String getIndexPage(Model model) {
         List<Bank> banks = bankService.getAllBanks();
 
         model.addAttribute("banks", banks);
-        return CONTROLLER_NAME + "/index";
+        return CONTROLLER_NAME + "/list";
     }
 }

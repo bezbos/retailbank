@@ -23,8 +23,26 @@
         <a th:href="@{~/home/index}" class="navbar-brand">BankCentric</a>
         <div class="navbar-nav mr-auto">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a th:href="@{~/account/index}" class="nav-link">Accounts</a>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/bank/list}" class="nav-link">Banks</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/address/list}" class="nav-link">Addresses</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/refTypes/list}" class="nav-link">Ref Types</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/branch/list}" class="nav-link">Branches</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/customer/list}" class="nav-link">Customers</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/account/list}" class="nav-link">Accounts</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a th:href="@{~/transaction/list}" class="nav-link">Transactions</a>
                 </li>
             </ul>
         </div>
