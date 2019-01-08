@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -60,12 +61,16 @@ public class BankController {
     }
 
     @RequestMapping(value = "/formSubmit", method = RequestMethod.POST)
-    public ModelAndView onFormSubmit(@ModelAttribute("bankDto") @Valid BankDto bankDto,
-                                     BindingResult result) {
+    public String onFormSubmit(@ModelAttribute("bankDto") @Valid BankDto bankDto,
+                               BindingResult result,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
 
         // Check if valid
-        if (bankDto == null || result.hasErrors())
-            return new ModelAndView(CONTROLLER_NAME + "/form", "bankDto", bankDto);
+        if (bankDto == null || result.hasErrors()) {
+            model.addAttribute("bankDto", bankDto);
+            return CONTROLLER_NAME + "/form";
+        }
 
         // Try adding/updating bank
         try {
@@ -73,32 +78,45 @@ public class BankController {
                 Bank updatedBank = bankService.getById(bankDto.getId());
                 updatedBank.setDetails(bankDto.getDetails());
                 bankService.updateBank(updatedBank);
+
+                redirectAttributes.addAttribute("message", "Successfully updated bank.");
             } else {
                 Bank newBank = new Bank(bankDto.getDetails());
                 bankService.addBank(newBank);
+
+                redirectAttributes.addAttribute("message", "Successfully created bank.");
             }
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
 
             // If we get here something went wrong
-            return new ModelAndView(CONTROLLER_NAME + "/form", "bankDto", bankDto);
+            redirectAttributes.asMap().clear();
+            model.addAttribute("bankDto", bankDto);
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/form";
         }
 
-        return new ModelAndView("redirect:/" + CONTROLLER_NAME + "/list");
+        return "redirect:/" + CONTROLLER_NAME + "/list";
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public ModelAndView onDeleteSubmit(@PathVariable("id") Long id) {
+    public String onDeleteSubmit(@PathVariable("id") Long id,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
         try {
             bankService.deleteBank(id);
+
+            redirectAttributes.addAttribute("message", "Successfully deleted bank.");
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
 
             // Something went wrong.
-            return new ModelAndView("redirect:/" + CONTROLLER_NAME + "/list", "errors", Arrays.asList(ex.getMessage()));
+            redirectAttributes.asMap().clear();
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/list";
         }
 
-        return new ModelAndView("redirect:/" + CONTROLLER_NAME + "/list", "messages", Arrays.asList("Successfully deleted bank with ID " + id));
+        return "redirect:/" + CONTROLLER_NAME + "/list";
     }
 
     // ############ TESTS ############ //
