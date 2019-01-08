@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.Address;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface IAddressService {
 
     void deleteAddress(Long id);
 
+    Page<Address> getAllAddressesByPage(int pageIndex, int pageSize);
 }

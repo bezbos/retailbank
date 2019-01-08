@@ -1,16 +1,22 @@
 package com.codecentric.retailbank.web.controller;
 
+import com.codecentric.retailbank.constants.Constant;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.service.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/address")
@@ -32,11 +38,20 @@ public class AddressController {
     }
 
 
-    @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
-    public String getIndexPage(Model model) {
-        List<Address> addresses = addressService.getAllAddress();
+    @RequestMapping(value = {"", "/", "/index", "/list", "/list/{pageIdx}"}, method = RequestMethod.GET)
+    public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
+                               Model model) {
 
-        model.addAttribute("addresses", addresses);
+        // If pageIndex is less than 1 set it to 1.
+        Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
+        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
+                0 : pageIndex;
+
+        Page<Address> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
+
+        model.addAttribute("currentPageIndex", pageIndex);
+        model.addAttribute("totalPages", addresses.getTotalPages());
+        model.addAttribute("addresses", addresses.getContent());
         return CONTROLLER_NAME + "/index";
     }
 

@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,7 +100,6 @@ public class BankController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String onDeleteSubmit(@PathVariable("id") Long id,
-                                 Model model,
                                  RedirectAttributes redirectAttributes) {
         try {
             bankService.deleteBank(id);

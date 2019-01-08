@@ -1,6 +1,93 @@
 <div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
      layout:decorate="~{shared/_layout}" layout:fragment="content">
-    <ul th:each="address : ${addresses}" class="list-group">
-        <li th:text="'Line 1: ' + ${address.getLine1()}" class="list-group-item">Client</li>
-    </ul>
+    <br>
+
+    <h2>Address list: </h2>
+    <a th:href="@{~/address/form}" class="btn btn-primary">Add New</a>
+    <br>
+    <br>
+
+    <!-- Messages & Errors -->
+    <div class="alert-danger" th:if="${param.error != null}">
+        <span th:text="${param.error}"></span>
+    </div>
+    <div class="alert-info" th:if="${param.message != null}">
+        <span th:text="${param.message}"></span>
+    </div>
+    <!-- /messages & errors -->
+
+    <!-- List of Banks -->
+    <table th:unless="${#lists.isEmpty(addresses)}" class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Line 1</th>
+            <th scope="col">Line 2</th>
+            <th scope="col">Town City</th>
+            <th scope="col">Zip Postcode</th>
+            <th scope="col">State/Province/Country</th>
+            <th scope="col">Country</th>
+            <th scope="col">Other details</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="address : ${addresses}">
+            <th th:text="${address.getId()}" scope="row"></th>
+            <td th:text="${address.getLine1()}"></td>
+            <td th:text="${address.getLine2()}"></td>
+            <td th:text="${address.getTownCity()}"></td>
+            <td th:text="${address.getZipPostcode()}"></td>
+            <td th:text="${address.getStateProvinceCountry()}"></td>
+            <td th:text="${address.getCountry()}"></td>
+            <td th:text="${address.getOtherDetails()}"></td>
+            <td><a th:href="${'/address/form/' + address.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+            <td><a th:href="${'/address/delete/' + address.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div id="pagination-navigation" class="pagination offset-5">
+
+        </div>
+    </div>
+    <br>
+    <!-- /list of banks -->
+
+    <script type="text/javascript">
+        var currentPageIndex = [[${currentPageIndex}]];
+        var totalPages = [[${totalPages}]];
+        var paginationNavigation = document.querySelector("#pagination-navigation");
+
+        (function () {
+            if(currentPageIndex > totalPages)
+                window.location = "/address/list/" + (totalPages-1);
+
+            // Create "previous page" button only if the page index is less than 2
+            var previousButtons = currentPageIndex <= 1 ?
+                "<a style='disabled: true;'>&laquo;</a>"
+                :
+                "<a href='/address/list/" + (currentPageIndex - 2) + "'>&laquo;</a>";
+
+            // Create buttons that go previous pages
+            for (let i = currentPageIndex - 1; i > 0 && i > currentPageIndex - 2 && i < totalPages; i--) {
+                previousButtons += "<a href='/address/list/" + i + "'>" + i + "</a>";
+            }
+
+            var nextButtons = "";
+            for (let i = currentPageIndex; i <= currentPageIndex + 1 && i < totalPages; i++) {
+                nextButtons += i == currentPageIndex ?
+                    "<a class='active' href='/address/list/" + i + "'>" + i + "</a>"
+                    :
+                    "<a href='/address/list/" + i + "'>" + i + "</a>";
+            }
+
+            if((currentPageIndex + 2) < totalPages)
+                nextButtons += "<a href='/address/list/" + (currentPageIndex + 2) + "'>&raquo;</a>";
+
+            paginationNavigation.innerHTML += previousButtons;
+            paginationNavigation.innerHTML += nextButtons;
+        })();
+    </script>
 </div>
