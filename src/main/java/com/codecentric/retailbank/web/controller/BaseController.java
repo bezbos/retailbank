@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpSession;
 import java.util.Locale;
 
 public class BaseController {
@@ -181,15 +182,15 @@ public class BaseController {
     /**
      * Adds a <code>username</code> attribute and value to the model.
      *
-     * @param model              Model to which we add the <code>username</code> attribute and value.
+     * @param session              Session to which we add the <code>username</code> attribute and value.
      * @param principalClassName Type of principal to expect. Required to properly retrieve the <code>username</code> value.
      * @param principal          Principal from which we get the <code>username</code> value.
      */
-    protected void setModelUsernameAttribute(Model model, String principalClassName, Object principal) {
+    protected void setSessionUsernameAttribute(HttpSession session, String principalClassName, Object principal) {
         if (principalClassName == Constant.CLASS_NAME_USER_DETAILS_USER) {
-            model.addAttribute("username", ((org.springframework.security.core.userdetails.User) principal).getUsername());
+            session.setAttribute("username", ((org.springframework.security.core.userdetails.User) principal).getUsername());
         } else if (principalClassName == Constant.CLASS_NAME_OAUTH2_DEFAULT_OIDC_USER) {
-            model.addAttribute("username", ((org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser) principal).getFullName());
+            session.setAttribute("username", ((org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser) principal).getFullName());
         }
     }
 

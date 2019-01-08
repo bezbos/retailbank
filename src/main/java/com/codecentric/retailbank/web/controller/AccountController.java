@@ -33,6 +33,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -57,28 +58,22 @@ public class AccountController extends BaseController {
 
 
     @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String getHomePage(Model model) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
-
+    public String getHomePage(Model model, HttpSession session) {
         return CONTROLLER_NAME + "/index";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String getLoginPage(Model model) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
-
+    public String getLoginPage(HttpSession session) {
         return CONTROLLER_NAME + "/login";
     }
 
     @RequestMapping(value = "/logout-success", method = RequestMethod.GET)
-    public String getLogoutPage(Model model) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
-
+    public String getLogoutPage(Model model, HttpSession session) {
         return CONTROLLER_NAME + "/logout";
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm(Model model, HttpSession session) {
         UserDto dto = new UserDto();
         model.addAttribute("user", dto);
         return CONTROLLER_NAME + "/registration";
@@ -110,7 +105,7 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
     public String confirmRegistration(WebRequest request,
-                                      Model model,
+                                      Model model, HttpSession session,
                                       @RequestParam("token") String token) {
         Locale locale = request.getLocale();
         VerificationToken verificationToken = userService.getVerificationToken(token);
@@ -142,7 +137,7 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/resendRegistrationToken", method = RequestMethod.GET)
     public String resendRegistrationToken(HttpServletRequest request,
-                                          Model model,
+                                          Model model, HttpSession session,
                                           @RequestParam("token") String existingToken) {
         VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
         Locale locale = request.getLocale();
@@ -166,9 +161,7 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-    public String showForgotPasswordPage(Model model) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
-
+    public String showForgotPasswordPage(Model model, HttpSession session) {
         return CONTROLLER_NAME + "/forgotPassword";
     }
 
@@ -199,10 +192,9 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     public String showChangePasswordPage(Locale locale,
-                                         Model model,
+                                         Model model, HttpSession session,
                                          @RequestParam("id") long id,
                                          @RequestParam("token") String token) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
 
         // Retrieve password reset token from DB, then retrieve token owner.
         PasswordResetToken passwordToken = userService.getPasswordResetToken(token);
@@ -232,9 +224,7 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = "/updateForgotPassword", method = RequestMethod.GET)
-    public String showUpdatePasswordPage(Model model) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
-
+    public String showUpdatePasswordPage(Model model, HttpSession session) {
         return CONTROLLER_NAME + "/updatePassword";
     }
 
@@ -261,9 +251,7 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = "/updatePassword", method = RequestMethod.GET)
-    public String showChangePasswordPageForAuthenticatedUser(Model model) {
-        setModelUsernameAttribute(model, getPrincipalClassName(), getPrincipal());
-
+    public String showChangePasswordPageForAuthenticatedUser(Model model, HttpSession session) {
         return CONTROLLER_NAME + "/changePassword";
     }
 
@@ -309,7 +297,7 @@ public class AccountController extends BaseController {
     private ClientRegistrationRepository clientRegistrationRepository;
 
     @RequestMapping(value = "/oauth_login", method = RequestMethod.GET)
-    public String getOauthLoginPage(Model model) {
+    public String getOauthLoginPage(Model model, HttpSession session) {
 
         Iterable<ClientRegistration> clientRegistrations = null;
 

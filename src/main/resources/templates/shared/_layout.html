@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="../../static/css/site.css" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/site.css}">
 
     <title layout:title-pattern="$LAYOUT_TITLE | $CONTENT_TITLE">BankCentric</title>
 </head>
@@ -55,7 +55,7 @@
                     <a th:href="@{~/account/registration}" class="nav-link">Register</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <span th:text="'Hello '+ ${username} + '!'" class="nav-link"></span>
+                    <span th:text="'Hello '+ ${session.username} + '!'" class="nav-link"></span>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a th:href="@{~/account/logout}" class="nav-link">Logout</a>
@@ -83,7 +83,7 @@
 </footer>
 
 <!-- JQUERY -->
-<script href="../../static/js/jquery-3.3.1/jquery-3.3.1.js" th:href="@{/js/jquery-3.3.1/jquery-3.3.1.js}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 </body>
 </html>

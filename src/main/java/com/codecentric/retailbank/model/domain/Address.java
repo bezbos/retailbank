@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "addresses")
 public class Address {
+
     @Id
     @Column(name = "address_id")
     @GeneratedValue
