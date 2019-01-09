@@ -33,7 +33,7 @@ CREATE TABLE ref_branch_types(
 
 CREATE TABLE branches(
 	branch_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    address_id BIGINT NOT NULL, FOREIGN KEY (address_id) REFERENCES addresses(address_id),
+    address_id BIGINT, FOREIGN KEY (address_id) REFERENCES addresses(address_id),
     bank_id BIGINT NOT NULL, FOREIGN KEY (bank_id) REFERENCES banks(bank_id),
     branch_type_id BIGINT NOT NULL, FOREIGN KEY (branch_type_id) REFERENCES ref_branch_types(branch_type_id),
     branch_details VARCHAR(255)
@@ -41,7 +41,7 @@ CREATE TABLE branches(
 
 CREATE TABLE customers(
 	customer_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    address_id BIGINT NOT NULL, FOREIGN KEY (address_id) REFERENCES addresses(address_id),
+    address_id BIGINT, FOREIGN KEY (address_id) REFERENCES addresses(address_id),
     branch_id BIGINT NOT NULL, FOREIGN KEY (branch_id) REFERENCES branches(branch_id),
     personal_details VARCHAR(255) NOT NULL,
     contact_details VARCHAR(255) NOT NULL

@@ -1,7 +1,9 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Address;
-import com.codecentric.retailbank.repository.AddressRepository;
+import com.codecentric.retailbank.model.domain.Branch;
+import com.codecentric.retailbank.model.domain.Customer;
+import com.codecentric.retailbank.repository.*;
 import com.codecentric.retailbank.service.interfaces.IAddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,15 @@ public class AddressService implements IAddressService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private AddressRepository repo;
+    private AddressRepository addressRepository;
+    @Autowired
+    private BranchRepository branchRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
 
     public AddressService() {
@@ -31,48 +41,69 @@ public class AddressService implements IAddressService {
 
     @Override
     public Address getById(Long id) {
-        Address address = repo.findById(id).get();
+        Address address = addressRepository.findById(id).get();
         return address;
     }
 
     @Override
     public Address getByLine1(String line1) {
-        Address address = repo.findByLine1(line1);
+        Address address = addressRepository.findByLine1(line1);
         return address;
     }
 
     @Override
     public List<Address> getAllAddress() {
-        List<Address> addresses = repo.findAll();
+        List<Address> addresses = addressRepository.findAll();
         return addresses;
     }
 
     @Override
     public Page<Address> getAllAddressesByPage(int pageIndex, int pageSize) {
         Pageable page = new PageRequest(pageIndex, pageSize);
-        Page<Address> addresses = repo.findAll(page);
+        Page<Address> addresses = addressRepository.findAll(page);
         return addresses;
     }
 
     @Override
     public Address addAddress(Address address) {
-        Address result = repo.save(address);
+        Address result = addressRepository.save(address);
         return result;
     }
 
     @Override
     public Address updateAddress(Address address) {
-        Address result = repo.save(address);
+        Address result = addressRepository.save(address);
         return result;
     }
 
     @Override
     public void deleteAddress(Address address) {
-        repo.delete(address);
+        // Remove any foreign key constraints
+        branchRepository.findByAddress(address).forEach(branch -> {
+            branch.setAddress(null);
+        });
+        customerRepository.findByAddress(address).forEach(customer ->{
+            customer.setAddress(null);
+        });
+
+        // Delete the actual address
+        addressRepository.delete(address);
     }
 
     @Override
     public void deleteAddress(Long id) {
-        repo.deleteById(id);
+        Address address = addressRepository.getOne(id);
+
+        // Remove any foreign key constraints
+        branchRepository.findByAddress(address).forEach(branch -> {
+            branch.setAddress(null);
+        });
+        customerRepository.findByAddress(address).forEach(customer ->{
+            customer.setAddress(null);
+        });
+
+        // Delete the actual address
+        addressRepository.delete(address);
     }
+
 }

@@ -14,7 +14,6 @@ public class Branch {
     @GeneratedValue
     private Long id;
 
-    @NotNull
     @OneToOne(targetEntity = Address.class)
     @JoinColumn(name = "address_id")
     private Address address;

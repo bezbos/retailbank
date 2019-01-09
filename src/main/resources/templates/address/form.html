@@ -1,0 +1,72 @@
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+     layout:decorate="~{shared/_layout}" layout:fragment="content">
+    <br>
+    <h2>Bank Form:</h2>
+    <form th:action="@{~/address/formSubmit}" th:object="${addressDto}" method="POST" enctype="utf8">
+        <!-- Errors -->
+        <div th:if="${#fields.hasErrors()}">
+            <h4>Error summary: </h4>
+            <ul class="list-group">
+                <li class="list-group-item-danger" th:each="error: ${#fields.allErrors()}"
+                    th:text="${error}">Validation error
+                </li>
+            </ul>
+            <br>
+        </div>
+        <!-- /errors -->
+
+        <!-- ID -->
+        <input type="hidden" th:field="*{id}">
+
+        <!-- Line 1 -->
+        <div class="form-group">
+            <label for="line1">Line 1</label>
+            <input type="text" class="form-control" id="line1" aria-describedby="addressLine1"
+                   th:field="*{line1}"/>
+        </div>
+
+        <!-- Line 2 -->
+        <div class="form-group">
+            <label for="line2">Line 2</label>
+            <input type="text" class="form-control" id="line2" aria-describedby="addressLine2"
+                   th:field="*{line2}"/>
+        </div>
+
+        <!-- Town City -->
+        <div class="form-group">
+            <label for="townCity">Town City</label>
+            <input type="text" class="form-control" id="townCity" aria-describedby="addressTownCity"
+                   th:field="*{townCity}"/>
+        </div>
+
+        <!-- Zip Postcode-->
+        <div class="form-group">
+            <label for="zipPostcode">Zip Postcode</label>
+            <input type="text" class="form-control" id="zipPostcode" aria-describedby="addressZipPostcode"
+                   th:field="*{zipPostcode}"/>
+        </div>
+
+        <!-- State Province Country -->
+        <div class="form-group">
+            <label for="stateProvinceCountry">State Province Country</label>
+            <input type="text" class="form-control" id="stateProvinceCountry" aria-describedby="addressStateProvinceCountry"
+                   th:field="*{stateProvinceCountry}"/>
+        </div>
+
+        <!-- Country -->
+        <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" class="form-control" id="country" aria-describedby="addressCountry"
+                   th:field="*{country}"/>
+        </div>
+
+        <!-- Details -->
+        <div class="form-group">
+            <label for="otherDetails">Details</label>
+            <input type="text" class="form-control" id="otherDetails" aria-describedby="addressDetails"
+                   th:field="*{otherDetails}"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

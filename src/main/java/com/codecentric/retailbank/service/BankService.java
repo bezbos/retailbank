@@ -77,37 +77,22 @@ public class BankService implements IBankService {
 
     @Override
     public void deleteBank(Bank bank) {
-        // Find the branch that depends on this bank
-        Branch relatedBranch = branchRepository.findByBank(bank);
-
-        // Find the customer that depends on this branch
-        Customer relatedCustomer = customerRepository.findByBranch(relatedBranch);
-
-        // Find the bank account that depends on this customer
-        BankAccount relatedBankAccount = bankAccountRepository.findByCustomer(relatedCustomer);
-
-        // Find the transaction that depends on this bank account
-        Transaction relatedTransaction = transactionRepository.findByAccount(relatedBankAccount);
-
-        // Delete the transaction dependency
-        if(relatedTransaction != null)
-            transactionRepository.delete(relatedTransaction);
-
-        // Delete the bank account dependency
-        if(relatedBankAccount != null)
-            bankAccountRepository.delete(relatedBankAccount);
-
-        // Delete the customer dependency
-        if(relatedCustomer != null)
-            customerRepository.delete(relatedCustomer);
-
-        // Delete the branch dependency
-        if(relatedBranch != null)
-            branchRepository.delete(relatedBranch);
+        // Recursively find and delete any FK constraints that this bank has
+        branchRepository.findByBank(bank).forEach(branch ->{
+            customerRepository.findByBranch(branch).forEach(customer ->{
+                bankAccountRepository.findByCustomer(customer).forEach(bankAccount ->{
+                    transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
+                        transactionRepository.delete(transaction);
+                    });
+                    bankAccountRepository.delete(bankAccount);
+                });
+                customerRepository.delete(customer);
+            });
+            branchRepository.delete(branch);
+        });
 
         // Delete the actual bank
-        if(bank != null)
-            bankRepository.delete(bank);
+        bankRepository.delete(bank);
     }
 
     @Override
@@ -115,36 +100,21 @@ public class BankService implements IBankService {
         // Get the bank with this id
         Bank bank = bankRepository.getOne(id);
 
-        // Find the branch that depends on this bank
-        Branch relatedBranch = branchRepository.findByBank(bank);
-
-        // Find the customer that depends on this branch
-        Customer relatedCustomer = customerRepository.findByBranch(relatedBranch);
-
-        // Find the bank account that depends on this customer
-        BankAccount relatedBankAccount = bankAccountRepository.findByCustomer(relatedCustomer);
-
-        // Find the transaction that depends on this bank account
-        Transaction relatedTransaction = transactionRepository.findByAccount(relatedBankAccount);
-
-        // Delete the transaction dependency
-        if(relatedTransaction != null)
-            transactionRepository.delete(relatedTransaction);
-
-        // Delete the bank account dependency
-        if(relatedBankAccount != null)
-        bankAccountRepository.delete(relatedBankAccount);
-
-        // Delete the customer dependency
-        if(relatedCustomer != null)
-        customerRepository.delete(relatedCustomer);
-
-        // Delete the branch dependency
-        if(relatedBranch != null)
-        branchRepository.delete(relatedBranch);
+        // Recursively find and delete any FK constraints that this bank has
+        branchRepository.findByBank(bank).forEach(branch ->{
+            customerRepository.findByBranch(branch).forEach(customer ->{
+                bankAccountRepository.findByCustomer(customer).forEach(bankAccount ->{
+                    transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
+                        transactionRepository.delete(transaction);
+                    });
+                    bankAccountRepository.delete(bankAccount);
+                });
+                customerRepository.delete(customer);
+            });
+            branchRepository.delete(branch);
+        });
 
         // Delete the actual bank
-        if(bank != null)
         bankRepository.delete(bank);
     }
 }

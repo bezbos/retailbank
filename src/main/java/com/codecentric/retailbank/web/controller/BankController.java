@@ -62,7 +62,6 @@ public class BankController {
 
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
     public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
-
         Bank bank = id.isPresent() ?
                 bankService.getById(id.get()) : new Bank(0L);
 

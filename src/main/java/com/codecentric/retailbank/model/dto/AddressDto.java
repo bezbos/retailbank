@@ -1,61 +1,62 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.dto;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "addresses")
-public class Address {
+public class AddressDto {
 
-    @Id
-    @Column(name = "address_id")
-    @GeneratedValue
     private Long id;
 
     @NotNull
     @Length(max = 255)
-    @Column(name = "line_1")
     private String line1;
 
     @Length(max = 255)
-    @Column(name = "line_2")
     private String line2;
 
     @NotNull
     @Length(max = 255)
-    @Column(name = "town_city")
     private String townCity;
 
     @NotNull
     @Length(max = 50)
-    @Column(name = "zip_postcode")
     private String zipPostcode;
 
     @NotNull
     @Length(max = 50)
-    @Column(name = "state_province_country")
     private String stateProvinceCountry;
 
     @NotNull
-    @Column(name = "country")
     @Length(max = 50)
     private String country;
 
     @Length(max = 255)
-    @Column(name = "other_details")
     private String otherDetails;
 
 
-    public Address() {
+    public AddressDto() {
         super();
     }
 
-    public Address(Long id) {
+    public AddressDto(Long id,
+                      @NotNull @Length(max = 255) String line1,
+                      @Length(max = 255) String line2,
+                      @NotNull @Length(max = 255) String townCity,
+                      @NotNull @Length(max = 50) String zipPostcode,
+                      @NotNull @Length(max = 50) String stateProvinceCountry,
+                      @NotNull @Length(max = 50) String country,
+                      @Length(max = 255) String otherDetails) {
+        super();
         this.id = id;
+        this.line1 = line1;
+        this.line2 = line2;
+        this.townCity = townCity;
+        this.zipPostcode = zipPostcode;
+        this.stateProvinceCountry = stateProvinceCountry;
+        this.country = country;
+        this.otherDetails = otherDetails;
     }
-
 
     public Long getId() {
         return id;
@@ -118,23 +119,6 @@ public class Address {
     }
 
     public void setOtherDetails(String otherDetails) {
-        this.otherDetails = otherDetails;
-    }
-
-
-    public void setFields(@NotNull @Length(max = 255) String line1,
-                          @Length(max = 255) String line2,
-                          @NotNull @Length(max = 255) String townCity,
-                          @NotNull @Length(max = 50) String zipPostcode,
-                          @NotNull @Length(max = 50) String stateProvinceCountry,
-                          @NotNull @Length(max = 50) String country,
-                          @Length(max = 255) String otherDetails) {
-        this.line1 = line1;
-        this.line2 = line2;
-        this.townCity = townCity;
-        this.zipPostcode = zipPostcode;
-        this.stateProvinceCountry = stateProvinceCountry;
-        this.country = country;
         this.otherDetails = otherDetails;
     }
 }

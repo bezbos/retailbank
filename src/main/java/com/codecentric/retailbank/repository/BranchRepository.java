@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.domain.Branch;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,7 @@ import java.util.List;
 public interface BranchRepository extends JpaRepository<Branch, Long> {
     Branch findByDetails(String details);
 
-    Branch findByBank(Bank bank);
+    List<Branch> findByBank(Bank bank);
+
+    List<Branch> findByAddress(Address address);
 }
