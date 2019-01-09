@@ -6,6 +6,9 @@ import com.codecentric.retailbank.service.interfaces.IBankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +53,13 @@ public class BankService implements IBankService {
     @Override
     public List<Bank> getAllBanks() {
         List<Bank> banks = bankRepository.findAll();
+        return banks;
+    }
+
+    @Override
+    public Page<Bank> getAllBanksByPage(Integer pageIndex, Integer pageSize) {
+        Pageable page = new PageRequest(pageIndex, pageSize);
+        Page<Bank> banks = bankRepository.findAll(page);
         return banks;
     }
 

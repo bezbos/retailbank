@@ -6,6 +6,7 @@ import com.codecentric.retailbank.service.BankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/bank")
@@ -40,11 +43,20 @@ public class BankController {
     }
 
 
-    @RequestMapping(value = {"", "/", "/index", "/list"}, method = RequestMethod.GET)
-    public String getIndexPage(Model model) {
-        List<Bank> banks = bankService.getAllBanks();
+    @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
+    public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
+                               Model model) {
 
-        model.addAttribute("banks", banks);
+        // If pageIndex is less than 1 set it to 1.
+        Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
+        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
+                0 : pageIndex;
+
+        Page<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
+
+        model.addAttribute("currentPageIndex", pageIndex);
+        model.addAttribute("totalPages", banks.getTotalPages());
+        model.addAttribute("banks", banks.getContent());
         return CONTROLLER_NAME + "/list";
     }
 

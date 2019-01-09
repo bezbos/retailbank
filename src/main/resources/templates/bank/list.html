@@ -3,6 +3,8 @@
     <br>
     <h2>Bank list: </h2>
     <a th:href="@{~/bank/form}" class="btn btn-primary">Add New</a>
+    <br>
+    <br>
 
     <!-- Messages & Errors -->
     <div class="alert-danger" th:if="${param.error != null}">
@@ -32,6 +34,22 @@
         </tr>
         </tbody>
     </table>
+    <div class="row">
+        <div id="pagination-navigation" class="pagination offset-5">
+
+        </div>
+    </div>
+    <br>
     <!-- /list of banks -->
 
+
+    <script th:src="@{/js/pagination-navigation/pagination-navigation.js}"></script>
+    <script type="text/javascript">
+        var currentPageIndex = [[${currentPageIndex}]];
+        var totalPages = [[${totalPages}]];
+        var paginationNavigation = document.querySelector("#pagination-navigation");
+        var domainModelName = "bank";
+
+        generatePaginationNavigation(currentPageIndex, totalPages, paginationNavigation, domainModelName);
+    </script>
 </div>
