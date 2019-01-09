@@ -19,10 +19,14 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTarget"
+                aria-controls="navbarTarget" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <a th:href="@{~/home/index}" class="navbar-brand">BankCentric</a>
-        <div class="navbar-nav mr-auto">
-            <ul class="navbar-nav">
+        <div class="collapse navbar-collapse" id="navbarTarget">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a th:href="@{~/bank/list}" class="nav-link">Banks</a>
                 </li>
@@ -30,7 +34,7 @@
                     <a th:href="@{~/address/list}" class="nav-link">Addresses</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a th:href="@{~/refTypes/list}" class="nav-link">Ref Types</a>
+                    <a th:href="@{~/refTypes/list}" class="nav-link">RefTypes</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a th:href="@{~/branch/list}" class="nav-link">Branches</a>
@@ -45,9 +49,7 @@
                     <a th:href="@{~/transaction/list}" class="nav-link">Transactions</a>
                 </li>
             </ul>
-        </div>
-        <div class="navbar-nav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav my-2 my-lg-0">
                 <li sec:authorize="isAnonymous()" class="nav-item">
                     <a th:href="@{~/account/login}" class="nav-link">Login</a>
                 </li>
@@ -55,16 +57,15 @@
                     <a th:href="@{~/account/registration}" class="nav-link">Register</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <span th:text="'Hello '+ ${session.username} + '!'" class="nav-link"></span>
+                    <a th:href="@{~/account/updatePassword}" th:text="'Hello '+ ${session.username} + '!'" class="nav-link">
+                    </a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a th:href="@{~/account/logout}" class="nav-link">Logout</a>
                 </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a th:href="@{~/account/updatePassword}" class="nav-link">Change Password</a>
-                </li>
             </ul>
         </div>
+
     </nav>
 </header>
 

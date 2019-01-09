@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -38,11 +39,13 @@ public class RefTypesController {
     @Autowired
     private RefTransactionTypeService refTransactionTypeService;
 
+
     public RefTypesController() {
         super();
     }
 
-    @RequestMapping(value = {"", "/", "/index"})
+
+    @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
         List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
         List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();

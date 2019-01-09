@@ -1,23 +1,95 @@
 <div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
      layout:decorate="~{shared/_layout}" layout:fragment="content">
     <br>
-    <h2>Ref Account Types</h2>
-    <ul th:each="refAccountType : ${refAccountTypes}" class="list-group">
-        <li th:text="'Code: ' + ${refAccountType.getCode()}" class="list-group-item">Client</li>
-        <li th:text="'Description: ' + ${refAccountType.getDescription()}" class="list-group-item">Client</li>
-    </ul>
+    <div class="row">
+        <div class="col-12">
+            <h2>Ref Account Types</h2>
+            <table th:unless="${#lists.isEmpty(refAccountTypes)}" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Is Checking?</th>
+                    <th scope="col">Is Savings?</th>
+                    <th scope="col">Is Certificate of Deposit?</th>
+                    <th scope="col">Is Money Market?</th>
+                    <th scope="col">Is Individual Retirement?</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="refAccountType : ${refAccountTypes}">
+                    <th th:text="${refAccountType.getId()}" scope="row"></th>
+                    <td th:text="${refAccountType.getCode()}"></td>
+                    <td th:text="${refAccountType.getDescription()}"></td>
+                    <td th:text="${refAccountType.getIsCheckingType()}"></td>
+                    <td th:text="${refAccountType.getIsSavingsType()}"></td>
+                    <td th:text="${refAccountType.getIsCertificateOfDepositType()}"></td>
+                    <td th:text="${refAccountType.getIsMoneyMarketType()}"></td>
+                    <td th:text="${refAccountType.getIsIndividualRetirementType()}"></td>
+                    <td><a th:href="${'/refType/form/accountType/' + refAccountType.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+                    <td><a th:href="${'/refType/delete/accountType/' + refAccountType.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <br>
-    <h2>Ref Account Statuses</h2>
-    <ul th:each="refAccountStatus : ${refAccountStatuses}" class="list-group">
-        <li th:text="'Code: ' + ${refAccountStatus.getCode()}" class="list-group-item">Client</li>
-        <li th:text="'Description: ' + ${refAccountStatus.getDescription()}" class="list-group-item">Client</li>
-    </ul>
+        <div class="col-12">
+            <h2>Ref Account Statuses</h2>
+            <table th:unless="${#lists.isEmpty(refAccountStatuses)}" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Is Active?</th>
+                    <th scope="col">Is Closed?</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="refAccountStatus : ${refAccountStatuses}">
+                    <th th:text="${refAccountStatus.getId()}" scope="row"></th>
+                    <td th:text="${refAccountStatus.getCode()}"></td>
+                    <td th:text="${refAccountStatus.getDescription()}"></td>
+                    <td th:text="${refAccountStatus.getIsActive()}"></td>
+                    <td th:text="${refAccountStatus.getIsClosed()}"></td>
+                    <td><a th:href="${'/refType/form/accountStatus/' + refAccountStatus.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+                    <td><a th:href="${'/refType/delete/accountStatus/' + refAccountStatus.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <br>
-    <h2>Ref Transaction Types</h2>
-    <ul th:each="refTransactionType : ${refTransactionTypes}" class="list-group">
-        <li th:text="'Code: ' + ${refTransactionType.getCode()}" class="list-group-item">Client</li>
-        <li th:text="'Description: ' + ${refTransactionType.getDescription()}" class="list-group-item">Client</li>
-    </ul>
+        <div class="col-12">
+            <h2>Ref Transaction Types</h2>
+            <table th:unless="${#lists.isEmpty(refTransactionTypes)}" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Is Deposit?</th>
+                    <th scope="col">Is Withdrawal?</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="refTransactionType : ${refTransactionTypes}">
+                    <th th:text="${refTransactionType.getId()}" scope="row"></th>
+                    <td th:text="${refTransactionType.getCode()}"></td>
+                    <td th:text="${refTransactionType.getDescription()}"></td>
+                    <td th:text="${refTransactionType.getIsDeposit()}"></td>
+                    <td th:text="${refTransactionType.getIsWithdrawal()}"></td>
+                    <td><a th:href="${'/refType/form/transactionType/' + refTransactionType.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+                    <td><a th:href="${'/refType/delete/transactionType/' + refTransactionType.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

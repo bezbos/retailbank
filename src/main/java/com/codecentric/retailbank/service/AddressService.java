@@ -1,8 +1,6 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Address;
-import com.codecentric.retailbank.model.domain.Branch;
-import com.codecentric.retailbank.model.domain.Customer;
 import com.codecentric.retailbank.repository.*;
 import com.codecentric.retailbank.service.interfaces.IAddressService;
 import org.slf4j.Logger;
@@ -82,7 +80,7 @@ public class AddressService implements IAddressService {
         branchRepository.findByAddress(address).forEach(branch -> {
             branch.setAddress(null);
         });
-        customerRepository.findByAddress(address).forEach(customer ->{
+        customerRepository.findByAddress(address).forEach(customer -> {
             customer.setAddress(null);
         });
 
@@ -98,7 +96,7 @@ public class AddressService implements IAddressService {
         branchRepository.findByAddress(address).forEach(branch -> {
             branch.setAddress(null);
         });
-        customerRepository.findByAddress(address).forEach(customer ->{
+        customerRepository.findByAddress(address).forEach(customer -> {
             customer.setAddress(null);
         });
 
