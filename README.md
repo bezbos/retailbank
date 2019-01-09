@@ -9,11 +9,12 @@
 * Password update
 * External login via Google
 * Basic domain CRUD operations
+* Better errors display(right now errors are very poorly displayed to the user)
 
 ### Planned features:
 * Frontend React version
+* Full CRUD for necessary domain models.
 * Internationalization
-* Better errors display(right now errors are very poorly displayed to the user)
 * Additional external login providers(Facebook, Github, etc.)
 * Two Factor Authentication(my Twilio trial expired so I might not even bother, I'll see)
 
@@ -27,3 +28,4 @@
 * https://app.pluralsight.com/library/courses/build-web-app-spring-mvc-hibernate-bootstrap-rest-service
 * https://www.baeldung.com/security-spring
 * http://www.databaseanswers.org/data_models/retail_banks/
+* StackOverflow
