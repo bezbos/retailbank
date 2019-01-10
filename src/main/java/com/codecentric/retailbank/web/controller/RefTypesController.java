@@ -4,7 +4,9 @@ import com.codecentric.retailbank.model.domain.RefAccountStatus;
 import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
-import com.codecentric.retailbank.repository.RefTransactionTypeRepository;
+import com.codecentric.retailbank.model.dto.RefAccountStatusDto;
+import com.codecentric.retailbank.model.dto.RefAccountTypeDto;
+import com.codecentric.retailbank.model.dto.RefTransactionTypeDto;
 import com.codecentric.retailbank.service.RefAccountStatusService;
 import com.codecentric.retailbank.service.RefAccountTypeService;
 import com.codecentric.retailbank.service.RefBranchTypeService;
@@ -14,11 +16,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/refTypes")
@@ -55,6 +59,60 @@ public class RefTypesController {
         model.addAttribute("refAccountStatuses", refAccountStatuses);
         model.addAttribute("refTransactionTypes", refTransactionTypes);
         return CONTROLLER_NAME + "/index";
+    }
+
+    @RequestMapping(value = {"/form/{type}", "/form/{type}/{id}"})
+    public ModelAndView getFormPage(@PathVariable("type") String type,
+                                    @PathVariable("id") Optional<Long> id) {
+        switch (type) {
+            case "accountType": {
+                RefAccountType refAccountType = id.isPresent() ?
+                        refAccountTypeService.getById(id.get()) : new RefAccountType(0L);
+
+                RefAccountTypeDto refAccountTypeDto = new RefAccountTypeDto(
+                        refAccountType.getId(),
+                        refAccountType.getCode(),
+                        refAccountType.getDescription(),
+                        refAccountType.getIsCheckingType(),
+                        refAccountType.getIsSavingsType(),
+                        refAccountType.getIsCertificateOfDepositType(),
+                        refAccountType.getIsMoneyMarketType(),
+                        refAccountType.getIsIndividualRetirementType()
+                );
+
+                return new ModelAndView(CONTROLLER_NAME + "/form", "refAccountTypeDto", refAccountTypeDto);
+            }
+            case "accountStatus": {
+                RefAccountStatus refAccountStatus = id.isPresent() ?
+                        refAccountStatusService.getById(id.get()) : new RefAccountStatus(0L);
+
+                RefAccountStatusDto refAccountStatusDto = new RefAccountStatusDto(
+                        refAccountStatus.getId(),
+                        refAccountStatus.getCode(),
+                        refAccountStatus.getDescription(),
+                        refAccountStatus.getIsActive(),
+                        refAccountStatus.getIsClosed()
+                );
+
+                return new ModelAndView(CONTROLLER_NAME + "/form", "refAccountStatusDto", refAccountStatusDto);
+            }
+            case "transactionType": {
+                RefTransactionType refTransactionType = id.isPresent() ?
+                        refTransactionTypeService.getById(id.get()) : new RefTransactionType(0L);
+
+                RefTransactionTypeDto refTransactionTypeDto = new RefTransactionTypeDto(
+                        refTransactionType.getId(),
+                        refTransactionType.getCode(),
+                        refTransactionType.getDescription(),
+                        refTransactionType.getIsDeposit(),
+                        refTransactionType.getIsWithdrawal()
+                );
+
+                return new ModelAndView(CONTROLLER_NAME + "/form", "refTransactionTypeDto", refTransactionTypeDto);
+            }
+        }
+
+        return new ModelAndView(CONTROLLER_NAME + "/form");
     }
 
 

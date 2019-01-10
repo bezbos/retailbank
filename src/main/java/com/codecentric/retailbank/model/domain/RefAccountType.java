@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -13,26 +15,43 @@ public class RefAccountType {
     private Long id;
 
     @NotNull
+    @Length(max = 15)
     @Column(name = "account_type_code", nullable = false, unique = true)
     private String code;
 
+    @Length(max = 255)
     @Column(name = "account_type_description")
     private String description;
 
+    @Length(max = 1)
     @Column(name = "checking")
     private String isCheckingType;
 
+    @Length(max = 1)
     @Column(name = "savings")
     private String isSavingsType;
 
+    @Length(max = 1)
     @Column(name = "certificate_of_deposit")
     private String isCertificateOfDepositType;
 
+    @Length(max = 1)
     @Column(name = "money_market")
     private String isMoneyMarketType;
 
+    @Length(max = 1)
     @Column(name = "individual_retirement")
     private String isIndividualRetirementType;
+
+
+    public RefAccountType() {
+        super();
+    }
+
+    public RefAccountType(Long id) {
+        super();
+        this.id = id;
+    }
 
 
     public Long getId() {

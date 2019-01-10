@@ -30,6 +30,16 @@ public class RefAccountStatus {
     private String isClosed;
 
 
+    public RefAccountStatus() {
+        super();
+    }
+
+    public RefAccountStatus(Long id) {
+        super();
+        this.id = id;
+    }
+
+
     public Long getId() {
         return id;
     }

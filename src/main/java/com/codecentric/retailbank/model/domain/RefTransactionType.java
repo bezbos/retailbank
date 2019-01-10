@@ -3,7 +3,6 @@ package com.codecentric.retailbank.model.domain;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 
 @Entity
 @Table(name = "ref_transaction_types")
@@ -29,6 +28,16 @@ public class RefTransactionType {
     @Length(max = 1)
     @Column(name = "withdrawal")
     private String isWithdrawal;
+
+
+    public RefTransactionType() {
+        super();
+    }
+
+    public RefTransactionType(Long id) {
+        super();
+        this.id = id;
+    }
 
 
     public Long getId() {
