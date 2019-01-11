@@ -6,6 +6,9 @@ import com.codecentric.retailbank.service.interfaces.IBranchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -40,6 +43,13 @@ public class BranchService implements IBranchService {
     @Override
     public List<Branch> getAllBranches() {
         List<Branch> branches = branchRepository.findAll();
+        return branches;
+    }
+
+    @Override
+    public Page<Branch> getAllBranchesByPage(Integer pageIndex, int pageSize) {
+        Pageable page = new PageRequest(pageIndex, pageSize);
+        Page<Branch> branches = branchRepository.findAll(page);
         return branches;
     }
 

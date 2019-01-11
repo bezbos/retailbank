@@ -8,12 +8,16 @@ import com.codecentric.retailbank.service.RefBranchTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
+import java.util.Optional;
+
+import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/branch")
@@ -39,81 +43,22 @@ public class BranchController {
     }
 
 
-    @RequestMapping(value = {"", "/", "/index"})
-    public String getIndexPage(Model model) {
-        List<Branch> branches = branchService.getAllBranches();
+    @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
+    public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
+                               Model model) {
 
+        // If pageIndex is less than 1 set it to 1.
+        Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
+        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
+                0 : pageIndex;
+
+        Page<Branch> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
+
+        model.addAttribute("currentPageIndex", pageIndex);
+        model.addAttribute("totalPages", branches.getTotalPages());
         model.addAttribute("branches", branches);
         return CONTROLLER_NAME + "/index";
     }
 
 
-    // TESTS
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String getTestPage(Model model) {
-        boolean readWorks = true;
-        boolean addWorks = true;
-        boolean updateWorks = true;
-        boolean deleteWorks = true;
-
-        try {
-            List<Branch> branches = branchService.getAllBranches();
-            Branch branch = branchService.getById(1L);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            readWorks = false;
-        }
-        LOGGER.info("LOG: getAllBranches() completed successfully.");
-        LOGGER.info("LOG: getById(1L) completed successfully.");
-
-        try {
-            Branch testBranch = new Branch();
-            testBranch.setDetails("TEST");
-            testBranch.setAddress(addressService.getById(1L));
-            testBranch.setBank(bankService.getById(1L));
-            testBranch.setType(refBranchTypeService.getById(1L));
-
-
-            branchService.addBranch(testBranch);
-            Branch result = branchService.getByDetails("TEST");
-            if (result == null)
-                addWorks = false;
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            addWorks = false;
-        }
-        LOGGER.info("LOG: addBranch(testBranch) completed successfully.");
-
-
-        Branch existingBranch = branchService.getByDetails("TEST");
-        try {
-            existingBranch.setDetails("TEST");
-            existingBranch.setAddress(addressService.getById(2L));
-            existingBranch.setBank(bankService.getById(2L));
-            existingBranch.setType(refBranchTypeService.getById(2L));
-
-            Branch result = branchService.updateBranch(existingBranch);
-            if (result == null)
-                updateWorks = false;
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            updateWorks = false;
-        }
-        LOGGER.info("LOG: updateBranch(existing) completed successfully.");
-
-        try {
-            branchService.deleteBranch(existingBranch);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            deleteWorks = false;
-        }
-        LOGGER.info("LOG: deleteBranch(existingBranch) completed successfully.");
-
-        model.addAttribute("readWorks", readWorks);
-        model.addAttribute("addWorks", addWorks);
-        model.addAttribute("updateWorks", updateWorks);
-        model.addAttribute("deleteWorks", deleteWorks);
-
-        return CONTROLLER_NAME + "/test";
-    }
 }
