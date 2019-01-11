@@ -4,7 +4,7 @@
     <br>
     <!-- Ref Account Type Form -->
     <h2 th:if="${refAccountTypeDto != null}">Ref Account Type Form:</h2>
-    <form th:action="@{~/refTypes/refAccountTypeDto/formSubmit}" th:if="${refAccountTypeDto != null}"
+    <form th:action="@{~/refTypes/formSubmit/accountType}" th:if="${refAccountTypeDto != null}"
           th:object="${refAccountTypeDto}" method="POST" enctype="utf8">
         <!-- Errors -->
         <div th:if="${#fields.hasErrors()}">
@@ -75,7 +75,7 @@
 
     <!-- Ref Account Status Form -->
     <h2 th:if="${refAccountStatusDto != null}">Ref Status Form:</h2>
-    <form th:action="@{~/refTypes/refAccountStatus/formSubmit}" th:if="${refAccountStatusDto != null}"
+    <form th:action="@{~/refTypes/formSubmit/accountStatus}" th:if="${refAccountStatusDto != null}"
           th:object="${refAccountStatusDto}" method="POST" enctype="utf8">
         <!-- Errors -->
         <div th:if="${#fields.hasErrors()}">
@@ -125,7 +125,7 @@
 
     <!-- Ref Transaction Type Form -->
     <h2 th:if="${refTransactionTypeDto != null}">Ref Transaction Type Form:</h2>
-    <form th:action="@{~/refTypes/refTransactionType/formSubmit}" th:if="${refTransactionTypeDto != null}"
+    <form th:action="@{~/refTypes/formSubmit/transactionType}" th:if="${refTransactionTypeDto != null}"
           th:object="${refTransactionTypeDto}" method="POST" enctype="utf8">
         <!-- Errors -->
         <div th:if="${#fields.hasErrors()}">

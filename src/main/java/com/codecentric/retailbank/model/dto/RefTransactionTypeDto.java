@@ -12,20 +12,13 @@ public class RefTransactionTypeDto {
     @Length(max = 255)
     private String description;
 
-    @Length(max = 1)
     private Boolean isDepositType;
 
-    @Length(max = 1)
     private Boolean isWithdrawalType;
 
 
     public RefTransactionTypeDto() {
         super();
-    }
-
-    public RefTransactionTypeDto(Long id) {
-        super();
-        this.id = id;
     }
 
     public RefTransactionTypeDto(Long id,
@@ -37,21 +30,8 @@ public class RefTransactionTypeDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isDepositType = isDepositType.equalsIgnoreCase("Y");
-        this.isWithdrawalType = isWithdrawalType.equalsIgnoreCase("Y");
-    }
-
-    public RefTransactionTypeDto(Long id,
-                                 @Length(max = 15) String code,
-                                 @Length(max = 255) String description,
-                                 @Length(max = 1) Boolean isDepositType,
-                                 @Length(max = 1) Boolean isWithdrawalType) {
-        super();
-        this.id = id;
-        this.code = code;
-        this.description = description;
-        this.isDepositType = isDepositType;
-        this.isWithdrawalType = isWithdrawalType;
+        this.isDepositType = isDepositType != null ? isDepositType.equalsIgnoreCase("Y") : false;
+        this.isWithdrawalType = isWithdrawalType != null ? isWithdrawalType.equalsIgnoreCase("Y") : false;
     }
 
 

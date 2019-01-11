@@ -16,11 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,6 +119,159 @@ public class RefTypesController {
         return new ModelAndView(CONTROLLER_NAME + "/form");
     }
 
+    @RequestMapping(value = "/formSubmit/accountType", method = RequestMethod.POST)
+    public String onRefAccountTypeFormSubmit(@ModelAttribute("refAccountTypeDto") @Valid RefAccountTypeDto dto,
+                                             BindingResult result,
+                                             Model model,
+                                             RedirectAttributes redirectAttributes) {
+        // Check if valid
+        if (dto == null || result.hasErrors()) {
+            model.addAttribute("refAccountTypeDto", dto);
+            return CONTROLLER_NAME + "/form";
+        }
+
+        // Try adding/updating RefAccountType
+        try {
+            if (dto.getId() != null && dto.getId() != 0) {
+                RefAccountType updatedRefAccountType = refAccountTypeService.getById(dto.getId());
+                updatedRefAccountType.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsCheckingType(),
+                        dto.getIsSavingsType(),
+                        dto.getIsCertificateOfDepositType(),
+                        dto.getIsMoneyMarketType(),
+                        dto.getIsIndividualRetirementType()
+                );
+                refAccountTypeService.updateRefAccountType(updatedRefAccountType);
+
+                redirectAttributes.addAttribute("message", "Successfully updated RefAccountType.");
+            } else {
+                RefAccountType newRefAccountType = new RefAccountType();
+                newRefAccountType.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsCheckingType(),
+                        dto.getIsSavingsType(),
+                        dto.getIsCertificateOfDepositType(),
+                        dto.getIsMoneyMarketType(),
+                        dto.getIsIndividualRetirementType()
+                );
+                refAccountTypeService.addRefAccountType(newRefAccountType);
+
+                redirectAttributes.addAttribute("message", "Successfully created RefAccountType.");
+            }
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+
+            // If we get here something went wrong
+            redirectAttributes.asMap().clear();
+            model.addAttribute("refAccountTypeDto", dto);
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/form";
+        }
+
+        return "redirect:/" + CONTROLLER_NAME + "/list";
+    }
+
+    @RequestMapping(value = "/formSubmit/accountStatus", method = RequestMethod.POST)
+    public String onRefAccountStatusFormSubmit(@ModelAttribute("refAccountStatusDto") @Valid RefAccountStatusDto dto,
+                                               BindingResult result,
+                                               Model model,
+                                               RedirectAttributes redirectAttributes) {
+        // Check if valid
+        if (dto == null || result.hasErrors()) {
+            model.addAttribute("refAccountStatusDto", dto);
+            return CONTROLLER_NAME + "/form";
+        }
+
+        // Try adding/updating RefAccountType
+        try {
+            if (dto.getId() != null && dto.getId() != 0) {
+                RefAccountStatus updatedRefAccountStatus = refAccountStatusService.getById(dto.getId());
+                updatedRefAccountStatus.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsActiveStatus(),
+                        dto.getIsClosedStatus()
+                );
+
+                refAccountStatusService.updateRefAccountStatus(updatedRefAccountStatus);
+
+                redirectAttributes.addAttribute("message", "Successfully updated RefAccountStatus.");
+            } else {
+                RefAccountStatus newRefAccountStatus = new RefAccountStatus();
+                newRefAccountStatus.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsActiveStatus(),
+                        dto.getIsClosedStatus()
+                );
+                refAccountStatusService.addRefAccountStatus(newRefAccountStatus);
+
+                redirectAttributes.addAttribute("message", "Successfully created RefAccountStatus.");
+            }
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+
+            // If we get here something went wrong
+            redirectAttributes.asMap().clear();
+            model.addAttribute("refAccountStatusDto", dto);
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/form";
+        }
+
+        return "redirect:/" + CONTROLLER_NAME + "/list";
+    }
+
+    @RequestMapping(value = "/formSubmit/transactionType", method = RequestMethod.POST)
+    public String onRefTransactionTypeFormSubmit(@ModelAttribute("refTransactionTypeDto") @Valid RefTransactionTypeDto dto,
+                                             BindingResult result,
+                                             Model model,
+                                             RedirectAttributes redirectAttributes) {
+        // Check if valid
+        if (dto == null || result.hasErrors()) {
+            model.addAttribute("refTransactionTypeDto", dto);
+            return CONTROLLER_NAME + "/form";
+        }
+
+        // Try adding/updating RefTransactionType
+        try {
+            if (dto.getId() != null && dto.getId() != 0) {
+                RefTransactionType updatedRefTransactionType = refTransactionTypeService.getById(dto.getId());
+                updatedRefTransactionType.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsDepositType(),
+                        dto.getIsWithdrawalType()
+                );
+                refTransactionTypeService.updateRefTransactionType(updatedRefTransactionType);
+
+                redirectAttributes.addAttribute("message", "Successfully updated RefTransactionType.");
+            } else {
+                RefTransactionType newRefTransactionType = new RefTransactionType();
+                newRefTransactionType.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsDepositType(),
+                        dto.getIsWithdrawalType()
+                );
+                refTransactionTypeService.addRefTransactionType(newRefTransactionType);
+
+                redirectAttributes.addAttribute("message", "Successfully created RefTransactionType.");
+            }
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+
+            // If we get here something went wrong
+            redirectAttributes.asMap().clear();
+            model.addAttribute("refTransactionTypeDto", dto);
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/form";
+        }
+
+        return "redirect:/" + CONTROLLER_NAME + "/list";
+    }
 
     // ############ TESTS ############ //
     @RequestMapping(value = "/testRefBranchType", method = RequestMethod.GET)

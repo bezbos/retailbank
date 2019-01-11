@@ -79,4 +79,18 @@ public class RefAccountStatus {
     public void setIsClosed(String isClosed) {
         this.isClosed = isClosed;
     }
+
+    public void setFields(@Length(max = 15) String code,
+                          @Length(max = 255) String description,
+                          Boolean isActive,
+                          Boolean isClosed) {
+        this.code = code;
+        this.description = description;
+
+        if(isActive != null)
+            this.isActive = isActive.booleanValue() == true ? "Y" : "N";
+
+        if(isClosed != null)
+            this.isClosed = isClosed.booleanValue() == true ? "Y" : "N";;
+    }
 }

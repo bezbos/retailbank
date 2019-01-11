@@ -38,25 +38,6 @@ public class RefAccountTypeDto {
     public RefAccountTypeDto(Long id,
                              @NotNull @Length(max = 15) String code,
                              @Length(max = 255) String description,
-                             Boolean isCheckingType,
-                             Boolean isSavingsType,
-                             Boolean isCertificateOfDepositType,
-                             Boolean isMoneyMarketType,
-                             Boolean isIndividualRetirementType) {
-        super();
-        this.id = id;
-        this.code = code;
-        this.description = description;
-        this.isCheckingType = isCheckingType;
-        this.isSavingsType = isSavingsType;
-        this.isCertificateOfDepositType = isCertificateOfDepositType;
-        this.isMoneyMarketType = isMoneyMarketType;
-        this.isIndividualRetirementType = isIndividualRetirementType;
-    }
-
-    public RefAccountTypeDto(Long id,
-                             @NotNull @Length(max = 15) String code,
-                             @Length(max = 255) String description,
                              String isCheckingType,
                              String isSavingsType,
                              String isCertificateOfDepositType,
@@ -66,11 +47,11 @@ public class RefAccountTypeDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isCheckingType = isCheckingType.equalsIgnoreCase("Y");
-        this.isSavingsType = isSavingsType.equalsIgnoreCase("Y");
-        this.isCertificateOfDepositType = isCertificateOfDepositType.equalsIgnoreCase("Y");
-        this.isMoneyMarketType = isMoneyMarketType.equalsIgnoreCase("Y");
-        this.isIndividualRetirementType = isIndividualRetirementType.equalsIgnoreCase("Y");
+        this.isCheckingType = isCheckingType != null ? isCheckingType.equalsIgnoreCase("Y") : false;
+        this.isSavingsType = isSavingsType != null ? isSavingsType.equalsIgnoreCase("Y") : false;
+        this.isCertificateOfDepositType = isSavingsType != null ? isCertificateOfDepositType.equalsIgnoreCase("Y") : false;
+        this.isMoneyMarketType = isMoneyMarketType != null ? isMoneyMarketType.equalsIgnoreCase("Y") : false;
+        this.isIndividualRetirementType = isIndividualRetirementType != null ? isIndividualRetirementType.equalsIgnoreCase("Y") : false;
     }
 
 

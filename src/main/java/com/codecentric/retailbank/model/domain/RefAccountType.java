@@ -117,4 +117,30 @@ public class RefAccountType {
     public void setIsIndividualRetirementType(String isIndividualRetirementType) {
         this.isIndividualRetirementType = isIndividualRetirementType;
     }
+
+    public void setFields(@NotNull @Length(max = 15) String code,
+                          @Length(max = 255) String description,
+                          Boolean isCheckingType,
+                          Boolean isSavingsType,
+                          Boolean isCertificateOfDepositType,
+                          Boolean isMoneyMarketType,
+                          Boolean isIndividualRetirementType) {
+        this.code = code;
+        this.description = description;
+
+        if (isCheckingType != null)
+            this.isCheckingType = isCheckingType.booleanValue() == true ? "Y" : "N";
+
+        if (isSavingsType != null)
+            this.isSavingsType = isSavingsType.booleanValue() == true ? "Y" : "N";
+
+        if (isCertificateOfDepositType != null)
+            this.isCertificateOfDepositType = isCertificateOfDepositType.booleanValue() == true ? "Y" : "N";
+
+        if (isMoneyMarketType != null)
+            this.isMoneyMarketType = isMoneyMarketType.booleanValue() == true ? "Y" : "N";
+
+        if (isIndividualRetirementType != null)
+            this.isIndividualRetirementType = isIndividualRetirementType.booleanValue() == true ? "Y" : "N";
+    }
 }

@@ -15,29 +15,18 @@ public class RefAccountStatusDto {
     @Length(max = 255)
     private String description;
 
-    @Length(max = 1)
     private Boolean isActiveStatus;
 
-    @Length(max = 1)
     private Boolean isClosedStatus;
 
+
+    public RefAccountStatusDto() {
+        super();
+    }
 
     public RefAccountStatusDto(Long id) {
         super();
         this.id = id;
-    }
-
-    public RefAccountStatusDto(Long id,
-                               @NotNull @Length(max = 15) String code,
-                               @Length(max = 255) String description,
-                               @Length(max = 1) Boolean isActiveStatus,
-                               @Length(max = 1) Boolean isClosedStatus) {
-        super();
-        this.id = id;
-        this.code = code;
-        this.description = description;
-        this.isActiveStatus = isActiveStatus;
-        this.isClosedStatus = isClosedStatus;
     }
 
     public RefAccountStatusDto(Long id,
@@ -49,8 +38,8 @@ public class RefAccountStatusDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isActiveStatus = isActiveStatus.equalsIgnoreCase("Y");
-        this.isClosedStatus = isClosedStatus.equalsIgnoreCase("Y");
+        this.isActiveStatus = isActiveStatus != null ? isActiveStatus.equalsIgnoreCase("Y") : false;
+        this.isClosedStatus = isClosedStatus != null ? isClosedStatus.equalsIgnoreCase("Y") : false;
     }
 
 

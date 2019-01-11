@@ -1,9 +1,24 @@
+<!--suppress ALL -->
 <div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
      layout:decorate="~{shared/_layout}" layout:fragment="content">
     <br>
+
+    <!-- Messages & Errors -->
+    <div class="alert alert-danger" th:if="${param.error != null}">
+        <span th:text="${param.error}"></span>
+    </div>
+    <div class="alert alert-info" th:if="${param.message != null}">
+        <span th:text="${param.message}"></span>
+    </div>
+    <br>
+    <!-- /messages & errors -->
+
     <div class="row">
         <!-- Ref Account Types -->
         <div class="col-12">
+            <a th:href="@{~/refTypes/form/accountType}" class="btn btn-primary">Add New Ref Account Type</a>
+            <br>
+            <br>
             <h2>Ref Account Types</h2>
             <table th:unless="${#lists.isEmpty(refAccountTypes)}" class="table table-striped">
                 <thead>
@@ -30,6 +45,9 @@
 
         <!-- Ref Account Statuses -->
         <div class="col-12">
+            <a th:href="@{~/refTypes/form/accountStatus}" class="btn btn-primary">Add New Ref Account Status</a>
+            <br>
+            <br>
             <h2>Ref Account Statuses</h2>
             <table th:unless="${#lists.isEmpty(refAccountStatuses)}" class="table table-striped">
                 <thead>
@@ -56,6 +74,9 @@
 
         <!-- Ref Transaction Types -->
         <div class="col-12">
+            <a th:href="@{~/refTypes/form/transactionType}" class="btn btn-primary">Add New Ref Transaction Type</a>
+            <br>
+            <br>
             <h2>Ref Transaction Types</h2>
             <table th:unless="${#lists.isEmpty(refTransactionTypes)}" class="table table-striped">
                 <thead>

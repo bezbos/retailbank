@@ -79,4 +79,19 @@ public class RefTransactionType {
     public void setIsWithdrawal(String isWithdrawal) {
         this.isWithdrawal = isWithdrawal;
     }
+
+    public void setFields(@Length(max = 15) String code,
+                          @Length(max = 255) String description,
+                          Boolean isDeposit,
+                          Boolean isWithdrawal) {
+        this.code = code;
+        this.description = description;
+
+        if (isDeposit != null)
+            this.isDeposit = isDeposit.booleanValue() == true ? "Y" : "N";
+
+        if (isWithdrawal != null)
+            this.isWithdrawal = isWithdrawal.booleanValue() == true ? "Y" : "N";
+        ;
+    }
 }
