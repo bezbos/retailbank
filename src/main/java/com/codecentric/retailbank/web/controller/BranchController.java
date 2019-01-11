@@ -38,6 +38,17 @@ public class BranchController {
         super();
     }
 
+
+    @RequestMapping(value = {"", "/", "/index"})
+    public String getIndexPage(Model model) {
+        List<Branch> branches = branchService.getAllBranches();
+
+        model.addAttribute("branches", branches);
+        return CONTROLLER_NAME + "/index";
+    }
+
+
+    // TESTS
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String getTestPage(Model model) {
         boolean readWorks = true;
@@ -104,13 +115,5 @@ public class BranchController {
         model.addAttribute("deleteWorks", deleteWorks);
 
         return CONTROLLER_NAME + "/test";
-    }
-
-    @RequestMapping(value = {"", "/", "/index"})
-    public String getIndexPage(Model model) {
-        List<Branch> branches = branchService.getAllBranches();
-
-        model.addAttribute("branches", branches);
-        return CONTROLLER_NAME + "/index";
     }
 }

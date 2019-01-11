@@ -14,12 +14,41 @@
     <!-- /messages & errors -->
 
     <div class="row">
-        <!-- Ref Account Types -->
+        <!-- Reference Account Types -->
         <div class="col-12">
-            <a th:href="@{~/refTypes/form/accountType}" class="btn btn-primary">Add New Ref Account Type</a>
+            <a th:href="@{~/refTypes/form/branchType}" class="btn btn-primary">Add Reference Branch Type</a>
             <br>
             <br>
-            <h2>Ref Account Types</h2>
+            <h2>Reference Branch Types</h2>
+            <table th:unless="${#lists.isEmpty(refBranchTypes)}" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="refBranchType : ${refBranchTypes}">
+                    <th th:text="${refBranchType.getId()}" scope="row"></th>
+                    <td th:text="${refBranchType.getCode()}"></td>
+                    <td th:text="${refBranchType.getDescription()}"></td>
+                    <td><a th:href="${'/refTypes/form/branchType/' + refBranchType.getId()}" class="btn btn-sm btn-warning">Edit</a></td>
+                    <td><a th:href="${'/refTypes/delete/branchType/' + refBranchType.getId()}" class="btn btn-sm btn-danger">Delete</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /reference account types -->
+
+        <!-- Reference Account Types -->
+        <div class="col-12">
+            <a th:href="@{~/refTypes/form/accountType}" class="btn btn-primary">Add New Reference Account Type</a>
+            <br>
+            <br>
+            <h2>Reference Account Types</h2>
             <table th:unless="${#lists.isEmpty(refAccountTypes)}" class="table table-striped">
                 <thead>
                 <tr>
@@ -41,14 +70,14 @@
                 </tbody>
             </table>
         </div>
-        <!-- /ref account types -->
+        <!-- /reference account types -->
 
-        <!-- Ref Account Statuses -->
+        <!-- Reference Account Statuses -->
         <div class="col-12">
-            <a th:href="@{~/refTypes/form/accountStatus}" class="btn btn-primary">Add New Ref Account Status</a>
+            <a th:href="@{~/refTypes/form/accountStatus}" class="btn btn-primary">Add New Reference Account Status</a>
             <br>
             <br>
-            <h2>Ref Account Statuses</h2>
+            <h2>Reference Account Statuses</h2>
             <table th:unless="${#lists.isEmpty(refAccountStatuses)}" class="table table-striped">
                 <thead>
                 <tr>
@@ -70,14 +99,14 @@
                 </tbody>
             </table>
         </div>
-        <!-- /ref account statuses -->
+        <!-- /reference account statuses -->
 
-        <!-- Ref Transaction Types -->
+        <!-- Reference Transaction Types -->
         <div class="col-12">
-            <a th:href="@{~/refTypes/form/transactionType}" class="btn btn-primary">Add New Ref Transaction Type</a>
+            <a th:href="@{~/refTypes/form/transactionType}" class="btn btn-primary">Add New Reference Transaction Type</a>
             <br>
             <br>
-            <h2>Ref Transaction Types</h2>
+            <h2>Reference Transaction Types</h2>
             <table th:unless="${#lists.isEmpty(refTransactionTypes)}" class="table table-striped">
                 <thead>
                 <tr>
@@ -99,7 +128,7 @@
                 </tbody>
             </table>
         </div>
-        <!-- /ref transaction types -->
+        <!-- /reference transaction types -->
 
     </div>
 </div>

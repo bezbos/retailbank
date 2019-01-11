@@ -2,12 +2,15 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.RefAccountStatus;
 import com.codecentric.retailbank.model.domain.RefAccountType;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.model.dto.RefAccountStatusDto;
 import com.codecentric.retailbank.model.dto.RefAccountTypeDto;
+import com.codecentric.retailbank.model.dto.RefBranchTypeDto;
 import com.codecentric.retailbank.model.dto.RefTransactionTypeDto;
 import com.codecentric.retailbank.service.RefAccountStatusService;
 import com.codecentric.retailbank.service.RefAccountTypeService;
+import com.codecentric.retailbank.service.RefBranchTypeService;
 import com.codecentric.retailbank.service.RefTransactionTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,8 @@ public class RefTypesController {
     private String CONTROLLER_NAME = "refTypes";
 
     @Autowired
+    private RefBranchTypeService refBranchTypeService;
+    @Autowired
     private RefAccountTypeService refAccountTypeService;
     @Autowired
     private RefAccountStatusService refAccountStatusService;
@@ -51,10 +56,13 @@ public class RefTypesController {
 
     @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
+        List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
         List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
         List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
         List<RefTransactionType> refTransactionTypes = refTransactionTypeService.getAllRefTransactionTypes();
 
+
+        model.addAttribute("refBranchTypes", refBranchTypes);
         model.addAttribute("refAccountTypes", refAccountTypes);
         model.addAttribute("refAccountStatuses", refAccountStatuses);
         model.addAttribute("refTransactionTypes", refTransactionTypes);
@@ -65,6 +73,21 @@ public class RefTypesController {
     public ModelAndView getFormPage(@PathVariable("type") String type,
                                     @PathVariable("id") Optional<Long> id) {
         switch (type) {
+            case "branchType":{
+                RefBranchType refBranchType = id.isPresent() ?
+                        refBranchTypeService.getById(id.get()) : new RefBranchType(0L);
+
+                RefBranchTypeDto refBranchTypeDto = new RefBranchTypeDto(
+                        refBranchType.getId(),
+                        refBranchType.getCode(),
+                        refBranchType.getDescription(),
+                        refBranchType.getIsLargeUrban(),
+                        refBranchType.getIsSmallRural(),
+                        refBranchType.getIsMediumSuburban()
+                );
+
+                return new ModelAndView(CONTROLLER_NAME + "/form", "refBranchTypeDto", refBranchTypeDto);
+            }
             case "accountType": {
                 RefAccountType refAccountType = id.isPresent() ?
                         refAccountTypeService.getById(id.get()) : new RefAccountType(0L);
@@ -113,6 +136,57 @@ public class RefTypesController {
         }
 
         return new ModelAndView(CONTROLLER_NAME + "/form");
+    }
+
+    @RequestMapping(value = "/formSubmit/branchType", method = RequestMethod.POST)
+    public String onRefBranchTypeFormSubmit(@ModelAttribute("refBranchTypeDto") @Valid RefBranchTypeDto dto,
+                                             BindingResult result,
+                                             Model model,
+                                             RedirectAttributes redirectAttributes) {
+        // Check if valid
+        if (dto == null || result.hasErrors()) {
+            model.addAttribute("refBranchTypeDto", dto);
+            return CONTROLLER_NAME + "/form";
+        }
+
+        // Try adding/updating RefBranchType
+        try {
+            if (dto.getId() != null && dto.getId() != 0) {
+                RefBranchType updatedRefBranchType = refBranchTypeService.getById(dto.getId());
+                updatedRefBranchType.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsLargeUrbanType(),
+                        dto.getIsSmallRuralType(),
+                        dto.getIsMediumSuburbanType()
+                );
+                refBranchTypeService.updateRefBranchType(updatedRefBranchType);
+
+                redirectAttributes.addAttribute("message", "Successfully updated RefBranchType.");
+            } else {
+                RefBranchType newRefBranchType = new RefBranchType();
+                newRefBranchType.setFields(
+                        dto.getCode(),
+                        dto.getDescription(),
+                        dto.getIsLargeUrbanType(),
+                        dto.getIsSmallRuralType(),
+                        dto.getIsMediumSuburbanType()
+                );
+                refBranchTypeService.addRefBranchType(newRefBranchType);
+
+                redirectAttributes.addAttribute("message", "Successfully created RefBranchType.");
+            }
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+
+            // If we get here something went wrong
+            redirectAttributes.asMap().clear();
+            model.addAttribute("refBranchTypeDto", dto);
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/form";
+        }
+
+        return "redirect:/" + CONTROLLER_NAME + "/list";
     }
 
     @RequestMapping(value = "/formSubmit/accountType", method = RequestMethod.POST)
@@ -274,6 +348,22 @@ public class RefTypesController {
                                          @PathVariable("id") Long id,
                                          RedirectAttributes redirectAttributes) {
         switch (type) {
+            case "branchType":{
+                try {
+                    refBranchTypeService.deleteRefBranchType(id);
+
+                    redirectAttributes.addAttribute("message", "Successfully deleted RefBranchType.");
+                } catch (Exception ex) {
+                    LOGGER.error(ex.getMessage());
+
+                    // Something went wrong...
+                    redirectAttributes.asMap().clear();
+                    redirectAttributes.addAttribute("error", ex.getMessage());
+                    return "redirect:/" + CONTROLLER_NAME + "/list";
+                }
+
+                return "redirect:/" + CONTROLLER_NAME + "/list";
+            }
             case "accountType": {
                 try {
                     refAccountTypeService.deleteRefAccountType(id);

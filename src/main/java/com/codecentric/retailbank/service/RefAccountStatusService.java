@@ -64,7 +64,7 @@ public class RefAccountStatusService implements IRefAccountStatusService {
 
     @Override
     public void deleteRefAccountStatus(RefAccountStatus refAccountStatus) {
-        // Delete any entities containing FK constraints to refAccountStatus
+        // Recursively find and delete any FK constraints to this refAccountStatus
         bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
             transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
                 transactionRepository.delete(transaction);
@@ -80,7 +80,7 @@ public class RefAccountStatusService implements IRefAccountStatusService {
     public void deleteRefAccountStatus(Long id) {
         RefAccountStatus refAccountStatus = refAccountStatusRepository.getOne(id);
 
-        // Delete any entities containing FK constraints to refAccountStatus
+        // Recursively find and delete any FK constraints to this refAccountStatus
         bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
             transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
                 transactionRepository.delete(transaction);

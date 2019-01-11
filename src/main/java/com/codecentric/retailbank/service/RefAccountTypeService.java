@@ -64,7 +64,7 @@ public class RefAccountTypeService implements IRefAccountTypeService {
 
     @Override
     public void deleteRefAccountType(RefAccountType refAccountType) {
-        // Delete any entities containing FK constraints to refAccountType
+        // Recursively find and delete any FK constraints to this refAccountType
         bankAccountRepository.findByType(refAccountType).forEach(bankAccount ->{
             transactionRepository.findByAccount(bankAccount).forEach(transaction ->{
                 transactionRepository.delete(transaction);
@@ -80,7 +80,7 @@ public class RefAccountTypeService implements IRefAccountTypeService {
     public void deleteRefAccountType(Long id) {
         RefAccountType refAccountType = refAccountTypeRepository.getOne(id);
 
-        // Delete any entities containing FK constraints to refAccountType
+        // Recursively find and delete any FK constraints to this refAccountType
         bankAccountRepository.findByType(refAccountType).forEach(bankAccount ->{
             transactionRepository.findByAccount(bankAccount).forEach(transaction ->{
                 transactionRepository.delete(transaction);

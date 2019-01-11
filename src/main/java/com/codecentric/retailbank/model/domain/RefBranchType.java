@@ -2,8 +2,8 @@ package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.naming.Name;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ref_branch_types")
@@ -14,6 +14,8 @@ public class RefBranchType {
     @GeneratedValue
     private Long id;
 
+    @NotNull
+    @Length(max = 15)
     @Column(name = "branch_type_code", nullable = false, unique = true)
     private String code;
 
@@ -34,6 +36,24 @@ public class RefBranchType {
     private String isMediumSuburban;  // Y or N
 
 
+    public RefBranchType() {
+        super();
+    }
+
+    public RefBranchType(Long id) {
+        super();
+        this.id = id;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getCode() {
         return code;
     }
@@ -50,28 +70,47 @@ public class RefBranchType {
         this.description = description;
     }
 
-    public String getLargeUrban() {
+    public String getIsLargeUrban() {
         return isLargeUrban;
     }
 
-    public void setLargeUrban(String largeUrban) {
+    public void setIsLargeUrban(String largeUrban) {
         this.isLargeUrban = largeUrban;
     }
 
-    public String getSmallRural() {
+    public String getIsSmallRural() {
         return isSmallRural;
     }
 
-    public void setSmallRural(String smallRural) {
+    public void setIsSmallRural(String smallRural) {
         this.isSmallRural = smallRural;
     }
 
-    public String getMediumSuburban() {
+    public String getIsMediumSuburban() {
         return isMediumSuburban;
     }
 
-    public void setMediumSuburban(String mediumSuburban) {
+    public void setIsMediumSuburban(String mediumSuburban) {
         this.isMediumSuburban = mediumSuburban;
+    }
+
+
+    public void setFields(String code,
+                          @Length(max = 255) String description,
+                          Boolean isLargeUrban,
+                          Boolean isSmallRural,
+                          Boolean isMediumSuburban) {
+        this.code = code;
+        this.description = description;
+
+        if (isLargeUrban != null)
+            this.isLargeUrban = isLargeUrban.booleanValue() == true ? "Y" : "N";
+
+        if (isSmallRural != null)
+            this.isSmallRural = isSmallRural.booleanValue() == true ? "Y" : "N";
+
+        if (isMediumSuburban != null)
+            this.isMediumSuburban = isMediumSuburban.booleanValue() == true ? "Y" : "N";
     }
 
 }

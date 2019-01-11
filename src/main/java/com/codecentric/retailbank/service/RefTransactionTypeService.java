@@ -62,7 +62,7 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
 
     @Override
     public void deleteRefTransactionType(RefTransactionType refTransactionType) {
-        // Delete any transactions that have a foreign key constraint to this RefTransactionType
+        // Delete any transactions with a FK constraint to this refTransactionType
         List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
         transactionRepository.deleteAll(transactions);
 
@@ -74,7 +74,7 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
     public void deleteRefTransactionType(Long id) {
         RefTransactionType refTransactionType = refTransactionTypeRepository.getOne(id);
 
-        // Delete any transactions that have a foreign key constraint to this RefTransactionType
+        // Delete any transactions with a FK constraint to this refTransactionType
         List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
         transactionRepository.deleteAll(transactions);
 
