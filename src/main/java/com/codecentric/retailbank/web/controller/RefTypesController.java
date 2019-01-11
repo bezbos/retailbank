@@ -268,4 +268,62 @@ public class RefTypesController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+
+    @RequestMapping(value = "/delete/{type}/{id}", method = RequestMethod.GET)
+    public String onRefAccountTypeDelete(@PathVariable("type") String type,
+                                         @PathVariable("id") Long id,
+                                         RedirectAttributes redirectAttributes) {
+        switch (type) {
+            case "accountType": {
+                try {
+                    refAccountTypeService.deleteRefAccountType(id);
+
+                    redirectAttributes.addAttribute("message", "Successfully deleted RefAccountType.");
+                } catch (Exception ex) {
+                    LOGGER.error(ex.getMessage());
+
+                    // Something went wrong...
+                    redirectAttributes.asMap().clear();
+                    redirectAttributes.addAttribute("error", ex.getMessage());
+                    return "redirect:/" + CONTROLLER_NAME + "/list";
+                }
+
+                return "redirect:/" + CONTROLLER_NAME + "/list";
+            }
+            case "accountStatus": {
+                try {
+                    refAccountStatusService.deleteRefAccountStatus(id);
+
+                    redirectAttributes.addAttribute("message", "Successfully deleted RefAccountStatus.");
+                } catch (Exception ex) {
+                    LOGGER.error(ex.getMessage());
+
+                    // Something went wrong...
+                    redirectAttributes.asMap().clear();
+                    redirectAttributes.addAttribute("error", ex.getMessage());
+                    return "redirect:/" + CONTROLLER_NAME + "/list";
+                }
+
+                return "redirect:/" + CONTROLLER_NAME + "/list";
+            }
+            case "transactionType": {
+                try {
+                    refTransactionTypeService.deleteRefTransactionType(id);
+
+                    redirectAttributes.addAttribute("message", "Successfully deleted RefTransactionType.");
+                } catch (Exception ex) {
+                    LOGGER.error(ex.getMessage());
+
+                    // Something went wrong...
+                    redirectAttributes.asMap().clear();
+                    redirectAttributes.addAttribute("error", ex.getMessage());
+                    return "redirect:/" + CONTROLLER_NAME + "/list";
+                }
+
+                return "redirect:/" + CONTROLLER_NAME + "/list";
+            }
+        }
+
+        return "redirect:/" + CONTROLLER_NAME + "/list";
+    }
 }

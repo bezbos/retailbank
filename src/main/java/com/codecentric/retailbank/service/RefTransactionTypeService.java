@@ -1,7 +1,9 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.RefTransactionType;
+import com.codecentric.retailbank.model.domain.Transaction;
 import com.codecentric.retailbank.repository.RefTransactionTypeRepository;
+import com.codecentric.retailbank.repository.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IRefTransactionTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,9 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private RefTransactionTypeRepository repo;
+    private RefTransactionTypeRepository refTransactionTypeRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
 
     public RefTransactionTypeService() {
@@ -28,41 +32,53 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
 
     @Override
     public RefTransactionType getById(Long id) {
-        RefTransactionType refTransactionType = repo.getOne(id);
+        RefTransactionType refTransactionType = refTransactionTypeRepository.getOne(id);
         return refTransactionType;
     }
 
     @Override
     public RefTransactionType getByCode(String code) {
-        RefTransactionType refTransactionType = repo.findByCode(code);
+        RefTransactionType refTransactionType = refTransactionTypeRepository.findByCode(code);
         return refTransactionType;
     }
 
     @Override
     public List<RefTransactionType> getAllRefTransactionTypes() {
-        List<RefTransactionType> refTransactionTypes = repo.findAll();
+        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.findAll();
         return refTransactionTypes;
     }
 
     @Override
     public RefTransactionType addRefTransactionType(RefTransactionType refTransactionType) {
-        RefTransactionType result = repo.save(refTransactionType);
+        RefTransactionType result = refTransactionTypeRepository.save(refTransactionType);
         return result;
     }
 
     @Override
     public RefTransactionType updateRefTransactionType(RefTransactionType refTransactionType) {
-        RefTransactionType result = repo.save(refTransactionType);
+        RefTransactionType result = refTransactionTypeRepository.save(refTransactionType);
         return result;
     }
 
     @Override
     public void deleteRefTransactionType(RefTransactionType refTransactionType) {
-        repo.delete(refTransactionType);
+        // Delete any transactions that have a foreign key constraint to this RefTransactionType
+        List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
+        transactionRepository.deleteAll(transactions);
+
+        // Delete the actual RefTransactionType
+        refTransactionTypeRepository.delete(refTransactionType);
     }
 
     @Override
     public void deleteRefTransactionType(Long id) {
-        repo.deleteById(id);
+        RefTransactionType refTransactionType = refTransactionTypeRepository.getOne(id);
+
+        // Delete any transactions that have a foreign key constraint to this RefTransactionType
+        List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
+        transactionRepository.deleteAll(transactions);
+
+        // Delete the actual RefTransactionType
+        refTransactionTypeRepository.delete(refTransactionType);
     }
 }
