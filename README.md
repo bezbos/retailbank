@@ -12,6 +12,7 @@
 * Better errors display(right now errors are very poorly displayed to the user)
 
 ### Planned features:
+* Limit normal user privileges. Only admins have full privileges.
 * Frontend React version
 * Full CRUD for necessary domain models.
 * Internationalization
