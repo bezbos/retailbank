@@ -23,22 +23,18 @@ public class Address {
     @Column(name = "line_2")
     private String line2;
 
-    @NotNull
     @Length(max = 255)
     @Column(name = "town_city")
     private String townCity;
 
-    @NotNull
     @Length(max = 50)
     @Column(name = "zip_postcode")
     private String zipPostcode;
 
-    @NotNull
     @Length(max = 50)
     @Column(name = "state_province_country")
     private String stateProvinceCountry;
 
-    @NotNull
     @Column(name = "country")
     @Length(max = 50)
     private String country;
@@ -124,10 +120,10 @@ public class Address {
 
     public void setFields(@NotNull @Length(max = 255) String line1,
                           @Length(max = 255) String line2,
-                          @NotNull @Length(max = 255) String townCity,
-                          @NotNull @Length(max = 50) String zipPostcode,
-                          @NotNull @Length(max = 50) String stateProvinceCountry,
-                          @NotNull @Length(max = 50) String country,
+                          @Length(max = 255) String townCity,
+                          @Length(max = 50) String zipPostcode,
+                          @Length(max = 50) String stateProvinceCountry,
+                          @Length(max = 50) String country,
                           @Length(max = 255) String otherDetails) {
         this.line1 = line1;
         this.line2 = line2;

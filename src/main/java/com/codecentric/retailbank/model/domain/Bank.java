@@ -16,6 +16,7 @@ public class Bank {
     @Column(name = "bank_details")
     private String details;
 
+
     public Bank() {
         super();
     }

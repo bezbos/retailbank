@@ -1,5 +1,3 @@
--- noinspection SqlNoDataSourceInspectionForFile
-
 DROP DATABASE bankcentric;
 
 CREATE DATABASE bankcentric;
@@ -15,10 +13,10 @@ CREATE TABLE addresses(
 	address_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     line_1 VARCHAR(255) NOT NULL,
     line_2 VARCHAR(255),
-    town_city VARCHAR(255) NOT NULL,
-    zip_postcode CHAR(20) NOT NULL,
-    state_province_country VARCHAR(50) NOT NULL,
-    country VARCHAR(50) NOT NULL,
+    town_city VARCHAR(255),
+    zip_postcode CHAR(20),
+    state_province_country VARCHAR(50),
+    country VARCHAR(50),
     other_details VARCHAR(255)
 );
 

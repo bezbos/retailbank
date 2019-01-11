@@ -9,6 +9,7 @@ public class BankDto {
     @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     private String details;
 
+
     public BankDto() {
         super();
     }

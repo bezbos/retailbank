@@ -15,19 +15,15 @@ public class AddressDto {
     @Length(max = 255)
     private String line2;
 
-    @NotNull
     @Length(max = 255)
     private String townCity;
 
-    @NotNull
     @Length(max = 50)
     private String zipPostcode;
 
-    @NotNull
     @Length(max = 50)
     private String stateProvinceCountry;
 
-    @NotNull
     @Length(max = 50)
     private String country;
 
@@ -42,10 +38,10 @@ public class AddressDto {
     public AddressDto(Long id,
                       @NotNull @Length(max = 255) String line1,
                       @Length(max = 255) String line2,
-                      @NotNull @Length(max = 255) String townCity,
-                      @NotNull @Length(max = 50) String zipPostcode,
-                      @NotNull @Length(max = 50) String stateProvinceCountry,
-                      @NotNull @Length(max = 50) String country,
+                      @Length(max = 255) String townCity,
+                      @Length(max = 50) String zipPostcode,
+                      @Length(max = 50) String stateProvinceCountry,
+                      @Length(max = 50) String country,
                       @Length(max = 255) String otherDetails) {
         super();
         this.id = id;

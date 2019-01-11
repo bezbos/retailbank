@@ -33,6 +33,16 @@ public class Branch {
     private String details;
 
 
+    public Branch() {
+        super();
+    }
+
+    public Branch(Long id) {
+        super();
+        this.id = id;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -72,4 +82,16 @@ public class Branch {
     public void setDetails(String details) {
         this.details = details;
     }
+
+
+    public void setFields(Address address,
+                          @NotNull Bank bank,
+                          @NotNull RefBranchType type,
+                          @Length(max = 255) String details) {
+        this.address = address;
+        this.bank = bank;
+        this.type = type;
+        this.details = details;
+    }
+
 }
