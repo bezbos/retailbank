@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
@@ -126,62 +125,5 @@ public class BankController {
         }
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
-    }
-
-    // ############ TESTS ############ //
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String getTestPage(Model model) {
-        boolean readWorks = true;
-        boolean addWorks = true;
-        boolean updateWorks = true;
-        boolean deleteWorks = true;
-
-        try {
-            List<Bank> banks = bankService.getAllBanks();
-            Bank bank = bankService.getById(1L);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            readWorks = false;
-        }
-        LOGGER.info("LOG: getAllBanks() completed successfully.");
-        LOGGER.info("LOG: getById(1L) completed successfully.");
-
-        try {
-            Bank testBank = new Bank();
-            testBank.setDetails("TEST");
-
-            bankService.addBank(testBank);
-            Bank result = bankService.getByDetails("TEST");
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            addWorks = false;
-        }
-        LOGGER.info("LOG: addBank(testBank) completed successfully.");
-
-
-        Bank existingBank = bankService.getByDetails("TEST");
-        try {
-            existingBank.setDetails("TEST UPDATED");
-            Bank result = bankService.updateBank(existingBank);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            updateWorks = false;
-        }
-        LOGGER.info("LOG: updateBank(existing) completed successfully.");
-
-        try {
-            bankService.deleteBank(existingBank);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            deleteWorks = false;
-        }
-        LOGGER.info("LOG: deleteBank(existingBank) completed successfully.");
-
-        model.addAttribute("readWorks", readWorks);
-        model.addAttribute("addWorks", addWorks);
-        model.addAttribute("updateWorks", updateWorks);
-        model.addAttribute("deleteWorks", deleteWorks);
-
-        return CONTROLLER_NAME + "/test";
     }
 }

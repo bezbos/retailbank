@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
@@ -83,7 +82,7 @@ public class AddressController {
     public String onFormSubmit(@ModelAttribute("addressDto") @Valid AddressDto addressDto,
                                BindingResult result,
                                Model model,
-                               RedirectAttributes redirectAttributes){
+                               RedirectAttributes redirectAttributes) {
         // Check if valid
         if (addressDto == null || result.hasErrors()) {
             model.addAttribute("addressDto", addressDto);
@@ -152,69 +151,4 @@ public class AddressController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
-    // ############ TESTS ############ //
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String getTestPage(Model model) {
-        boolean readWorks = true;
-        boolean addWorks = true;
-        boolean updateWorks = true;
-        boolean deleteWorks = true;
-
-        try {
-            List<Address> addresses = addressService.getAllAddress();
-            Address address = addressService.getById(1L);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            readWorks = false;
-        }
-        LOGGER.info("LOG: getAllAddresses() completed successfully.");
-        LOGGER.info("LOG: getById(1L) completed successfully.");
-
-        try {
-            Address testAddress = new Address();
-            testAddress.setLine1("TEST");
-            testAddress.setTownCity("TEST");
-            testAddress.setZipPostcode("TEST");
-            testAddress.setStateProvinceCountry("TEST");
-            testAddress.setCountry("TEST");
-
-            addressService.addAddress(testAddress);
-            Address result = addressService.getByLine1("TEST");
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            addWorks = false;
-        }
-        LOGGER.info("LOG: addAddress(testAddress) completed successfully.");
-
-
-        Address existingAddress = addressService.getByLine1("TEST");
-        try {
-            existingAddress.setLine1("TEST UPDATED");
-            existingAddress.setTownCity("TEST UPDATED");
-            existingAddress.setZipPostcode("TEST UPDATED");
-            existingAddress.setStateProvinceCountry("TEST UPDATED");
-            existingAddress.setCountry("TEST UPDATED");
-            Address result = addressService.updateAddress(existingAddress);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            updateWorks = false;
-        }
-        LOGGER.info("LOG: updateAddress(existing) completed successfully.");
-
-        try {
-            addressService.deleteAddress(existingAddress);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            deleteWorks = false;
-        }
-        LOGGER.info("LOG: deleteAddress(existingAddress) completed successfully.");
-
-        model.addAttribute("readWorks", readWorks);
-        model.addAttribute("addWorks", addWorks);
-        model.addAttribute("updateWorks", updateWorks);
-        model.addAttribute("deleteWorks", deleteWorks);
-
-        return CONTROLLER_NAME + "/test";
-    }
-
 }
