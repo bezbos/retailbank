@@ -2,7 +2,7 @@ package com.codecentric.retailbank.security;
 
 import com.codecentric.retailbank.model.security.Role;
 import com.codecentric.retailbank.model.security.User;
-import com.codecentric.retailbank.repository.UserRepository;
+import com.codecentric.retailbank.repository.SpringData.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

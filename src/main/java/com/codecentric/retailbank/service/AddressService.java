@@ -1,7 +1,11 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Address;
-import com.codecentric.retailbank.repository.*;
+import com.codecentric.retailbank.repository.SpringData.AddressRepository;
+import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
+import com.codecentric.retailbank.repository.SpringData.BranchRepository;
+import com.codecentric.retailbank.repository.SpringData.CustomerRepository;
+import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IAddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

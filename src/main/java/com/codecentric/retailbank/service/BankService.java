@@ -1,14 +1,16 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.*;
-import com.codecentric.retailbank.repository.*;
+import com.codecentric.retailbank.model.domain.Bank;
+import com.codecentric.retailbank.repository.JDBC.ListPage;
+import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
+import com.codecentric.retailbank.repository.SpringData.BankRepository;
+import com.codecentric.retailbank.repository.SpringData.BranchRepository;
+import com.codecentric.retailbank.repository.SpringData.CustomerRepository;
+import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IBankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,6 +32,9 @@ public class BankService implements IBankService {
     private BankAccountRepository bankAccountRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private com.codecentric.retailbank.repository.JDBC.BankRepositoryJDBC bankRepositoryJDBC;
 
     public BankService() {
         super();
@@ -57,9 +62,8 @@ public class BankService implements IBankService {
     }
 
     @Override
-    public Page<Bank> getAllBanksByPage(Integer pageIndex, Integer pageSize) {
-        Pageable page = new PageRequest(pageIndex, pageSize);
-        Page<Bank> banks = bankRepository.findAll(page);
+    public ListPage<Bank> getAllBanksByPage(int pageIndex, int pageSize) {
+        ListPage<Bank> banks = bankRepositoryJDBC.allByPage(pageIndex, pageSize);
         return banks;
     }
 

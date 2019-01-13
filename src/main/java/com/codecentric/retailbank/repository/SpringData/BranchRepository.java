@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository;
+package com.codecentric.retailbank.repository.SpringData;
 
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;

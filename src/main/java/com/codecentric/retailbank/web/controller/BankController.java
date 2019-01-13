@@ -2,12 +2,11 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.dto.BankDto;
-import com.codecentric.retailbank.repository.JDBC.BankJDBCRepository;
+import com.codecentric.retailbank.repository.JDBC.ListPage;
 import com.codecentric.retailbank.service.BankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,18 +47,16 @@ public class BankController {
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
                                Model model) throws SQLException {
 
-        BankJDBCRepository.test5();
-
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
                 0 : pageIndex;
 
-        Page<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
+        ListPage<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
 
         model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", banks.getTotalPages());
-        model.addAttribute("banks", banks.getContent());
+        model.addAttribute("totalPages", banks.getPageCount());
+        model.addAttribute("banks", banks.getModels());
         return CONTROLLER_NAME + "/list";
     }
 
@@ -130,4 +127,5 @@ public class BankController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+
 }

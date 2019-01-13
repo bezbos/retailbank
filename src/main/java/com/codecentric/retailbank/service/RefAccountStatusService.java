@@ -1,9 +1,9 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.RefAccountStatus;
-import com.codecentric.retailbank.repository.BankAccountRepository;
-import com.codecentric.retailbank.repository.RefAccountStatusRepository;
-import com.codecentric.retailbank.repository.TransactionRepository;
+import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
+import com.codecentric.retailbank.repository.SpringData.RefAccountStatusRepository;
+import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IRefAccountStatusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

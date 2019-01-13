@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository;
+package com.codecentric.retailbank.repository.SpringData;
 
 import com.codecentric.retailbank.model.domain.Merchant;
 import org.springframework.data.jpa.repository.JpaRepository;

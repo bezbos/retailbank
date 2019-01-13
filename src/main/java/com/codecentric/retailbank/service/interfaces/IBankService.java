@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.Bank;
-import org.springframework.data.domain.Page;
+import com.codecentric.retailbank.repository.JDBC.ListPage;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface IBankService {
 
     List<Bank> getAllBanks();
 
-    Page<Bank> getAllBanksByPage(Integer pageIndex, Integer pageSize);
+    ListPage<Bank> getAllBanksByPage(int pageIndex, int pageSize);
 
     // CREATE
     Bank addBank(Bank bank);

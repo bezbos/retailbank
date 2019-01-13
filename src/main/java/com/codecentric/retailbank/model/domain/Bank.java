@@ -2,7 +2,11 @@ package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "banks")
@@ -18,7 +22,6 @@ public class Bank {
 
 
     public Bank() {
-        super();
     }
 
     public Bank(String details) {
@@ -27,6 +30,11 @@ public class Bank {
 
     public Bank(Long id) {
         this.id = id;
+    }
+
+    public Bank(Long id, String details) {
+        this.id = id;
+        this.details = details;
     }
 
 

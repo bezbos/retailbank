@@ -1,7 +1,6 @@
-package com.codecentric.retailbank.repository;
+package com.codecentric.retailbank.repository.SpringData;
 
 import com.codecentric.retailbank.model.domain.Address;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

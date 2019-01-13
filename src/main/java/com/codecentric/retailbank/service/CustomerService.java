@@ -1,10 +1,8 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Customer;
-import com.codecentric.retailbank.repository.BankRepository;
-import com.codecentric.retailbank.repository.CustomerRepository;
+import com.codecentric.retailbank.repository.SpringData.CustomerRepository;
 import com.codecentric.retailbank.service.interfaces.ICustomerService;
-import org.apache.catalina.util.CustomObjectInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

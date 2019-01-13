@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Branch;
-import com.codecentric.retailbank.repository.BranchRepository;
+import com.codecentric.retailbank.repository.SpringData.BranchRepository;
 import com.codecentric.retailbank.service.interfaces.IBranchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

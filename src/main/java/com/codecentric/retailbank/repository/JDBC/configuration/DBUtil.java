@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository.JDBC;
+package com.codecentric.retailbank.repository.JDBC.configuration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ public class DBUtil {
     // ORACLE
     private static final String ORACLE_USERNAME = "hr";
     private static final String ORACLE_PASSWORD = "hr";
-    private static final String ORACLE_CONNECTION_STRING = "jdbc:mysql://localhost:3306/bankcentric";
+    private static final String ORACLE_CONNECTION_STRING = "ORACLE_DB_CONNECTION_STRING";
 
     // MYSQL
     private static final String MY_SQL_USERNAME = "root";
@@ -28,7 +28,7 @@ public class DBUtil {
         }
     }
 
-    public static void showErrorMessage(SQLException ex){
+    public static void showErrorMessage(SQLException ex) {
         System.err.println("Error: " + ex.getMessage());
         System.err.println("Error code: " + ex.getErrorCode());
     }
