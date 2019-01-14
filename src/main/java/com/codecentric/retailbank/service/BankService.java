@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.repository.JDBC.ListPage;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
 import com.codecentric.retailbank.repository.SpringData.BankRepository;
 import com.codecentric.retailbank.repository.SpringData.BranchRepository;

@@ -2,7 +2,8 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.dto.BankDto;
-import com.codecentric.retailbank.repository.JDBC.ListPage;
+import com.codecentric.retailbank.repository.JDBC.BankRepositoryJDBC;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.service.BankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,11 @@ public class BankController {
         Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
                 0 : pageIndex;
+
+        BankRepositoryJDBC bankRepositoryJDBC = new BankRepositoryJDBC();
+        bankRepositoryJDBC.singleOrDefault(0L);
+        bankRepositoryJDBC.single(1L);
+        bankRepositoryJDBC.update(new Bank(1L, "ANOTHER TEST"));
 
         ListPage<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
 

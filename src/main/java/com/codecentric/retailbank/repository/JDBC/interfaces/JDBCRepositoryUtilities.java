@@ -6,20 +6,40 @@ import java.sql.SQLException;
 
 public class JDBCRepositoryUtilities {
 
-    protected void closeConnections(ResultSet resultSet) throws SQLException {
-        if(resultSet != null)
-            resultSet.close();
+    protected void closeConnections(ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    protected void closeConnections(Connection connection) throws SQLException {
-        if(connection != null)
-            connection.close();
+    protected void closeConnections(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    protected void closeConnections(Connection connection, ResultSet resultSet) throws SQLException {
-        if(connection != null)
-            connection.close();
-        if(resultSet != null)
-            resultSet.close();
+    protected void closeConnections(Connection connection, ResultSet resultSet) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -19,7 +19,7 @@ CREATE TABLE addresses(
     country VARCHAR(50),
     other_details VARCHAR(255)
 );
-
+    
 CREATE TABLE ref_branch_types(
 	branch_type_id BIGINT AUTO_INCREMENT PRIMARY KEY,
 	branch_type_code CHAR(15) NOT NULL UNIQUE,
@@ -95,14 +95,14 @@ CREATE TABLE transactions(
     transaction_amount DECIMAL(65,5) NOT NULL,
     other_details VARCHAR(255)
 );
-
-
+    
+    
 CREATE TABLE application_logs(
 	uuid BINARY(16) PRIMARY KEY,
 	log_message VARCHAR(255),
     log_date DATETIME
 );
-
+    
 CREATE TABLE user_account(
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255),

@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository.JDBC;
+package com.codecentric.retailbank.repository.JDBC.wrappers;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class ListPage<T> {
     public ListPage(List<T> modelList, long modelsCount, long pageSize) {
         this.models = modelList;
         this.pageCount = (modelsCount / pageSize) < 1.0f ?
-                1 : (modelsCount / pageSize);
+                1L : (long)Math.ceil((modelsCount / pageSize) + 0.5f);
     }
 
 
@@ -31,6 +31,6 @@ public class ListPage<T> {
 
     public void setPageCount(long modelsCount, long pageSize) {
         this.pageCount = (modelsCount / pageSize) < 1.0f ?
-                1 : (modelsCount / pageSize);
+                1L : (long)Math.ceil((modelsCount / pageSize) + 0.5f);
     }
 }

@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.repository.JDBC.ListPage;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 
 import java.util.List;
 

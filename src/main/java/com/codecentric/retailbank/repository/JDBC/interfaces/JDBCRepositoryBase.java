@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.repository.JDBC.interfaces;
 
-import com.codecentric.retailbank.repository.JDBC.ListPage;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 
 import java.util.List;
 
@@ -12,14 +12,6 @@ public interface JDBCRepositoryBase<T, ID> {
     T singleOrDefault(ID id);
 
     T single(ID id);
-
-    T firstOrDefault(ID id);
-
-    T first(ID id);
-
-    T lastOrDefault(ID id);
-
-    T last(ID id);
 
     T insert(T model);
 
