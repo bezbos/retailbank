@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
-public class BankJDBCRepository {
+public class JDBCDemos {
 
     public static void metadata_demo() throws SQLException {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB)) {

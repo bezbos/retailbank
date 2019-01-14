@@ -5,15 +5,19 @@ import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import java.util.List;
 
 public interface JDBCRepositoryBase<T, ID> {
-    List<T> all();
+    List<T> findAllOrDefault();
 
-    ListPage<T> allByPage(int pageIndex, int pageSize);
+    List<T> findAll();
 
-    T singleOrDefault(ID id);
+    ListPage<T> findAllRangeOrDefault(int pageIndex, int pageSize);
 
-    T single(ID id);
+    ListPage<T> findAllRange(int pageIndex, int pageSize);
 
-    T insert(T model);
+    T getSingleOrDefault(ID id);
+
+    T getSingle(ID id);
+
+    T add(T model);
 
     T update(T model);
 

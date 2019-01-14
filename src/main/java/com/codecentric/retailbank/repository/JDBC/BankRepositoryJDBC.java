@@ -22,15 +22,14 @@ import java.util.List;
 public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         implements JDBCRepositoryBase<Bank, Long> {
 
-    @Override
-    public List<Bank> all() {
+    @Override public List<Bank> findAllOrDefault() {
         ResultSet resultSet = null;
         List<Bank> banks = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAllBanks = conn.prepareCall("{call allBanks()}")) {
 
-            // Retrieve all banks
+            // Retrieve findAll banks
             csAllBanks.execute();
 
             // Transform each ResultSet row into Bank model and add to "banks" list
@@ -47,11 +46,42 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             closeConnections(resultSet);
         }
 
+        return banks.size() < 1 ? null : banks;
+    }
+
+    @Override public List<Bank> findAll() {
+        ResultSet resultSet = null;
+        List<Bank> banks = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csAllBanks = conn.prepareCall("{call allBanks()}")) {
+
+            // Retrieve findAll banks
+            csAllBanks.execute();
+
+            // Transform each ResultSet row into Bank model and add to "banks" list
+            resultSet = csAllBanks.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+                banks.add(
+                        new Bank(resultSet.getLong(1), resultSet.getString(2))
+                );
+            }
+
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
         return banks;
     }
 
-    @Override
-    public ListPage<Bank> allByPage(int pageIndex, int pageSize) {
+
+    @Override public ListPage<Bank> findAllRangeOrDefault(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Bank> bankListPage = new ListPage<>();
 
@@ -59,7 +89,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
              CallableStatement csAllBanksRange = conn.prepareCall("{call allBanksRange(?,?)}");
              CallableStatement csBanksCount = conn.prepareCall("{call allBanksCount()}")) {
 
-            // Retrieve all banks by page
+            // Retrieve findAll banks by page
             csAllBanksRange.setInt(1, Math.abs(pageIndex * pageSize));
             csAllBanksRange.setInt(2, Math.abs(pageSize));
             csAllBanksRange.execute();
@@ -88,11 +118,127 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             closeConnections(resultSet);
         }
 
+        return bankListPage.getModels().size() < 1 ? null : bankListPage;
+    }
+
+    @Override public ListPage<Bank> findAllRange(int pageIndex, int pageSize) {
+        ResultSet resultSet = null;
+        ListPage<Bank> bankListPage = new ListPage<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csAllBanksRange = conn.prepareCall("{call allBanksRange(?,?)}");
+             CallableStatement csBanksCount = conn.prepareCall("{call allBanksCount()}")) {
+
+            // Retrieve banks in a certain range
+            csAllBanksRange.setInt(1, Math.abs(pageIndex * pageSize));
+            csAllBanksRange.setInt(2, Math.abs(pageSize));
+            csAllBanksRange.execute();
+
+            // Transform ResultSet rows into Bank models and add them into the bankListPage
+            List<Bank> banksList = new ArrayList<>();
+            resultSet = csAllBanksRange.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+                ++rowCounter;
+                banksList.add(
+                        new Bank(resultSet.getLong(1), resultSet.getString(2))
+                );
+            }
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+            // Get the total number of banks in DB
+            csBanksCount.execute();
+            resultSet = csBanksCount.getResultSet();
+            rowCounter = 0;
+            while (resultSet.next()){
+                ++rowCounter;
+                bankListPage.setPageCount(resultSet.getLong(1), pageSize);
+            }
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+            // Add banks to ListPage transfer object
+            bankListPage.setModels(banksList);
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
         return bankListPage;
     }
 
-    @Override
-    public Bank singleOrDefault(Long id) {
+
+    public List<Bank> findAllByDetailsOrDefault(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+        List<Bank> banks = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement callableStatement = conn.prepareCall("{call allBanksByDetails(?)}")) {
+
+            // Retrieve findAll banks
+            callableStatement.setString(1, details);
+            callableStatement.execute();
+
+            // Transform each ResultSet row into Bank model and add to "banks" list
+            resultSet = callableStatement.getResultSet();
+            while (resultSet.next()) {
+                banks.add(
+                        new Bank(resultSet.getLong(1), resultSet.getString(2))
+                );
+            }
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return banks.size() < 1 ? null : banks;
+    }
+
+    public List<Bank> findAllByDetails(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+        List<Bank> banks = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement callableStatement = conn.prepareCall("{call allBanksByDetails(?)}")) {
+
+            // Retrieve findAll banks
+            callableStatement.setString(1, details);
+            callableStatement.execute();
+
+            // Transform each ResultSet row into Bank model and add to "banks" list
+            resultSet = callableStatement.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+                banks.add(
+                        new Bank(resultSet.getLong(1), resultSet.getString(2))
+                );
+            }
+
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return banks;
+    }
+
+
+    @Override public Bank getSingleOrDefault(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -102,7 +248,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleBank = conn.prepareCall("{call singleBank(?)}")) {
 
-            // Retrieve a single bank
+            // Retrieve a getSingle bank
             csSingleBank.setLong(1, id);
             csSingleBank.execute();
 
@@ -128,8 +274,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         return bank;
     }
 
-    @Override
-    public Bank single(Long id) {
+    @Override public Bank getSingle(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -139,7 +284,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleBank = conn.prepareCall("{call singleBank(?)}")) {
 
-            // Retrieve a single bank
+            // Retrieve a getSingle bank
             csSingleBank.setLong(1, id);
             csSingleBank.execute();
 
@@ -169,8 +314,85 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         return bank;
     }
 
-    @Override
-    public Bank insert(Bank model) {
+
+    public Bank getSingleByDetailsOrDefault(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        Bank bank = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csSingleBank = conn.prepareCall("{call singleBankByDetails(?)}")) {
+
+            // Retrieve a getSingle bank
+            csSingleBank.setString(1, details);
+            csSingleBank.execute();
+
+            // Transform ResultSet row into a Bank model
+            resultSet = csSingleBank.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Bank object
+                bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
+            }
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return bank;
+    }
+
+    public Bank getSingleByDetails(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        Bank bank = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csSingleBank = conn.prepareCall("{call singleBankByDetails(?)}")) {
+
+            // Retrieve a getSingle bank
+            csSingleBank.setString(1, details);
+            csSingleBank.execute();
+
+            // Transform ResultSet row into a Bank model
+            byte rowCounter = 0;
+            resultSet = csSingleBank.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Bank object
+                bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
+            }
+
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return bank;
+    }
+
+
+    @Override public Bank add(Bank model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -188,8 +410,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         return model;
     }
 
-    @Override
-    public Bank update(Bank model) {
+    @Override public Bank update(Bank model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -208,8 +429,8 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         return model;
     }
 
-    @Override
-    public void deleteOrDefault(Bank model) {
+
+    @Override public void deleteOrDefault(Bank model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -225,8 +446,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void delete(Bank model) {
+    @Override public void delete(Bank model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -265,8 +485,8 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void deleteByIdOrDefault(Long id) {
+
+    @Override public void deleteByIdOrDefault(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -282,8 +502,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void deleteById(Long id) {
+    @Override public void deleteById(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -323,8 +542,8 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void insertBatch(Iterable<Bank> models) {
+
+    @Override public void insertBatch(Iterable<Bank> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAddBank = conn.prepareCall("{call addBank(?)}")) {
 
@@ -345,8 +564,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void updateBatch(Iterable<Bank> models) {
+    @Override public void updateBatch(Iterable<Bank> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cstmtUpdateBank = conn.prepareCall("{call updateBank(?,?)}")) {
 
@@ -368,8 +586,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void deleteBatch(Iterable<Bank> models) {
+    @Override public void deleteBatch(Iterable<Bank> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cstmtUpdateBank = conn.prepareCall("{call deleteBank(?)}")) {
 
@@ -390,8 +607,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         }
     }
 
-    @Override
-    public void deleteBatchByIds(Iterable<Long> ids) {
+    @Override public void deleteBatchByIds(Iterable<Long> ids) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cstmtUpdateBank = conn.prepareCall("{call deleteBank(?)}")) {
 

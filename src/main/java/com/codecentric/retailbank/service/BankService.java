@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Bank;
+import com.codecentric.retailbank.repository.JDBC.BankRepositoryJDBC;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
 import com.codecentric.retailbank.repository.SpringData.BankRepository;
@@ -32,59 +33,49 @@ public class BankService implements IBankService {
     private BankAccountRepository bankAccountRepository;
     @Autowired
     private TransactionRepository transactionRepository;
-
     @Autowired
-    private com.codecentric.retailbank.repository.JDBC.BankRepositoryJDBC bankRepositoryJDBC;
+    private BankRepositoryJDBC bankRepositoryJDBC;
+
 
     public BankService() {
-        super();
     }
 
 
-    @Override
-    public Bank getById(Long id) {
-        Bank bank = bankRepository.findById(id).get();
-
+    @Override public Bank getById(Long id) {
+        Bank bank = bankRepositoryJDBC.getSingleOrDefault(id);
         return bank;
     }
 
-    @Override
-    public Bank getByDetails(String details) {
-        Bank bank = bankRepository.findByDetails(details);
-
+    @Override public Bank getByDetails(String details) {
+        Bank bank = bankRepositoryJDBC.getSingleByDetails(details);
         return bank;
     }
 
-    @Override
-    public List<Bank> getAllBanks() {
-        List<Bank> banks = bankRepository.findAll();
+    @Override public List<Bank> getAllBanks() {
+        List<Bank> banks = bankRepositoryJDBC.findAllOrDefault();
         return banks;
     }
 
-    @Override
-    public ListPage<Bank> getAllBanksByPage(int pageIndex, int pageSize) {
-        ListPage<Bank> banks = bankRepositoryJDBC.allByPage(pageIndex, pageSize);
+    @Override public ListPage<Bank> getAllBanksByPage(int pageIndex, int pageSize) {
+        ListPage<Bank> banks = bankRepositoryJDBC.findAllRange(pageIndex, pageSize);
         return banks;
     }
 
-    @Override
-    public Bank addBank(Bank bank) {
-        Bank result = bankRepository.save(bank);
+    @Override public Bank addBank(Bank bank) {
+        Bank result = bankRepositoryJDBC.add(bank);
         return result;
     }
 
-    @Override
-    public Bank updateBank(Bank bank) {
-        Bank result = bankRepository.save(bank);
+    @Override public Bank updateBank(Bank bank) {
+        Bank result = bankRepositoryJDBC.update(bank);
         return result;
     }
 
-    @Override
-    public void deleteBank(Bank bank) {
+    @Override public void deleteBank(Bank bank) {
         // Recursively find and delete any FK constraints that this bank has
-        branchRepository.findByBank(bank).forEach(branch ->{
-            customerRepository.findByBranch(branch).forEach(customer ->{
-                bankAccountRepository.findByCustomer(customer).forEach(bankAccount ->{
+        branchRepository.findByBank(bank).forEach(branch -> {
+            customerRepository.findByBranch(branch).forEach(customer -> {
+                bankAccountRepository.findByCustomer(customer).forEach(bankAccount -> {
                     transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
                         transactionRepository.delete(transaction);
                     });
@@ -96,18 +87,17 @@ public class BankService implements IBankService {
         });
 
         // Delete the actual bank
-        bankRepository.delete(bank);
+        bankRepositoryJDBC.delete(bank);
     }
 
-    @Override
-    public void deleteBank(Long id) {
+    @Override public void deleteBank(Long id) {
         // Get the bank with this id
-        Bank bank = bankRepository.getOne(id);
+        Bank bank = bankRepositoryJDBC.getSingle(id);
 
         // Recursively find and delete any FK constraints that this bank has
-        branchRepository.findByBank(bank).forEach(branch ->{
-            customerRepository.findByBranch(branch).forEach(customer ->{
-                bankAccountRepository.findByCustomer(customer).forEach(bankAccount ->{
+        branchRepository.findByBank(bank).forEach(branch -> {
+            customerRepository.findByBranch(branch).forEach(customer -> {
+                bankAccountRepository.findByCustomer(customer).forEach(bankAccount -> {
                     transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
                         transactionRepository.delete(transaction);
                     });
@@ -119,6 +109,6 @@ public class BankService implements IBankService {
         });
 
         // Delete the actual bank
-        bankRepository.delete(bank);
+        bankRepositoryJDBC.delete(bank);
     }
 }
