@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository.JDBC.interfaces;
+package com.codecentric.retailbank.repository.JDBC.helpers;
 
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 
@@ -17,16 +17,20 @@ public interface JDBCRepositoryBase<T, ID> {
 
     T update(T model);
 
+    void deleteOrDefault(T model);
+
     void delete(T model);
 
-    void deleteById(T model);
+    void deleteByIdOrDefault(Long id);
 
-    T insertMany(Iterable<T> model);
+    void deleteById(Long id);
 
-    T updateMany(Iterable<T> model);
+    T insertBatch(Iterable<T> models);
 
-    void deleteMany(Iterable<T> model);
+    T updateBatch(Iterable<T> models);
 
-    void deleteManyById(Iterable<ID> model);
+    void deleteBatch(Iterable<T> models);
+
+    void deleteBatchByIds(Iterable<ID> ids);
 
 }

@@ -57,6 +57,8 @@ public class BankController {
         bankRepositoryJDBC.singleOrDefault(0L);
         bankRepositoryJDBC.single(1L);
         bankRepositoryJDBC.update(new Bank(1L, "ANOTHER TEST"));
+        bankRepositoryJDBC.delete(new Bank(1L));
+        bankRepositoryJDBC.deleteById(2L);
 
         ListPage<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
 

@@ -6,8 +6,8 @@ import com.codecentric.retailbank.repository.JDBC.configuration.DBUtil;
 import com.codecentric.retailbank.repository.JDBC.exceptions.ArgumentNullException;
 import com.codecentric.retailbank.repository.JDBC.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.JDBC.exceptions.SourceCollectionIsEmptyException;
-import com.codecentric.retailbank.repository.JDBC.interfaces.JDBCRepositoryBase;
-import com.codecentric.retailbank.repository.JDBC.interfaces.JDBCRepositoryUtilities;
+import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryBase;
+import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import org.springframework.stereotype.Repository;
 
@@ -151,7 +151,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
                 // Check if more than one element matches id parameter
                 ++rowCounter;
                 if (rowCounter > 1)
-                    throw new NullPointerException("The ResultSet does not contain exactly one row.");
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a Bank object
                 bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
@@ -209,32 +209,137 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
     }
 
     @Override
+    public void deleteOrDefault(Bank model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}")) {
+
+            // Delete bank
+            csDeleteBank.setLong(1, model.getId());
+            csDeleteBank.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override
     public void delete(Bank model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}");
+             CallableStatement csSingleBank = conn.prepareCall("{call singleBank(?)}")) {
+
+            // Check if bank exists
+            csSingleBank.setLong(1, model.getId());
+            csSingleBank.execute();
+
+            // Validate result set
+            byte rowCounter = 0;
+            resultSet = csSingleBank.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+            }
+
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+            // Delete bank
+            csDeleteBank.setLong(1, model.getId());
+            csDeleteBank.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
     }
 
     @Override
-    public void deleteById(Bank model) {
+    public void deleteByIdOrDefault(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}")) {
+
+            // Delete bank
+            csDeleteBank.setLong(1, id);
+            csDeleteBank.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
     }
 
     @Override
-    public Bank insertMany(Iterable<Bank> model) {
+    public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}");
+             CallableStatement csSingleBank = conn.prepareCall("{call singleBank(?)}")) {
+
+            // Check if bank exists
+            csSingleBank.setLong(1, id);
+            csSingleBank.execute();
+
+            // Validate result set
+            byte rowCounter = 0;
+            resultSet = csSingleBank.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one row matches the id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+            }
+
+            // Check if ResultSet is empty.
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+
+            // Delete bank
+            csDeleteBank.setLong(1, id);
+            csDeleteBank.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+    }
+
+    @Override
+    public Bank insertBatch(Iterable<Bank> models) {
         return null;
     }
 
     @Override
-    public Bank updateMany(Iterable<Bank> model) {
+    public Bank updateBatch(Iterable<Bank> models) {
         return null;
     }
 
     @Override
-    public void deleteMany(Iterable<Bank> model) {
+    public void deleteBatch(Iterable<Bank> models) {
 
     }
 
     @Override
-    public void deleteManyById(Iterable<Long> model) {
+    public void deleteBatchByIds(Iterable<Long> models) {
 
     }
 }

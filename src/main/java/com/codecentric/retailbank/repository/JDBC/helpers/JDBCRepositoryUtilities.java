@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository.JDBC.interfaces;
+package com.codecentric.retailbank.repository.JDBC.helpers;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -43,3 +43,4 @@ public class JDBCRepositoryUtilities {
         }
     }
 }
+
