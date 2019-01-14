@@ -25,9 +25,9 @@ public interface JDBCRepositoryBase<T, ID> {
 
     void deleteById(Long id);
 
-    T insertBatch(Iterable<T> models);
+    void insertBatch(Iterable<T> models);
 
-    T updateBatch(Iterable<T> models);
+    void updateBatch(Iterable<T> models);
 
     void deleteBatch(Iterable<T> models);
 

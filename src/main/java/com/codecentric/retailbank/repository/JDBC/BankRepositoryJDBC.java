@@ -324,22 +324,91 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
     }
 
     @Override
-    public Bank insertBatch(Iterable<Bank> models) {
-        return null;
+    public void insertBatch(Iterable<Bank> models) {
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csAddBank = conn.prepareCall("{call addBank(?)}")) {
+
+            // Add calls to batch
+            for (Bank model : models) {
+                try {
+                    csAddBank.setString(1, model.getDetails());
+                    csAddBank.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            csAddBank.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
     }
 
     @Override
-    public Bank updateBatch(Iterable<Bank> models) {
-        return null;
+    public void updateBatch(Iterable<Bank> models) {
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cstmtUpdateBank = conn.prepareCall("{call updateBank(?,?)}")) {
+
+            // Add calls to batch
+            for (Bank model : models) {
+                try {
+                    cstmtUpdateBank.setLong(1, model.getId());
+                    cstmtUpdateBank.setString(2, model.getDetails());
+                    cstmtUpdateBank.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            cstmtUpdateBank.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
     }
 
     @Override
     public void deleteBatch(Iterable<Bank> models) {
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cstmtUpdateBank = conn.prepareCall("{call deleteBank(?)}")) {
 
+            // Add calls to batch
+            for (Bank model : models) {
+                try {
+                    cstmtUpdateBank.setLong(1, model.getId());
+                    cstmtUpdateBank.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            cstmtUpdateBank.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
     }
 
     @Override
-    public void deleteBatchByIds(Iterable<Long> models) {
+    public void deleteBatchByIds(Iterable<Long> ids) {
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cstmtUpdateBank = conn.prepareCall("{call deleteBank(?)}")) {
 
+            // Add calls to batch
+            for (Long id : ids) {
+                try {
+                    cstmtUpdateBank.setLong(1, id);
+                    cstmtUpdateBank.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            cstmtUpdateBank.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
     }
 }
