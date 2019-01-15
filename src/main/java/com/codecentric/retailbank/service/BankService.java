@@ -4,7 +4,6 @@ import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.repository.JDBC.BankRepositoryJDBC;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
-import com.codecentric.retailbank.repository.SpringData.BankRepository;
 import com.codecentric.retailbank.repository.SpringData.BranchRepository;
 import com.codecentric.retailbank.repository.SpringData.CustomerRepository;
 import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
@@ -23,8 +22,6 @@ public class BankService implements IBankService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private BankRepository bankRepository;
     @Autowired
     private BranchRepository branchRepository;
     @Autowired

@@ -55,8 +55,8 @@ public class BankController {
         ListPage<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
 
         model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", banks.getPageCount());
-        model.addAttribute("banks", banks.getModels());
+        model.addAttribute("totalPages", banks == null ? null : banks.getPageCount());
+        model.addAttribute("banks", banks == null ? null : banks.getModels());
         return CONTROLLER_NAME + "/list";
     }
 

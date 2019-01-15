@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class BankRepositoryJDBC extends JDBCRepositoryUtilities
-        implements JDBCRepositoryBase<Bank, Long> {
+public class BankRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Bank, Long> {
 
     @Override public List<Bank> findAllOrDefault() {
         ResultSet resultSet = null;
@@ -63,6 +62,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             resultSet = csAllBanks.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
+                ++rowCounter;
                 banks.add(
                         new Bank(resultSet.getLong(1), resultSet.getString(2))
                 );
@@ -89,12 +89,12 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
              CallableStatement csAllBanksRange = conn.prepareCall("{call allBanksRange(?,?)}");
              CallableStatement csBanksCount = conn.prepareCall("{call allBanksCount()}")) {
 
-            // Retrieve findAll banks by page
+            // Retrieve banks in a certain range
             csAllBanksRange.setInt(1, Math.abs(pageIndex * pageSize));
             csAllBanksRange.setInt(2, Math.abs(pageSize));
             csAllBanksRange.execute();
 
-            // Create bank models and add them into a list
+            // Transform ResultSet rows into Bank models and add them into the bankListPage
             List<Bank> banksList = new ArrayList<>();
             resultSet = csAllBanksRange.getResultSet();
             while (resultSet.next()) {
@@ -135,8 +135,8 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             csAllBanksRange.execute();
 
             // Transform ResultSet rows into Bank models and add them into the bankListPage
-            List<Bank> banksList = new ArrayList<>();
             resultSet = csAllBanksRange.getResultSet();
+            List<Bank> banksList = new ArrayList<>();
             byte rowCounter = 0;
             while (resultSet.next()) {
                 ++rowCounter;
@@ -151,7 +151,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             csBanksCount.execute();
             resultSet = csBanksCount.getResultSet();
             rowCounter = 0;
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 ++rowCounter;
                 bankListPage.setPageCount(resultSet.getLong(1), pageSize);
             }
@@ -253,8 +253,8 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             csSingleBank.execute();
 
             // Transform ResultSet row into a Bank model
-            byte rowCounter = 0;
             resultSet = csSingleBank.getResultSet();
+            byte rowCounter = 0;
             while (resultSet.next()) {
 
                 // Check if more than one element matches id parameter
@@ -289,8 +289,8 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             csSingleBank.execute();
 
             // Transform ResultSet row into a Bank model
-            byte rowCounter = 0;
             resultSet = csSingleBank.getResultSet();
+            byte rowCounter = 0;
             while (resultSet.next()) {
 
                 // Check if more than one element matches id parameter
@@ -303,7 +303,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             }
 
             if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -397,11 +397,11 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csSingleBank = conn.prepareCall("{call addBank(?)}")) {
+             CallableStatement cs_addBank = conn.prepareCall("{call addBank(?)}")) {
 
             // Add a bank to DB
-            csSingleBank.setString(1, model.getDetails());
-            csSingleBank.execute();
+            cs_addBank.setString(1, model.getDetails());
+            cs_addBank.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -417,7 +417,7 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleBank = conn.prepareCall("{call updateBank(?,?)}")) {
 
-            // Add a bank to DB
+            // Update an existing bank in DB
             csSingleBank.setLong(1, model.getId());
             csSingleBank.setString(2, model.getDetails());
             csSingleBank.execute();
@@ -545,20 +545,20 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities
 
     @Override public void insertBatch(Iterable<Bank> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csAddBank = conn.prepareCall("{call addBank(?)}")) {
+             CallableStatement cs_addBank = conn.prepareCall("{call addBank(?)}")) {
 
             // Add calls to batch
             for (Bank model : models) {
                 try {
-                    csAddBank.setString(1, model.getDetails());
-                    csAddBank.addBatch();
+                    cs_addBank.setString(1, model.getDetails());
+                    cs_addBank.addBatch();
                 } catch (SQLException ex) {
                     DBUtil.showErrorMessage(ex);
                 }
             }
 
             // Execute batch!
-            csAddBank.executeBatch();
+            cs_addBank.executeBatch();
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }

@@ -2,11 +2,11 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.dto.AddressDto;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.service.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,11 +51,11 @@ public class AddressController {
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
                 0 : pageIndex;
 
-        Page<Address> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
+        ListPage<Address> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
 
         model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", addresses.getTotalPages());
-        model.addAttribute("addresses", addresses.getContent());
+        model.addAttribute("totalPages", addresses == null ? null : addresses.getPageCount());
+        model.addAttribute("addresses", addresses == null ? null : addresses.getModels());
         return CONTROLLER_NAME + "/index";
     }
 

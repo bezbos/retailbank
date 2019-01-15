@@ -2,7 +2,11 @@ package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -45,13 +49,30 @@ public class Address {
 
 
     public Address() {
-        super();
+
     }
 
     public Address(Long id) {
         this.id = id;
     }
 
+    public Address(Long id,
+                   @NotNull @Length(max = 255) String line1,
+                   @Length(max = 255) String line2,
+                   @Length(max = 255) String townCity,
+                   @Length(max = 50) String zipPostcode,
+                   @Length(max = 50) String stateProvinceCountry,
+                   @Length(max = 50) String country,
+                   @Length(max = 255) String otherDetails) {
+        this.id = id;
+        this.line1 = line1;
+        this.line2 = line2;
+        this.townCity = townCity;
+        this.zipPostcode = zipPostcode;
+        this.stateProvinceCountry = stateProvinceCountry;
+        this.country = country;
+        this.otherDetails = otherDetails;
+    }
 
     public Long getId() {
         return id;
