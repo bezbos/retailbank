@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
 import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
 import org.hibernate.validator.constraints.Length;
 
@@ -11,7 +11,7 @@ public class BranchDto {
 
     private Long id;
 
-    private AddressOLD address;
+    private Address address;
 
     @NotNull
     private Bank bank;
@@ -28,7 +28,7 @@ public class BranchDto {
     }
 
     public BranchDto(Long id,
-                     AddressOLD address,
+                     Address address,
                      @NotNull Bank bank,
                      @NotNull RefBranchTypeOLD type,
                      @Length(min = 7, max = 255) String details) {
@@ -48,11 +48,11 @@ public class BranchDto {
         this.id = id;
     }
 
-    public AddressOLD getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(AddressOLD address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 

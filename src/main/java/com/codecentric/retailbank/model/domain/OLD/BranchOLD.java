@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.domain.OLD;
 
+import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
 import org.hibernate.validator.constraints.Length;
 
@@ -23,7 +24,7 @@ public class BranchOLD {
 
     @OneToOne(targetEntity = AddressOLD.class)
     @JoinColumn(name = "address_id")
-    private AddressOLD address;
+    private Address address;
 
     @NotNull
     @OneToOne(targetEntity = BankOLD.class)
@@ -58,11 +59,11 @@ public class BranchOLD {
         this.id = id;
     }
 
-    public AddressOLD getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(AddressOLD address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 
@@ -91,7 +92,7 @@ public class BranchOLD {
     }
 
 
-    public void setFields(AddressOLD address,
+    public void setFields(Address address,
                           @NotNull Bank bank,
                           @NotNull RefBranchTypeOLD type,
                           @Length(max = 255) String details) {

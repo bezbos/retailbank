@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.web.controller;
 
+import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
 import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
 import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
 import com.codecentric.retailbank.model.dto.BranchDto;
@@ -105,9 +105,9 @@ public class BranchController {
             if (dto.getId() != null && dto.getId() != 0) {
                 BranchOLD updatedBranch = branchService.getById(dto.getId());
 
-                AddressOLD address = addressService.getByLine1(dto.getAddress().getLine1());
+                Address address = addressService.getByLine1(dto.getAddress().getLine1());
                 if (address == null) {
-                    address = new AddressOLD();
+                    address = new Address();
                     address.setLine1(dto.getAddress().getLine1());
 
                     addressService.addAddress(address);
@@ -130,9 +130,9 @@ public class BranchController {
             } else {
                 BranchOLD newBranch = new BranchOLD();
 
-                AddressOLD address = addressService.getByLine1(dto.getAddress().getLine1());
+                Address address = addressService.getByLine1(dto.getAddress().getLine1());
                 if (address == null) {
-                    address = new AddressOLD();
+                    address = new Address();
                     address.setLine1(dto.getAddress().getLine1());
 
                     addressService.addAddress(address);

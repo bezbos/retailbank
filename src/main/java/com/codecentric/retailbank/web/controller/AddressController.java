@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
+import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.dto.AddressDto;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.service.AddressService;
@@ -46,7 +46,7 @@ public class AddressController {
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
                 0 : pageIndex;
 
-        ListPage<AddressOLD> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
+        ListPage<Address> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
 
         model.addAttribute("currentPageIndex", pageIndex);
         model.addAttribute("totalPages", addresses == null ? null : addresses.getPageCount());
@@ -56,8 +56,8 @@ public class AddressController {
 
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
     public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
-        AddressOLD address = id.isPresent() ?
-                addressService.getById(id.get()) : new AddressOLD(0L);
+        Address address = id.isPresent() ?
+                addressService.getById(id.get()) : new Address(0L);
 
         AddressDto addressDto = new AddressDto(
                 address.getId(),
@@ -87,7 +87,7 @@ public class AddressController {
         // Try adding/updating bank
         try {
             if (addressDto.getId() != null && addressDto.getId() != 0) {
-                AddressOLD updatedAddress = addressService.getById(addressDto.getId());
+                Address updatedAddress = addressService.getById(addressDto.getId());
                 updatedAddress.setFields(
                         addressDto.getLine1(),
                         addressDto.getLine2(),
@@ -101,7 +101,7 @@ public class AddressController {
 
                 redirectAttributes.addAttribute("message", "Successfully updated address.");
             } else {
-                AddressOLD newAddress = new AddressOLD();
+                Address newAddress = new Address();
                 newAddress.setFields(
                         addressDto.getLine1(),
                         addressDto.getLine2(),

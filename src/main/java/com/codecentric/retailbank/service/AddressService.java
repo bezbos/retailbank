@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
+import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.repository.JDBC.AddressRepositoryJDBC;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.repository.SpringData.AddressRepository;
@@ -43,50 +43,50 @@ public class AddressService implements IAddressService {
 
 
     @Override
-    public AddressOLD getById(Long id) {
-        AddressOLD address = addressRepositoryJDBC.getSingle(id);
+    public Address getById(Long id) {
+        Address address = addressRepositoryJDBC.getSingle(id);
         return address;
     }
 
     @Override
-    public AddressOLD getByLine1(String line1) {
-        AddressOLD address = addressRepositoryJDBC.getSingleByLine1(line1);
+    public Address getByLine1(String line1) {
+        Address address = addressRepositoryJDBC.getSingleByLine1(line1);
         return address;
     }
 
     @Override
-    public List<AddressOLD> getAllAddress() {
-        List<AddressOLD> addresses = addressRepositoryJDBC.findAll();
+    public List<Address> getAllAddress() {
+        List<Address> addresses = addressRepositoryJDBC.findAll();
         return addresses;
     }
 
     @Override
-    public ListPage<AddressOLD> getAllAddressesByPage(int pageIndex, int pageSize) {
-        ListPage<AddressOLD> addresses = addressRepositoryJDBC.findAllRangeOrDefault(pageIndex, pageSize);
+    public ListPage<Address> getAllAddressesByPage(int pageIndex, int pageSize) {
+        ListPage<Address> addresses = addressRepositoryJDBC.findAllRangeOrDefault(pageIndex, pageSize);
         return addresses;
     }
 
     @Override
-    public AddressOLD addAddress(AddressOLD address) {
-        AddressOLD result = addressRepositoryJDBC.add(address);
+    public Address addAddress(Address address) {
+        Address result = addressRepositoryJDBC.add(address);
         return result;
     }
 
     @Override
-    public AddressOLD updateAddress(AddressOLD address) {
-        AddressOLD result = addressRepositoryJDBC.update(address);
+    public Address updateAddress(Address address) {
+        Address result = addressRepositoryJDBC.update(address);
         return result;
     }
 
     @Override
-    public void deleteAddress(AddressOLD address) {
-        // Remove any foreign key constraints
-        branchRepository.findByAddress(address).forEach(branch -> {
-            branch.setAddress(null);
-        });
-        customerRepository.findByAddress(address).forEach(customer -> {
-            customer.setAddress(null);
-        });
+    public void deleteAddress(Address address) {
+//        // Remove any foreign key constraints
+//        branchRepository.findByAddress(address).forEach(branch -> {
+//            branch.setAddress(null);
+//        });
+//        customerRepository.findByAddress(address).forEach(customer -> {
+//            customer.setAddress(null);
+//        });
 
         // Delete the actual address
         addressRepositoryJDBC.delete(address);
@@ -94,15 +94,15 @@ public class AddressService implements IAddressService {
 
     @Override
     public void deleteAddress(Long id) {
-        AddressOLD address = addressRepository.getOne(id);
+        Address address = addressRepositoryJDBC.getSingle(id);
 
-        // Remove any foreign key constraints
-        branchRepository.findByAddress(address).forEach(branch -> {
-            branch.setAddress(null);
-        });
-        customerRepository.findByAddress(address).forEach(customer -> {
-            customer.setAddress(null);
-        });
+//        // Remove any foreign key constraints
+//        branchRepository.findByAddress(address).forEach(branch -> {
+//            branch.setAddress(null);
+//        });
+//        customerRepository.findByAddress(address).forEach(customer -> {
+//            customer.setAddress(null);
+//        });
 
         // Delete the actual address
         addressRepositoryJDBC.delete(address);
