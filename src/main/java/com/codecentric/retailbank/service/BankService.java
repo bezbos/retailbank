@@ -65,19 +65,19 @@ public class BankService implements IBankService {
     }
 
     @Override public void deleteBank(Bank bank) {
-        // Recursively find and delete any FK constraints that this bank has
-        branchRepository.findByBank(bank).forEach(branch -> {
-            customerRepository.findByBranch(branch).forEach(customer -> {
-                bankAccountRepository.findByCustomer(customer).forEach(bankAccount -> {
-                    transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
-                        transactionRepository.delete(transaction);
-                    });
-                    bankAccountRepository.delete(bankAccount);
-                });
-                customerRepository.delete(customer);
-            });
-            branchRepository.delete(branch);
-        });
+//        // Recursively find and delete any FK constraints that this bank has
+//        branchRepository.findByBank(bank).forEach(branch -> {
+//            customerRepository.findByBranch(branch).forEach(customer -> {
+//                bankAccountRepository.findByCustomer(customer).forEach(bankAccount -> {
+//                    transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
+//                        transactionRepository.delete(transaction);
+//                    });
+//                    bankAccountRepository.delete(bankAccount);
+//                });
+//                customerRepository.delete(customer);
+//            });
+//            branchRepository.delete(branch);
+//        });
 
         // Delete the actual bank
         bankRepositoryJDBC.delete(bank);
@@ -87,19 +87,19 @@ public class BankService implements IBankService {
         // Get the bank with this id
         Bank bank = bankRepositoryJDBC.getSingle(id);
 
-        // Recursively find and delete any FK constraints that this bank has
-        branchRepository.findByBank(bank).forEach(branch -> {
-            customerRepository.findByBranch(branch).forEach(customer -> {
-                bankAccountRepository.findByCustomer(customer).forEach(bankAccount -> {
-                    transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
-                        transactionRepository.delete(transaction);
-                    });
-                    bankAccountRepository.delete(bankAccount);
-                });
-                customerRepository.delete(customer);
-            });
-            branchRepository.delete(branch);
-        });
+//        // Recursively find and delete any FK constraints that this bank has
+//        branchRepository.findByBank(bank).forEach(branch -> {
+//            customerRepository.findByBranch(branch).forEach(customer -> {
+//                bankAccountRepository.findByCustomer(customer).forEach(bankAccount -> {
+//                    transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
+//                        transactionRepository.delete(transaction);
+//                    });
+//                    bankAccountRepository.delete(bankAccount);
+//                });
+//                customerRepository.delete(customer);
+//            });
+//            branchRepository.delete(branch);
+//        });
 
         // Delete the actual bank
         bankRepositoryJDBC.delete(bank);

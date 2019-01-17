@@ -1,23 +1,12 @@
 package com.codecentric.retailbank.model.domain;
 
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "banks")
 public class Bank {
-    @Id
-    @Column(name = "bank_id")
-    @GeneratedValue
+
     private Long id;
 
-    @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
-    @Column(name = "bank_details")
+    @Size(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     private String details;
 
 

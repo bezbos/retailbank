@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.BankAccount;
+import com.codecentric.retailbank.model.domain.OLD.BankAccount;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
 import com.codecentric.retailbank.service.interfaces.IBankAccountService;
 import org.slf4j.Logger;

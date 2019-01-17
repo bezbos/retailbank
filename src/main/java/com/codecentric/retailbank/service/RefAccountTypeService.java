@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.RefAccountType;
+import com.codecentric.retailbank.model.domain.OLD.RefAccountType;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
 import com.codecentric.retailbank.repository.SpringData.RefAccountTypeRepository;
 import com.codecentric.retailbank.repository.SpringData.TransactionRepository;

@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.RefTransactionType;
-import com.codecentric.retailbank.model.domain.Transaction;
+import com.codecentric.retailbank.model.domain.OLD.RefTransactionType;
+import com.codecentric.retailbank.model.domain.OLD.Transaction;
 import com.codecentric.retailbank.repository.SpringData.RefTransactionTypeRepository;
 import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IRefTransactionTypeService;

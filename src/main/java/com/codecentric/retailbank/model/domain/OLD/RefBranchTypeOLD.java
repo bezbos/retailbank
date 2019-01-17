@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.domain.OLD;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ref_branch_types")
-public class RefBranchType {
+public class RefBranchTypeOLD {
 
     @Id
     @Column(name = "branch_type_id")
@@ -40,19 +40,19 @@ public class RefBranchType {
     private String isMediumSuburban;  // Y or N
 
 
-    public RefBranchType() {
+    public RefBranchTypeOLD() {
     }
 
-    public RefBranchType(Long id) {
+    public RefBranchTypeOLD(Long id) {
         this.id = id;
     }
 
-    public RefBranchType(Long id,
-                         @NotNull @Length(max = 15) String code,
-                         @Length(max = 255) String description,
-                         @Length(max = 1) String isLargeUrban,
-                         @Length(max = 1) String isSmallRural,
-                         @Length(max = 1) String isMediumSuburban) {
+    public RefBranchTypeOLD(Long id,
+                            @NotNull @Length(max = 15) String code,
+                            @Length(max = 255) String description,
+                            @Length(max = 1) String isLargeUrban,
+                            @Length(max = 1) String isSmallRural,
+                            @Length(max = 1) String isMediumSuburban) {
         this.id = id;
         this.code = code;
         this.description = description;

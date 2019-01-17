@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 
 import java.util.List;
@@ -8,22 +8,22 @@ import java.util.List;
 public interface IAddressService {
 
     // GET
-    Address getById(Long id);
+    AddressOLD getById(Long id);
 
-    Address getByLine1(String line1);
+    AddressOLD getByLine1(String line1);
 
-    List<Address> getAllAddress();
+    List<AddressOLD> getAllAddress();
 
     // CREATE
-    Address addAddress(Address address);
+    AddressOLD addAddress(AddressOLD address);
 
     // UPDATE
-    Address updateAddress(Address address);
+    AddressOLD updateAddress(AddressOLD address);
 
     // DELETE
-    void deleteAddress(Address address);
+    void deleteAddress(AddressOLD address);
 
     void deleteAddress(Long id);
 
-    ListPage<Address> getAllAddressesByPage(int pageIndex, int pageSize);
+    ListPage<AddressOLD> getAllAddressesByPage(int pageIndex, int pageSize);
 }

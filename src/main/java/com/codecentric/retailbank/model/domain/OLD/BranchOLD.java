@@ -1,43 +1,50 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.domain.OLD;
 
+import com.codecentric.retailbank.model.domain.Bank;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "branches")
-public class Branch {
+public class BranchOLD {
 
     @Id
     @Column(name = "branch_id")
     @GeneratedValue
     private Long id;
 
-    @OneToOne(targetEntity = Address.class)
+    @OneToOne(targetEntity = AddressOLD.class)
     @JoinColumn(name = "address_id")
-    private Address address;
+    private AddressOLD address;
 
     @NotNull
-    @OneToOne(targetEntity = Bank.class)
+    @OneToOne(targetEntity = BankOLD.class)
     @JoinColumn(name = "bank_id")
     private Bank bank;
 
     @NotNull
-    @OneToOne(targetEntity = RefBranchType.class)
+    @OneToOne(targetEntity = RefBranchTypeOLD.class)
     @JoinColumn(name = "branch_type_id")
-    private RefBranchType type;
+    private RefBranchTypeOLD type;
 
     @Length(max = 255)
     @Column(name = "branch_details")
     private String details;
 
 
-    public Branch() {
+    public BranchOLD() {
         super();
     }
 
-    public Branch(Long id) {
+    public BranchOLD(Long id) {
         super();
         this.id = id;
     }
@@ -51,11 +58,11 @@ public class Branch {
         this.id = id;
     }
 
-    public Address getAddress() {
+    public AddressOLD getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressOLD address) {
         this.address = address;
     }
 
@@ -67,11 +74,11 @@ public class Branch {
         this.bank = bank;
     }
 
-    public RefBranchType getType() {
+    public RefBranchTypeOLD getType() {
         return type;
     }
 
-    public void setType(RefBranchType branchTypeCode) {
+    public void setType(RefBranchTypeOLD branchTypeCode) {
         this.type = branchTypeCode;
     }
 
@@ -84,9 +91,9 @@ public class Branch {
     }
 
 
-    public void setFields(Address address,
+    public void setFields(AddressOLD address,
                           @NotNull Bank bank,
-                          @NotNull RefBranchType type,
+                          @NotNull RefBranchTypeOLD type,
                           @Length(max = 255) String details) {
         this.address = address;
         this.bank = bank;

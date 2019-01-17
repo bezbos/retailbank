@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.domain.OLD;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "addresses")
-public class Address {
+public class AddressOLD {
 
     @Id
     @Column(name = "address_id")
@@ -48,22 +48,22 @@ public class Address {
     private String otherDetails;
 
 
-    public Address() {
+    public AddressOLD() {
 
     }
 
-    public Address(Long id) {
+    public AddressOLD(Long id) {
         this.id = id;
     }
 
-    public Address(Long id,
-                   @NotNull @Length(max = 255) String line1,
-                   @Length(max = 255) String line2,
-                   @Length(max = 255) String townCity,
-                   @Length(max = 50) String zipPostcode,
-                   @Length(max = 50) String stateProvinceCountry,
-                   @Length(max = 50) String country,
-                   @Length(max = 255) String otherDetails) {
+    public AddressOLD(Long id,
+                      @NotNull @Length(max = 255) String line1,
+                      @Length(max = 255) String line2,
+                      @Length(max = 255) String townCity,
+                      @Length(max = 50) String zipPostcode,
+                      @Length(max = 50) String stateProvinceCountry,
+                      @Length(max = 50) String country,
+                      @Length(max = 255) String otherDetails) {
         this.id = id;
         this.line1 = line1;
         this.line2 = line2;

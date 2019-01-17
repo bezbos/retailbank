@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.Transaction;
+import com.codecentric.retailbank.model.domain.OLD.Transaction;
 import com.codecentric.retailbank.service.BankAccountService;
 import com.codecentric.retailbank.service.MerchantService;
 import com.codecentric.retailbank.service.RefTransactionTypeService;

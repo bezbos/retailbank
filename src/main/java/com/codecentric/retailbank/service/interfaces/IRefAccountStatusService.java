@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.RefAccountStatus;
+import com.codecentric.retailbank.model.domain.OLD.RefAccountStatus;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.repository.SpringData;
 
-import com.codecentric.retailbank.model.domain.Address;
-import com.codecentric.retailbank.model.domain.Branch;
-import com.codecentric.retailbank.model.domain.Customer;
+import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
+import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
+import com.codecentric.retailbank.model.domain.OLD.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Customer findByPersonalDetails(String details);
 
-    List<Customer> findByBranch(Branch relatedBranch);
+    List<Customer> findByBranch(BranchOLD relatedBranch);
 
-    List<Customer> findByAddress(Address relatedAddress);
+    List<Customer> findByAddress(AddressOLD relatedAddress);
 }

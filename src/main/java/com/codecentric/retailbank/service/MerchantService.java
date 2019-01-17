@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.Merchant;
+import com.codecentric.retailbank.model.domain.OLD.Merchant;
 import com.codecentric.retailbank.repository.SpringData.MerchantRepository;
 import com.codecentric.retailbank.service.interfaces.IMerchantService;
 import org.slf4j.Logger;

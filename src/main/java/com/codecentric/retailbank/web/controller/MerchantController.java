@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.Merchant;
+import com.codecentric.retailbank.model.domain.OLD.Merchant;
 import com.codecentric.retailbank.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

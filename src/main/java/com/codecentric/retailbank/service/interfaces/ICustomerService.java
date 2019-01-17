@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.Customer;
+import com.codecentric.retailbank.model.domain.OLD.Customer;
 
 import java.util.List;
 

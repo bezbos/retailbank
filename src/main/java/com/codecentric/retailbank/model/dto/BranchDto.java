@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.model.dto;
 
-import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.RefBranchType;
+import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
+import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -11,13 +11,13 @@ public class BranchDto {
 
     private Long id;
 
-    private Address address;
+    private AddressOLD address;
 
     @NotNull
     private Bank bank;
 
     @NotNull
-    private RefBranchType type;
+    private RefBranchTypeOLD type;
 
     @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     private String details;
@@ -28,9 +28,9 @@ public class BranchDto {
     }
 
     public BranchDto(Long id,
-                     Address address,
+                     AddressOLD address,
                      @NotNull Bank bank,
-                     @NotNull RefBranchType type,
+                     @NotNull RefBranchTypeOLD type,
                      @Length(min = 7, max = 255) String details) {
         this.id = id;
         this.address = address;
@@ -48,11 +48,11 @@ public class BranchDto {
         this.id = id;
     }
 
-    public Address getAddress() {
+    public AddressOLD getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressOLD address) {
         this.address = address;
     }
 
@@ -64,11 +64,11 @@ public class BranchDto {
         this.bank = bank;
     }
 
-    public RefBranchType getType() {
+    public RefBranchTypeOLD getType() {
         return type;
     }
 
-    public void setType(RefBranchType type) {
+    public void setType(RefBranchTypeOLD type) {
         this.type = type;
     }
 

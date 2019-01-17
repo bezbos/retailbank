@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.Transaction;
+import com.codecentric.retailbank.model.domain.OLD.Transaction;
 
 import java.util.List;
 

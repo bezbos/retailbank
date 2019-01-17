@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.repository.SpringData;
 
-import com.codecentric.retailbank.model.domain.BankAccount;
-import com.codecentric.retailbank.model.domain.RefTransactionType;
-import com.codecentric.retailbank.model.domain.Transaction;
+import com.codecentric.retailbank.model.domain.OLD.BankAccount;
+import com.codecentric.retailbank.model.domain.OLD.RefTransactionType;
+import com.codecentric.retailbank.model.domain.OLD.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,14 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.domain.OLD;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -14,14 +20,14 @@ public class Customer {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(targetEntity = Address.class)
+    @OneToOne(targetEntity = AddressOLD.class)
     @JoinColumn(name = "address_id")
-    private Address address;
+    private AddressOLD address;
 
     @NotNull
-    @OneToOne(targetEntity = Branch.class)
+    @OneToOne(targetEntity = BranchOLD.class)
     @JoinColumn(name = "branch_id")
-    private Branch branch;
+    private BranchOLD branch;
 
     @NotNull
     @Length(max = 255)
@@ -42,19 +48,19 @@ public class Customer {
         this.id = id;
     }
 
-    public Address getAddress() {
+    public AddressOLD getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressOLD address) {
         this.address = address;
     }
 
-    public Branch getBranch() {
+    public BranchOLD getBranch() {
         return branch;
     }
 
-    public void setBranch(Branch branch) {
+    public void setBranch(BranchOLD branch) {
         this.branch = branch;
     }
 

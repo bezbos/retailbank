@@ -2,7 +2,7 @@
 <div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
      layout:decorate="~{shared/_layout}" layout:fragment="content">
     <br>
-    <!-- Ref Branch Type Form -->
+    <!-- Ref BranchOLD Type Form -->
     <h2 th:if="${refBranchTypeDto != null}">Ref Branch Type Form:</h2>
     <form th:action="@{~/refTypes/formSubmit/branchType}" th:if="${refBranchTypeDto != null}"
           th:object="${refBranchTypeDto}" method="POST" enctype="utf8">

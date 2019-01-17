@@ -5,15 +5,15 @@ SET SQL_SAFE_UPDATES = 0;
 INSERT INTO 
 banks(bank_details) 
 VALUES 
-('Industrial & Commercial Bank of China - ICBC'), 
-('China Construction Bank Corp.'), 
-('Agricultural Bank of China'), 
-('Bank of China'), 
+('Industrial & Commercial BankOLD of China - ICBC'),
+('China Construction BankOLD Corp.'),
+('Agricultural BankOLD of China'),
+('BankOLD of China'),
 ('HSBC Holdings'), 
 ('JPMorgan Chase & Co.'), 
 ('BNP Paribas'), 
 ('Mitsubishi UFJ Financial Group'), 
-('Bank of America'), 
+('BankOLD of America'),
 ('Credit Agricole Group');
         
 INSERT INTO 
@@ -109,8 +109,8 @@ VALUES
 INSERT INTO
 merchants(merchant_details)
 VALUES
-('Barings Bank'),
-('Berenberg Bank'),
+('Barings BankOLD'),
+('Berenberg BankOLD'),
 ('Greenhill & Co.'),
 ('Hill Samuel'),
 ('Kuhn, Loeb & Co.');

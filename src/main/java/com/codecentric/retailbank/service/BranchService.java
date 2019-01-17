@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.Branch;
+import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
 import com.codecentric.retailbank.repository.SpringData.BranchRepository;
 import com.codecentric.retailbank.service.interfaces.IBranchService;
 import org.slf4j.Logger;
@@ -29,44 +29,44 @@ public class BranchService implements IBranchService {
 
 
     @Override
-    public Branch getById(Long id) {
-        Branch branch = branchRepository.findById(id).get();
+    public BranchOLD getById(Long id) {
+        BranchOLD branch = branchRepository.findById(id).get();
         return branch;
     }
 
     @Override
-    public Branch getByDetails(String details) {
-        Branch branch = branchRepository.findByDetails(details);
+    public BranchOLD getByDetails(String details) {
+        BranchOLD branch = branchRepository.findByDetails(details);
         return branch;
     }
 
     @Override
-    public List<Branch> getAllBranches() {
-        List<Branch> branches = branchRepository.findAll();
+    public List<BranchOLD> getAllBranches() {
+        List<BranchOLD> branches = branchRepository.findAll();
         return branches;
     }
 
     @Override
-    public Page<Branch> getAllBranchesByPage(Integer pageIndex, int pageSize) {
+    public Page<BranchOLD> getAllBranchesByPage(Integer pageIndex, int pageSize) {
         Pageable page = new PageRequest(pageIndex, pageSize);
-        Page<Branch> branches = branchRepository.findAll(page);
+        Page<BranchOLD> branches = branchRepository.findAll(page);
         return branches;
     }
 
     @Override
-    public Branch addBranch(Branch branch) {
-        Branch result = branchRepository.save(branch);
+    public BranchOLD addBranch(BranchOLD branch) {
+        BranchOLD result = branchRepository.save(branch);
         return result;
     }
 
     @Override
-    public Branch updateBranch(Branch branch) {
-        Branch result = branchRepository.save(branch);
+    public BranchOLD updateBranch(BranchOLD branch) {
+        BranchOLD result = branchRepository.save(branch);
         return result;
     }
 
     @Override
-    public void deleteBranch(Branch branch) {
+    public void deleteBranch(BranchOLD branch) {
         branchRepository.delete(branch);
     }
 

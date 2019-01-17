@@ -1,9 +1,9 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.Branch;
-import com.codecentric.retailbank.model.domain.RefBranchType;
+import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
+import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
+import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
 import com.codecentric.retailbank.model.dto.BranchDto;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BankService;
@@ -60,7 +60,7 @@ public class BranchController {
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
                 0 : pageIndex;
 
-        Page<Branch> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
+        Page<BranchOLD> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
 
         model.addAttribute("currentPageIndex", pageIndex);
         model.addAttribute("totalPages", branches.getTotalPages());
@@ -71,8 +71,8 @@ public class BranchController {
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
     public String getFormPage(@PathVariable("id") Optional<Long> id,
                               Model model) {
-        Branch branch = id.isPresent() ?
-                branchService.getById(id.get()) : new Branch(0L);
+        BranchOLD branch = id.isPresent() ?
+                branchService.getById(id.get()) : new BranchOLD(0L);
 
         BranchDto branchDto = new BranchDto(
                 branch.getId(),
@@ -103,11 +103,11 @@ public class BranchController {
         // Try adding/updating branch
         try {
             if (dto.getId() != null && dto.getId() != 0) {
-                Branch updatedBranch = branchService.getById(dto.getId());
+                BranchOLD updatedBranch = branchService.getById(dto.getId());
 
-                Address address = addressService.getByLine1(dto.getAddress().getLine1());
+                AddressOLD address = addressService.getByLine1(dto.getAddress().getLine1());
                 if (address == null) {
-                    address = new Address();
+                    address = new AddressOLD();
                     address.setLine1(dto.getAddress().getLine1());
 
                     addressService.addAddress(address);
@@ -115,7 +115,7 @@ public class BranchController {
 
                 Bank bank = bankService.getById(dto.getBank().getId());
 
-                RefBranchType refBranchType = refBranchTypeService.getById(dto.getType().getId());
+                RefBranchTypeOLD refBranchType = refBranchTypeService.getById(dto.getType().getId());
 
                 updatedBranch.setFields(
                         address,
@@ -128,11 +128,11 @@ public class BranchController {
 
                 redirectAttributes.addAttribute("message", "Successfully updated branch.");
             } else {
-                Branch newBranch = new Branch();
+                BranchOLD newBranch = new BranchOLD();
 
-                Address address = addressService.getByLine1(dto.getAddress().getLine1());
+                AddressOLD address = addressService.getByLine1(dto.getAddress().getLine1());
                 if (address == null) {
-                    address = new Address();
+                    address = new AddressOLD();
                     address.setLine1(dto.getAddress().getLine1());
 
                     addressService.addAddress(address);
@@ -140,7 +140,7 @@ public class BranchController {
 
                 Bank bank = bankService.getById(dto.getBank().getId());
 
-                RefBranchType refBranchType = refBranchTypeService.getById(dto.getType().getId());
+                RefBranchTypeOLD refBranchType = refBranchTypeService.getById(dto.getType().getId());
 
                 newBranch.setFields(
                         address,

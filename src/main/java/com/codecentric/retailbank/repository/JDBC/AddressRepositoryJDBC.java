@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.repository.JDBC;
 
-import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.model.domain.OLD.AddressOLD;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBType;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBUtil;
 import com.codecentric.retailbank.repository.JDBC.exceptions.ArgumentNullException;
@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Address, Long> {
+public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<AddressOLD, Long> {
 
     @Override public List findAllOrDefault() {
         ResultSet resultSet = null;
-        List<Address> addresses = new ArrayList<>();
+        List<AddressOLD> addresses = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allAddresses = conn.prepareCall("{call allAddresses()}")) {
@@ -31,11 +31,11 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             // Retrieve findAll addresses
             cs_allAddresses.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
+            // Transform each ResultSet row into AddressOLD model and add to "addresses" list
             resultSet = cs_allAddresses.getResultSet();
             while (resultSet.next()) {
                 addresses.add(
-                        new Address(
+                        new AddressOLD(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -59,7 +59,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
 
     @Override public List findAll() {
         ResultSet resultSet = null;
-        List<Address> addresses = new ArrayList<>();
+        List<AddressOLD> addresses = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allAddresses = conn.prepareCall("{call allAddresses()}")) {
@@ -67,13 +67,13 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             // Retrieve findAll addresses
             cs_allAddresses.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
+            // Transform each ResultSet row into AddressOLD model and add to "addresses" list
             resultSet = cs_allAddresses.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
                 ++rowCounter;
                 addresses.add(
-                        new Address(
+                        new AddressOLD(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -101,7 +101,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
 
     @Override public ListPage findAllRangeOrDefault(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
-        ListPage<Address> addressListPage = new ListPage<>();
+        ListPage<AddressOLD> addressListPage = new ListPage<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allAddressesRange = conn.prepareCall("{call allAddressesRange(?,?)}");
@@ -112,12 +112,12 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             cs_allAddressesRange.setInt(2, Math.abs(pageSize));
             cs_allAddressesRange.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
+            // Transform each ResultSet row into AddressOLD model and add to "addresses" list
             resultSet = cs_allAddressesRange.getResultSet();
-            List<Address> addressList = new ArrayList<>();
+            List<AddressOLD> addressList = new ArrayList<>();
             while (resultSet.next()) {
                 addressList.add(
-                        new Address(
+                        new AddressOLD(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -150,7 +150,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
 
     @Override public ListPage findAllRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
-        ListPage<Address> addressListPage = new ListPage<>();
+        ListPage<AddressOLD> addressListPage = new ListPage<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allAddressesRange = conn.prepareCall("{call allAddressesRange(?, ?)}");
@@ -161,14 +161,14 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             cs_allAddressesRange.setInt(2, Math.abs(pageSize));
             cs_allAddressesRange.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
+            // Transform each ResultSet row into AddressOLD model and add to "addresses" list
             resultSet = cs_allAddressesRange.getResultSet();
-            List<Address> addressList = new ArrayList<>();
+            List<AddressOLD> addressList = new ArrayList<>();
             byte rowCounter = 0;
             while (resultSet.next()) {
                 ++rowCounter;
                 addressList.add(
-                        new Address(
+                        new AddressOLD(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -207,11 +207,11 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    @Override public Address getSingleOrDefault(Long id) {
+    @Override public AddressOLD getSingleOrDefault(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        Address address = null;
+        AddressOLD address = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -221,7 +221,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             cs_singleAddress.setLong(1, id);
             cs_singleAddress.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a AddressOLD model
             byte rowCounter = 0;
             resultSet = cs_singleAddress.getResultSet();
             while (resultSet.next()) {
@@ -231,8 +231,8 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a AddressOLD object
+                address = new AddressOLD(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
@@ -252,11 +252,11 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         return address;
     }
 
-    @Override public Address getSingle(Long id) {
+    @Override public AddressOLD getSingle(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        Address address = null;
+        AddressOLD address = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -266,7 +266,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             cs_singleAddress.setLong(1, id);
             cs_singleAddress.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a AddressOLD model
             resultSet = cs_singleAddress.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
@@ -276,8 +276,8 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a AddressOLD object
+                address = new AddressOLD(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
@@ -301,11 +301,11 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    public Address getSingleByLine1OrDefault(String line1) {
+    public AddressOLD getSingleByLine1OrDefault(String line1) {
         if (line1 == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        Address address = null;
+        AddressOLD address = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -315,7 +315,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             cs_singleAddress.setString(1, line1);
             cs_singleAddress.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a AddressOLD model
             byte rowCounter = 0;
             resultSet = cs_singleAddress.getResultSet();
             while (resultSet.next()) {
@@ -325,8 +325,8 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a AddressOLD object
+                address = new AddressOLD(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
@@ -346,11 +346,11 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         return address;
     }
 
-    public Address getSingleByLine1(String line1) {
+    public AddressOLD getSingleByLine1(String line1) {
         if (line1 == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        Address address = null;
+        AddressOLD address = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -360,7 +360,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             cs_singleAddress.setString(1, line1);
             cs_singleAddress.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a AddressOLD model
             byte rowCounter = 0;
             resultSet = cs_singleAddress.getResultSet();
             while (resultSet.next()) {
@@ -370,8 +370,8 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a AddressOLD object
+                address = new AddressOLD(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
@@ -395,7 +395,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    @Override public Address add(Address model) {
+    @Override public AddressOLD add(AddressOLD model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -419,7 +419,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         return model;
     }
 
-    @Override public Address update(Address model) {
+    @Override public AddressOLD update(AddressOLD model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -445,7 +445,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    @Override public void deleteOrDefault(Address model) {
+    @Override public void deleteOrDefault(AddressOLD model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -461,7 +461,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         }
     }
 
-    @Override public void delete(Address model) {
+    @Override public void delete(AddressOLD model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -557,7 +557,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    @Override public void insertBatch(Iterable<Address> models) {
+    @Override public void insertBatch(Iterable<AddressOLD> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
@@ -565,7 +565,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
              CallableStatement cs_addAddress = conn.prepareCall("{call addAddress(?,?,?,?,?,?,?)}")) {
 
             // Add calls to batch
-            for (Address model : models) {
+            for (AddressOLD model : models) {
                 try {
                     cs_addAddress.setString(1, model.getLine1());
                     cs_addAddress.setString(2, model.getLine2());
@@ -587,7 +587,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         }
     }
 
-    @Override public void updateBatch(Iterable<Address> models) {
+    @Override public void updateBatch(Iterable<AddressOLD> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
@@ -595,7 +595,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
              CallableStatement cs_updateAddress = conn.prepareCall("{call updateAddress(?,?,?,?,?,?,?,?)}")) {
 
             // Add calls to batch
-            for (Address model : models) {
+            for (AddressOLD model : models) {
                 try {
                     cs_updateAddress.setLong(1, model.getId());
                     cs_updateAddress.setString(2, model.getLine1());
@@ -618,7 +618,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         }
     }
 
-    @Override public void deleteBatch(Iterable<Address> models) {
+    @Override public void deleteBatch(Iterable<AddressOLD> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
@@ -626,7 +626,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
              CallableStatement cs_deleteAddreses = conn.prepareCall("{call deleteAddresses(?)}")) {
 
             // Add calls to batch
-            for (Address model : models) {
+            for (AddressOLD model : models) {
                 try {
                     cs_deleteAddreses.setLong(1, model.getId());
                     cs_deleteAddreses.addBatch();

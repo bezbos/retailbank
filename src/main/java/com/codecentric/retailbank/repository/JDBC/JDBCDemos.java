@@ -256,7 +256,7 @@ public class JDBCDemos {
         }
 
         rs.last();
-        System.out.println("Total Bank Accounts: " + rs.getRow());
+        System.out.println("Total BankOLD Accounts: " + rs.getRow());
     }
 
     @SuppressWarnings("UnusedAssignment")
