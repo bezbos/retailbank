@@ -37,11 +37,6 @@ public class AddressController {
     private AddressService addressService;
 
 
-    public AddressController() {
-        super();
-    }
-
-
     @RequestMapping(value = {"", "/", "/index", "/list", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
                                Model model) {

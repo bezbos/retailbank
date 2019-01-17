@@ -2,7 +2,11 @@ package com.codecentric.retailbank.model.domain;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -37,14 +41,25 @@ public class RefBranchType {
 
 
     public RefBranchType() {
-        super();
     }
 
     public RefBranchType(Long id) {
-        super();
         this.id = id;
     }
 
+    public RefBranchType(Long id,
+                         @NotNull @Length(max = 15) String code,
+                         @Length(max = 255) String description,
+                         @Length(max = 1) String isLargeUrban,
+                         @Length(max = 1) String isSmallRural,
+                         @Length(max = 1) String isMediumSuburban) {
+        this.id = id;
+        this.code = code;
+        this.description = description;
+        this.isLargeUrban = isLargeUrban;
+        this.isSmallRural = isSmallRural;
+        this.isMediumSuburban = isMediumSuburban;
+    }
 
     public Long getId() {
         return id;

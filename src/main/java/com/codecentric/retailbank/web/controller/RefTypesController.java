@@ -49,11 +49,6 @@ public class RefTypesController {
     private RefTransactionTypeService refTransactionTypeService;
 
 
-    public RefTypesController() {
-        super();
-    }
-
-
     @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
         List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
@@ -73,7 +68,7 @@ public class RefTypesController {
     public ModelAndView getFormPage(@PathVariable("type") String type,
                                     @PathVariable("id") Optional<Long> id) {
         switch (type) {
-            case "branchType":{
+            case "branchType": {
                 RefBranchType refBranchType = id.isPresent() ?
                         refBranchTypeService.getById(id.get()) : new RefBranchType(0L);
 
@@ -140,9 +135,9 @@ public class RefTypesController {
 
     @RequestMapping(value = "/formSubmit/branchType", method = RequestMethod.POST)
     public String onRefBranchTypeFormSubmit(@ModelAttribute("refBranchTypeDto") @Valid RefBranchTypeDto dto,
-                                             BindingResult result,
-                                             Model model,
-                                             RedirectAttributes redirectAttributes) {
+                                            BindingResult result,
+                                            Model model,
+                                            RedirectAttributes redirectAttributes) {
         // Check if valid
         if (dto == null || result.hasErrors()) {
             model.addAttribute("refBranchTypeDto", dto);
@@ -348,7 +343,7 @@ public class RefTypesController {
                                          @PathVariable("id") Long id,
                                          RedirectAttributes redirectAttributes) {
         switch (type) {
-            case "branchType":{
+            case "branchType": {
                 try {
                     refBranchTypeService.deleteRefBranchType(id);
 

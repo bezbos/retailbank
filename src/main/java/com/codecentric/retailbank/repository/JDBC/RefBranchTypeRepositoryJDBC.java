@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.repository.JDBC;
 
-import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBType;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBUtil;
 import com.codecentric.retailbank.repository.JDBC.exceptions.ArgumentNullException;
@@ -19,31 +19,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Address, Long> {
+public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<RefBranchType, Long> {
 
-    @Override public List findAllOrDefault() {
+    @Override public List<RefBranchType> findAllOrDefault() {
         ResultSet resultSet = null;
-        List<Address> addresses = new ArrayList<>();
+        List<RefBranchType> branchTypes = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allAddresses = conn.prepareCall("{call allAddresses()}")) {
+             CallableStatement cs_allRefBranchTypes = conn.prepareCall("{call allRefBranchTypes()}")) {
 
-            // Retrieve findAll addresses
-            cs_allAddresses.execute();
+            // Retrieve findAll branchTypes
+            cs_allRefBranchTypes.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
-            resultSet = cs_allAddresses.getResultSet();
+            // Transform each ResultSet row into RefBranchType model and add to "branchTypes" list
+            resultSet = cs_allRefBranchTypes.getResultSet();
             while (resultSet.next()) {
-                addresses.add(
-                        new Address(
+                branchTypes.add(
+                        new RefBranchType(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
                                 resultSet.getString(4),
                                 resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
+                                resultSet.getString(6)
                         )
                 );
             }
@@ -54,34 +52,31 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return addresses.size() < 1 ? null : addresses;
+        return branchTypes.size() < 1 ? null : branchTypes;
     }
 
-    @Override public List findAll() {
+    @Override public List<RefBranchType> findAll() {
         ResultSet resultSet = null;
-        List<Address> addresses = new ArrayList<>();
+        List<RefBranchType> branchTypes = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allAddresses = conn.prepareCall("{call allAddresses()}")) {
+             CallableStatement cs_allRefBranchTypes = conn.prepareCall("{call allRefBranchTypes()}")) {
 
-            // Retrieve findAll addresses
-            cs_allAddresses.execute();
+            // Retrieve findAll branchTypes
+            cs_allRefBranchTypes.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
-            resultSet = cs_allAddresses.getResultSet();
+            // Transform each ResultSet row into RefBranchType model and add to "branchTypes" list
+            resultSet = cs_allRefBranchTypes.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
-                ++rowCounter;
-                addresses.add(
-                        new Address(
+                branchTypes.add(
+                        new RefBranchType(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
                                 resultSet.getString(4),
                                 resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
+                                resultSet.getString(6)
                         )
                 );
             }
@@ -95,49 +90,47 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return addresses.size() < 1 ? null : addresses;
+        return branchTypes.size() < 1 ? null : branchTypes;
     }
 
 
-    @Override public ListPage findAllRangeOrDefault(int pageIndex, int pageSize) {
+    @Override public ListPage<RefBranchType> findAllRangeOrDefault(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
-        ListPage<Address> addressListPage = new ListPage<>();
+        ListPage<RefBranchType> refBranchTypeListPage = new ListPage<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allAddressesRange = conn.prepareCall("{call allAddressesRange(?,?)}");
-             CallableStatement cs_allAddressesCount = conn.prepareCall("{call allAddressesCount()}")) {
+             CallableStatement cs_allRefBranchTypesRange = conn.prepareCall("{call allRefBranchTypesRange(?,?)}");
+             CallableStatement cs_allRefBranchTypesCount = conn.prepareCall("{call allRefBranchTypesCount()}")) {
 
-            // Retrieve findAll addresses
-            cs_allAddressesRange.setInt(1, Math.abs(pageIndex * pageSize));
-            cs_allAddressesRange.setInt(2, Math.abs(pageSize));
-            cs_allAddressesRange.execute();
+            // Retrieve findAll RefBranchTypes
+            cs_allRefBranchTypesRange.setInt(1, Math.abs(pageIndex * pageSize));
+            cs_allRefBranchTypesRange.setInt(2, Math.abs(pageSize));
+            cs_allRefBranchTypesRange.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
-            resultSet = cs_allAddressesRange.getResultSet();
-            List<Address> addressList = new ArrayList<>();
+            // Transform each ResultSet row into RefBranchType model and add to "refBranchTypes" list
+            resultSet = cs_allRefBranchTypesRange.getResultSet();
+            List<RefBranchType> refBranchTypes = new ArrayList<>();
             while (resultSet.next()) {
-                addressList.add(
-                        new Address(
+                refBranchTypes.add(
+                        new RefBranchType(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
                                 resultSet.getString(4),
                                 resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
+                                resultSet.getString(6)
                         )
                 );
             }
 
-            // Get the total number of addresses in DB
-            cs_allAddressesCount.execute();
-            resultSet = cs_allAddressesCount.getResultSet();
+            // Get the total number of RefBranchType-s in DB
+            cs_allRefBranchTypesCount.execute();
+            resultSet = cs_allRefBranchTypesCount.getResultSet();
             while (resultSet.next())
-                addressListPage.setPageCount(resultSet.getLong(1), pageSize);
+                refBranchTypeListPage.setPageCount(resultSet.getLong(1), pageSize);
 
-            // Add addresses to ListPage transfer object
-            addressListPage.setModels(addressList);
+            // Add refBranchTypes to ListPage transfer object
+            refBranchTypeListPage.setModels(refBranchTypes);
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -145,57 +138,52 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return addressListPage.getModels().size() < 1 ? null : addressListPage;
+        return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
     }
 
-    @Override public ListPage findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<RefBranchType> findAllRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
-        ListPage<Address> addressListPage = new ListPage<>();
+        ListPage<RefBranchType> refBranchTypeListPage = new ListPage<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allAddressesRange = conn.prepareCall("{call allAddressesRange(?, ?)}");
-             CallableStatement cs_allAddressesCount = conn.prepareCall("{call allAddressesCount()}")) {
+             CallableStatement cs_allRefBranchTypesRange = conn.prepareCall("{call allRefBranchTypesRange(?,?)}");
+             CallableStatement cs_allRefBranchTypesCount = conn.prepareCall("{call allRefBranchTypesCount()}")) {
 
-            // Retrieve findAll addresses
-            cs_allAddressesRange.setInt(1, Math.abs(pageIndex * pageSize));
-            cs_allAddressesRange.setInt(2, Math.abs(pageSize));
-            cs_allAddressesRange.execute();
+            // Retrieve findAll RefBranchTypes
+            cs_allRefBranchTypesRange.setInt(1, Math.abs(pageIndex * pageSize));
+            cs_allRefBranchTypesRange.setInt(2, Math.abs(pageSize));
+            cs_allRefBranchTypesRange.execute();
 
-            // Transform each ResultSet row into Address model and add to "addresses" list
-            resultSet = cs_allAddressesRange.getResultSet();
-            List<Address> addressList = new ArrayList<>();
+            // Transform each ResultSet row into RefBranchType model and add to "refBranchTypes" list
+            resultSet = cs_allRefBranchTypesRange.getResultSet();
+            List<RefBranchType> refBranchTypes = new ArrayList<>();
             byte rowCounter = 0;
             while (resultSet.next()) {
-                ++rowCounter;
-                addressList.add(
-                        new Address(
+                refBranchTypes.add(
+                        new RefBranchType(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
                                 resultSet.getString(4),
                                 resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
+                                resultSet.getString(6)
                         )
                 );
             }
             if (rowCounter < 1)
                 throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
 
-            // Get the total number of addresses in DB
-            cs_allAddressesCount.execute();
-            resultSet = cs_allAddressesCount.getResultSet();
+            // Get the total number of RefBranchType-s in DB
+            cs_allRefBranchTypesCount.execute();
+            resultSet = cs_allRefBranchTypesCount.getResultSet();
             rowCounter = 0;
-            while (resultSet.next()) {
-                ++rowCounter;
-                addressListPage.setPageCount(resultSet.getLong(1), pageSize);
-            }
+            while (resultSet.next())
+                refBranchTypeListPage.setPageCount(resultSet.getLong(1), pageSize);
             if (rowCounter < 1)
                 throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
 
-            // Add addresses to ListPage transfer object
-            addressListPage.setModels(addressList);
+            // Add refBranchTypes to ListPage transfer object
+            refBranchTypeListPage.setModels(refBranchTypes);
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -203,27 +191,27 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return addressListPage;
+        return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
     }
 
 
-    @Override public Address getSingleOrDefault(Long id) {
+    @Override public RefBranchType getSingleOrDefault(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        Address address = null;
+        RefBranchType refBranchType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddress(?)}")) {
+             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
 
-            // Retrieve a getSingle address
-            cs_singleAddress.setLong(1, id);
-            cs_singleAddress.execute();
+            // Retrieve a getSingle RefBranchType
+            cs_singleRefBranchType.setLong(1, id);
+            cs_singleRefBranchType.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a RefBranchType model
             byte rowCounter = 0;
-            resultSet = cs_singleAddress.getResultSet();
+            resultSet = cs_singleRefBranchType.getResultSet();
             while (resultSet.next()) {
 
                 // Check if more than one element matches id parameter
@@ -231,16 +219,14 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a RefBranchType object
+                refBranchType = new RefBranchType(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getString(4),
                         resultSet.getString(5),
-                        resultSet.getString(6),
-                        resultSet.getString(7),
-                        resultSet.getString(8)
+                        resultSet.getString(6)
                 );
             }
         } catch (SQLException ex) {
@@ -249,25 +235,25 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return address;
+        return refBranchType;
     }
 
-    @Override public Address getSingle(Long id) {
+    @Override public RefBranchType getSingle(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        Address address = null;
+        RefBranchType refBranchType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddress(?)}")) {
+             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
 
-            // Retrieve a single address
-            cs_singleAddress.setLong(1, id);
-            cs_singleAddress.execute();
+            // Retrieve a getSingle RefBranchType
+            cs_singleRefBranchType.setLong(1, id);
+            cs_singleRefBranchType.execute();
 
-            // Transform ResultSet row into a Address model
-            resultSet = cs_singleAddress.getResultSet();
+            // Transform ResultSet row into a RefBranchType model
+            resultSet = cs_singleRefBranchType.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
 
@@ -276,16 +262,14 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a RefBranchType object
+                refBranchType = new RefBranchType(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getString(4),
                         resultSet.getString(5),
-                        resultSet.getString(6),
-                        resultSet.getString(7),
-                        resultSet.getString(8)
+                        resultSet.getString(6)
                 );
             }
             if (rowCounter < 1)
@@ -297,27 +281,27 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return address;
+        return refBranchType;
     }
 
 
-    public Address getSingleByLine1OrDefault(String line1) {
-        if (line1 == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+    public RefBranchType getSingleByCodeOrDefault(String code) {
+        if (code == null)
+            throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
-        Address address = null;
+        RefBranchType refBranchType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddressByLine1(?)}")) {
+             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchTypeByCode(?)}")) {
 
-            // Retrieve a getSingle address
-            cs_singleAddress.setString(1, line1);
-            cs_singleAddress.execute();
+            // Retrieve a getSingle RefBranchType
+            cs_singleRefBranchType.setString(1, code);
+            cs_singleRefBranchType.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a RefBranchType model
             byte rowCounter = 0;
-            resultSet = cs_singleAddress.getResultSet();
+            resultSet = cs_singleRefBranchType.getResultSet();
             while (resultSet.next()) {
 
                 // Check if more than one element matches id parameter
@@ -325,16 +309,14 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a RefBranchType object
+                refBranchType = new RefBranchType(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getString(4),
                         resultSet.getString(5),
-                        resultSet.getString(6),
-                        resultSet.getString(7),
-                        resultSet.getString(8)
+                        resultSet.getString(6)
                 );
             }
         } catch (SQLException ex) {
@@ -343,26 +325,26 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return address;
+        return refBranchType;
     }
 
-    public Address getSingleByLine1(String line1) {
-        if (line1 == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+    public RefBranchType getSingleByCode(String code) {
+        if (code == null)
+            throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
-        Address address = null;
+        RefBranchType refBranchType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddressByLine1(?)}")) {
+             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
 
-            // Retrieve a getSingle address
-            cs_singleAddress.setString(1, line1);
-            cs_singleAddress.execute();
+            // Retrieve a getSingle RefBranchType
+            cs_singleRefBranchType.setString(1, code);
+            cs_singleRefBranchType.execute();
 
-            // Transform ResultSet row into a Address model
+            // Transform ResultSet row into a RefBranchType model
+            resultSet = cs_singleRefBranchType.getResultSet();
             byte rowCounter = 0;
-            resultSet = cs_singleAddress.getResultSet();
             while (resultSet.next()) {
 
                 // Check if more than one element matches id parameter
@@ -370,16 +352,14 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
-                // Transform ResultSet row into a Address object
-                address = new Address(
+                // Transform ResultSet row into a RefBranchType object
+                refBranchType = new RefBranchType(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getString(4),
                         resultSet.getString(5),
-                        resultSet.getString(6),
-                        resultSet.getString(7),
-                        resultSet.getString(8)
+                        resultSet.getString(6)
                 );
             }
             if (rowCounter < 1)
@@ -391,26 +371,24 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return address;
+        return refBranchType;
     }
 
 
-    @Override public Address add(Address model) {
+    @Override public RefBranchType add(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addAddress = conn.prepareCall("{call addAddress(?,?,?,?,?,?,?)}")) {
+             CallableStatement cs_addRefBranchType = conn.prepareCall("{call addRefBranchType(?,?,?,?,?)}")) {
 
-            // Add an address to DB
-            cs_addAddress.setString(1, model.getLine1());
-            cs_addAddress.setString(2, model.getLine2());
-            cs_addAddress.setString(3, model.getTownCity());
-            cs_addAddress.setString(4, model.getZipPostcode());
-            cs_addAddress.setString(5, model.getStateProvinceCountry());
-            cs_addAddress.setString(6, model.getCountry());
-            cs_addAddress.setString(7, model.getOtherDetails());
-            cs_addAddress.execute();
+            // Add a new RefBranchType to DB
+            cs_addRefBranchType.setString(1, model.getCode());
+            cs_addRefBranchType.setString(2, model.getDescription());
+            cs_addRefBranchType.setString(3, model.getIsLargeUrban());
+            cs_addRefBranchType.setString(4, model.getIsSmallRural());
+            cs_addRefBranchType.setString(5, model.getIsMediumSuburban());
+            cs_addRefBranchType.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -419,23 +397,21 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         return model;
     }
 
-    @Override public Address update(Address model) {
+    @Override public RefBranchType update(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateAddress = conn.prepareCall("{call updateAddress(?,?,?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefBranchType = conn.prepareCall("{call updateRefBranchType(?,?,?,?,?,?)}")) {
 
-            // Update an existing address in DB
-            cs_updateAddress.setLong(1, model.getId());
-            cs_updateAddress.setString(2, model.getLine1());
-            cs_updateAddress.setString(3, model.getLine2());
-            cs_updateAddress.setString(4, model.getTownCity());
-            cs_updateAddress.setString(5, model.getZipPostcode());
-            cs_updateAddress.setString(6, model.getStateProvinceCountry());
-            cs_updateAddress.setString(7, model.getCountry());
-            cs_updateAddress.setString(8, model.getOtherDetails());
-            cs_updateAddress.execute();
+            // Add a new RefBranchType to DB
+            cs_updateRefBranchType.setLong(1, model.getId());
+            cs_updateRefBranchType.setString(2, model.getCode());
+            cs_updateRefBranchType.setString(3, model.getDescription());
+            cs_updateRefBranchType.setString(4, model.getIsLargeUrban());
+            cs_updateRefBranchType.setString(5, model.getIsSmallRural());
+            cs_updateRefBranchType.setString(6, model.getIsMediumSuburban());
+            cs_updateRefBranchType.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -445,38 +421,38 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    @Override public void deleteOrDefault(Address model) {
+    @Override public void deleteOrDefault(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
 
-            // Delete an existing address
-            cs_deleteAddress.setLong(1, model.getId());
-            cs_deleteAddress.execute();
+            // Delete an existing RefBranchType
+            cs_deleteRefBranchType.setLong(1, model.getId());
+            cs_deleteRefBranchType.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
     }
 
-    @Override public void delete(Address model) {
+    @Override public void delete(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}");
-             CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddress(?)}")) {
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}");
+             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
 
-            // Check if the address exists
-            cs_singleAddress.setLong(1, model.getId());
-            cs_singleAddress.execute();
+            // Check if the RefBranchType exists
+            cs_singleRefBranchType.setLong(1, model.getId());
+            cs_singleRefBranchType.execute();
 
             // Validate the result set
-            resultSet = cs_singleAddress.getResultSet();
+            resultSet = cs_singleRefBranchType.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
 
@@ -489,9 +465,9 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             if (rowCounter < 1)
                 throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
 
-            // Delete the existing address
-            cs_deleteAddress.setLong(1, model.getId());
-            cs_deleteAddress.execute();
+            // Delete an existing RefBranchType
+            cs_deleteRefBranchType.setLong(1, model.getId());
+            cs_deleteRefBranchType.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -499,18 +475,17 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
     }
-
 
     @Override public void deleteByIdOrDefault(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
 
-            // Delete an existing address
-            cs_deleteAddress.setLong(1, id);
-            cs_deleteAddress.execute();
+            // Delete an existing RefBranchType
+            cs_deleteRefBranchType.setLong(1, id);
+            cs_deleteRefBranchType.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -524,15 +499,15 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}");
-             CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddress(?)}")) {
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}");
+             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
 
-            // Check if the address exists
-            cs_singleAddress.setLong(1, id);
-            cs_singleAddress.execute();
+            // Check if the RefBranchType exists
+            cs_singleRefBranchType.setLong(1, id);
+            cs_singleRefBranchType.execute();
 
             // Validate the result set
-            resultSet = cs_singleAddress.getResultSet();
+            resultSet = cs_singleRefBranchType.getResultSet();
             byte rowCounter = 0;
             while (resultSet.next()) {
 
@@ -545,9 +520,9 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             if (rowCounter < 1)
                 throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
 
-            // Delete the existing address
-            cs_deleteAddress.setLong(1, id);
-            cs_deleteAddress.execute();
+            // Delete an existing RefBranchType
+            cs_deleteRefBranchType.setLong(1, id);
+            cs_deleteRefBranchType.execute();
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -557,86 +532,82 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
-    @Override public void insertBatch(Iterable<Address> models) {
+    @Override public void insertBatch(Iterable<RefBranchType> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addAddress = conn.prepareCall("{call addAddress(?,?,?,?,?,?,?)}")) {
+             CallableStatement cs_addRefBranchType = conn.prepareCall("{call addRefBranchType(?,?,?,?,?)}")) {
 
             // Add calls to batch
-            for (Address model : models) {
+            for (RefBranchType model : models) {
                 try {
-                    cs_addAddress.setString(1, model.getLine1());
-                    cs_addAddress.setString(2, model.getLine2());
-                    cs_addAddress.setString(3, model.getTownCity());
-                    cs_addAddress.setString(4, model.getZipPostcode());
-                    cs_addAddress.setString(5, model.getStateProvinceCountry());
-                    cs_addAddress.setString(6, model.getCountry());
-                    cs_addAddress.setString(7, model.getOtherDetails());
-                    cs_addAddress.addBatch();
+                    cs_addRefBranchType.setString(1, model.getCode());
+                    cs_addRefBranchType.setString(2, model.getDescription());
+                    cs_addRefBranchType.setString(3, model.getIsLargeUrban());
+                    cs_addRefBranchType.setString(4, model.getIsSmallRural());
+                    cs_addRefBranchType.setString(5, model.getIsMediumSuburban());
+                    cs_addRefBranchType.addBatch();
                 } catch (SQLException ex) {
                     DBUtil.showErrorMessage(ex);
                 }
             }
 
             // Execute batch!
-            cs_addAddress.executeBatch();
+            cs_addRefBranchType.executeBatch();
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
     }
 
-    @Override public void updateBatch(Iterable<Address> models) {
+    @Override public void updateBatch(Iterable<RefBranchType> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateAddress = conn.prepareCall("{call updateAddress(?,?,?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefBranchType = conn.prepareCall("{call updateRefBranchType(?,?,?,?,?,?)}")) {
 
             // Add calls to batch
-            for (Address model : models) {
+            for (RefBranchType model : models) {
                 try {
-                    cs_updateAddress.setLong(1, model.getId());
-                    cs_updateAddress.setString(2, model.getLine1());
-                    cs_updateAddress.setString(3, model.getLine2());
-                    cs_updateAddress.setString(4, model.getTownCity());
-                    cs_updateAddress.setString(5, model.getZipPostcode());
-                    cs_updateAddress.setString(6, model.getStateProvinceCountry());
-                    cs_updateAddress.setString(7, model.getCountry());
-                    cs_updateAddress.setString(8, model.getOtherDetails());
-                    cs_updateAddress.addBatch();
+                    cs_updateRefBranchType.setLong(1, model.getId());
+                    cs_updateRefBranchType.setString(2, model.getCode());
+                    cs_updateRefBranchType.setString(3, model.getDescription());
+                    cs_updateRefBranchType.setString(4, model.getIsLargeUrban());
+                    cs_updateRefBranchType.setString(5, model.getIsSmallRural());
+                    cs_updateRefBranchType.setString(6, model.getIsMediumSuburban());
+                    cs_updateRefBranchType.addBatch();
                 } catch (SQLException ex) {
                     DBUtil.showErrorMessage(ex);
                 }
             }
 
             // Execute batch!
-            cs_updateAddress.executeBatch();
+            cs_updateRefBranchType.executeBatch();
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
     }
 
-    @Override public void deleteBatch(Iterable<Address> models) {
+    @Override public void deleteBatch(Iterable<RefBranchType> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddreses = conn.prepareCall("{call deleteAddresses(?)}")) {
+             CallableStatement cs_deleteRefBranchTypes = conn.prepareCall("{call deleteRefBranchTypes(?)}")) {
 
             // Add calls to batch
-            for (Address model : models) {
+            for (RefBranchType model : models) {
                 try {
-                    cs_deleteAddreses.setLong(1, model.getId());
-                    cs_deleteAddreses.addBatch();
+                    cs_deleteRefBranchTypes.setLong(1, model.getId());
+                    cs_deleteRefBranchTypes.addBatch();
                 } catch (SQLException ex) {
                     DBUtil.showErrorMessage(ex);
                 }
             }
 
             // Execute batch!
-            cs_deleteAddreses.executeBatch();
+            cs_deleteRefBranchTypes.executeBatch();
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
@@ -647,20 +618,20 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
+             CallableStatement cs_deleteRefBranchTypes = conn.prepareCall("{call deleteRefBranchTypes(?)}")) {
 
             // Add calls to batch
             for (Long id : ids) {
                 try {
-                    cs_deleteAddress.setLong(1, id);
-                    cs_deleteAddress.addBatch();
+                    cs_deleteRefBranchTypes.setLong(1, id);
+                    cs_deleteRefBranchTypes.addBatch();
                 } catch (SQLException ex) {
                     DBUtil.showErrorMessage(ex);
                 }
             }
 
             // Execute batch!
-            cs_deleteAddress.executeBatch();
+            cs_deleteRefBranchTypes.executeBatch();
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }

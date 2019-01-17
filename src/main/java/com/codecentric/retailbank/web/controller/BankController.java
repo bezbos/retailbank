@@ -38,11 +38,6 @@ public class BankController {
     private BankService bankService;
 
 
-    public BankController() {
-        super();
-    }
-
-
     @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
                                Model model) throws SQLException {

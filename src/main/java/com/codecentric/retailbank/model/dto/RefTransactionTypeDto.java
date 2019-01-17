@@ -18,7 +18,6 @@ public class RefTransactionTypeDto {
 
 
     public RefTransactionTypeDto() {
-        super();
     }
 
     public RefTransactionTypeDto(Long id,
@@ -26,7 +25,6 @@ public class RefTransactionTypeDto {
                                  @Length(max = 255) String description,
                                  @Length(max = 1) String isDepositType,
                                  @Length(max = 1) String isWithdrawalType) {
-        super();
         this.id = id;
         this.code = code;
         this.description = description;

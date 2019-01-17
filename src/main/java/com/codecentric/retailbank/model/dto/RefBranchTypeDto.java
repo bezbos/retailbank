@@ -23,7 +23,6 @@ public class RefBranchTypeDto {
 
 
     public RefBranchTypeDto() {
-        super();
     }
 
     public RefBranchTypeDto(Long id,
@@ -32,7 +31,6 @@ public class RefBranchTypeDto {
                             @Length(max = 1) String isLargeUrban,
                             @Length(max = 1) String isSmallRural,
                             @Length(max = 1) String isMediumSuburban) {
-        super();
         this.id = id;
         this.code = code;
         this.description = description;

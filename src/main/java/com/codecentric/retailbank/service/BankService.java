@@ -34,10 +34,6 @@ public class BankService implements IBankService {
     private BankRepositoryJDBC bankRepositoryJDBC;
 
 
-    public BankService() {
-    }
-
-
     @Override public Bank getById(Long id) {
         Bank bank = bankRepositoryJDBC.getSingleOrDefault(id);
         return bank;
