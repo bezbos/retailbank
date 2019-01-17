@@ -82,10 +82,10 @@ public class AddressService implements IAddressService {
     public void deleteAddress(Address address) {
 //        // Remove any foreign key constraints
 //        branchRepository.findByAddress(address).forEach(branch -> {
-//            branch.setAddress(null);
+//            branch.setAddressId(null);
 //        });
 //        customerRepository.findByAddress(address).forEach(customer -> {
-//            customer.setAddress(null);
+//            customer.setAddressId(null);
 //        });
 
         // Delete the actual address
@@ -98,10 +98,10 @@ public class AddressService implements IAddressService {
 
 //        // Remove any foreign key constraints
 //        branchRepository.findByAddress(address).forEach(branch -> {
-//            branch.setAddress(null);
+//            branch.setAddressId(null);
 //        });
 //        customerRepository.findByAddress(address).forEach(customer -> {
-//            customer.setAddress(null);
+//            customer.setAddressId(null);
 //        });
 
         // Delete the actual address

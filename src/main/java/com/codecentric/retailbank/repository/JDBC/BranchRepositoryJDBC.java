@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.repository.JDBC;
 
-import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
+import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBType;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBUtil;
 import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryBase;
@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<BranchOLD, Long> {
+public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Branch, Long> {
 
-    @Override public List<BranchOLD> findAllOrDefault() {
+    @Override public List<Branch> findAllOrDefault() {
         ResultSet resultSet = null;
-        List<BranchOLD> branches = new ArrayList<>();
+        List<Branch> branches = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allAddresses = conn.prepareCall("{call allBranches()}")) {
@@ -31,7 +31,7 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
             // Transform each ResultSet row into Branches model and add to "branches" list
             resultSet = cs_allAddresses.getResultSet();
             while (resultSet.next()) {
-                BranchOLD branch = new BranchOLD();
+                Branch branch = new Branch();
 //                branch.setFields(
 //                        resultSet.getLong(1),
 //                        resultSet.getLong(2),
@@ -51,39 +51,39 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
         return branches.size() < 1 ? null : branches;
     }
 
-    @Override public List<BranchOLD> findAll() {
+    @Override public List<Branch> findAll() {
         return null;
     }
 
-    @Override public ListPage<BranchOLD> findAllRangeOrDefault(int pageIndex, int pageSize) {
+    @Override public ListPage<Branch> findAllRangeOrDefault(int pageIndex, int pageSize) {
         return null;
     }
 
-    @Override public ListPage<BranchOLD> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Branch> findAllRange(int pageIndex, int pageSize) {
         return null;
     }
 
-    @Override public BranchOLD getSingleOrDefault(Long aLong) {
+    @Override public Branch getSingleOrDefault(Long aLong) {
         return null;
     }
 
-    @Override public BranchOLD getSingle(Long aLong) {
+    @Override public Branch getSingle(Long aLong) {
         return null;
     }
 
-    @Override public BranchOLD add(BranchOLD model) {
+    @Override public Branch add(Branch model) {
         return null;
     }
 
-    @Override public BranchOLD update(BranchOLD model) {
+    @Override public Branch update(Branch model) {
         return null;
     }
 
-    @Override public void deleteOrDefault(BranchOLD model) {
+    @Override public void deleteOrDefault(Branch model) {
 
     }
 
-    @Override public void delete(BranchOLD model) {
+    @Override public void delete(Branch model) {
 
     }
 
@@ -95,15 +95,15 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
 
     }
 
-    @Override public void insertBatch(Iterable<BranchOLD> models) {
+    @Override public void insertBatch(Iterable<Branch> models) {
 
     }
 
-    @Override public void updateBatch(Iterable<BranchOLD> models) {
+    @Override public void updateBatch(Iterable<Branch> models) {
 
     }
 
-    @Override public void deleteBatch(Iterable<BranchOLD> models) {
+    @Override public void deleteBatch(Iterable<Branch> models) {
 
     }
 
