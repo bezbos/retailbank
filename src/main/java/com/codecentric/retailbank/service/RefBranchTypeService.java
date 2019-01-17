@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.repository.JDBC.RefBranchTypeRepositoryJDBC;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
 import com.codecentric.retailbank.repository.SpringData.BranchRepository;
@@ -37,50 +37,50 @@ public class RefBranchTypeService implements IRefBranchTypeService {
 
 
     @Override
-    public RefBranchTypeOLD getById(Long id) {
-        RefBranchTypeOLD refBranchType = refBranchTypeRepositoryJDBC.getSingle(id);
+    public RefBranchType getById(Long id) {
+        RefBranchType refBranchType = refBranchTypeRepositoryJDBC.getSingle(id);
         return refBranchType;
     }
 
     @Override
-    public RefBranchTypeOLD getByCode(String code) {
-        RefBranchTypeOLD refBranchType = refBranchTypeRepositoryJDBC.getSingleByCode(code);
+    public RefBranchType getByCode(String code) {
+        RefBranchType refBranchType = refBranchTypeRepositoryJDBC.getSingleByCode(code);
         return refBranchType;
     }
 
     @Override
-    public List<RefBranchTypeOLD> getAllRefBranchTypes() {
-        List<RefBranchTypeOLD> refBranchTypes = refBranchTypeRepositoryJDBC.findAllOrDefault();
+    public List<RefBranchType> getAllRefBranchTypes() {
+        List<RefBranchType> refBranchTypes = refBranchTypeRepositoryJDBC.findAllOrDefault();
         return refBranchTypes;
     }
 
     @Override
-    public RefBranchTypeOLD addRefBranchType(RefBranchTypeOLD refBranchType) {
-        RefBranchTypeOLD result = refBranchTypeRepositoryJDBC.add(refBranchType);
+    public RefBranchType addRefBranchType(RefBranchType refBranchType) {
+        RefBranchType result = refBranchTypeRepositoryJDBC.add(refBranchType);
         return result;
     }
 
     @Override
-    public RefBranchTypeOLD updateRefBranchType(RefBranchTypeOLD refBranchType) {
-        RefBranchTypeOLD result = refBranchTypeRepositoryJDBC.update(refBranchType);
+    public RefBranchType updateRefBranchType(RefBranchType refBranchType) {
+        RefBranchType result = refBranchTypeRepositoryJDBC.update(refBranchType);
         return result;
     }
 
     @Override
-    public void deleteRefBranchType(RefBranchTypeOLD refBranchType) {
-        // Recursively find and delete any FK constraints to this refBranchType
-        branchRepository.findByType(refBranchType).forEach(branch -> {
-            customerRepository.findByBranch(branch).forEach(customer -> {
-                bankAccountRepository.findByCustomer(customer).forEach(account -> {
-                    transactionRepository.findByAccount(account).forEach(transaction -> {
-                        transactionRepository.delete(transaction);
-                    });
-                    bankAccountRepository.delete(account);
-                });
-                customerRepository.delete(customer);
-            });
-            branchRepository.delete(branch);
-        });
+    public void deleteRefBranchType(RefBranchType refBranchType) {
+//        // Recursively find and delete any FK constraints to this refBranchType
+//        branchRepository.findByType(refBranchType).forEach(branch -> {
+//            customerRepository.findByBranch(branch).forEach(customer -> {
+//                bankAccountRepository.findByCustomer(customer).forEach(account -> {
+//                    transactionRepository.findByAccount(account).forEach(transaction -> {
+//                        transactionRepository.delete(transaction);
+//                    });
+//                    bankAccountRepository.delete(account);
+//                });
+//                customerRepository.delete(customer);
+//            });
+//            branchRepository.delete(branch);
+//        });
 
         // Delete the actual refBranchType
         refBranchTypeRepositoryJDBC.delete(refBranchType);
@@ -88,21 +88,21 @@ public class RefBranchTypeService implements IRefBranchTypeService {
 
     @Override
     public void deleteRefBranchType(Long id) {
-        RefBranchTypeOLD refBranchType = refBranchTypeRepositoryJDBC.getSingle(id);
+        RefBranchType refBranchType = refBranchTypeRepositoryJDBC.getSingle(id);
 
-        // Recursively find and delete any FK constraints to this refBranchType
-        branchRepository.findByType(refBranchType).forEach(branch -> {
-            customerRepository.findByBranch(branch).forEach(customer -> {
-                bankAccountRepository.findByCustomer(customer).forEach(account -> {
-                    transactionRepository.findByAccount(account).forEach(transaction -> {
-                        transactionRepository.delete(transaction);
-                    });
-                    bankAccountRepository.delete(account);
-                });
-                customerRepository.delete(customer);
-            });
-            branchRepository.delete(branch);
-        });
+//        // Recursively find and delete any FK constraints to this refBranchType
+//        branchRepository.findByType(refBranchType).forEach(branch -> {
+//            customerRepository.findByBranch(branch).forEach(customer -> {
+//                bankAccountRepository.findByCustomer(customer).forEach(account -> {
+//                    transactionRepository.findByAccount(account).forEach(transaction -> {
+//                        transactionRepository.delete(transaction);
+//                    });
+//                    bankAccountRepository.delete(account);
+//                });
+//                customerRepository.delete(customer);
+//            });
+//            branchRepository.delete(branch);
+//        });
 
         // Delete the actual refBranchType
         refBranchTypeRepositoryJDBC.delete(refBranchType);

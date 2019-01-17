@@ -1,26 +1,26 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 
 import java.util.List;
 
 public interface IRefBranchTypeService {
 
     // GET
-    RefBranchTypeOLD getById(Long id);
+    RefBranchType getById(Long id);
 
-    RefBranchTypeOLD getByCode(String code);
+    RefBranchType getByCode(String code);
 
-    List<RefBranchTypeOLD> getAllRefBranchTypes();
+    List<RefBranchType> getAllRefBranchTypes();
 
     // CREATE
-    RefBranchTypeOLD addRefBranchType(RefBranchTypeOLD refBranchType);
+    RefBranchType addRefBranchType(RefBranchType refBranchType);
 
     // UPDATE
-    RefBranchTypeOLD updateRefBranchType(RefBranchTypeOLD refBranchType);
+    RefBranchType updateRefBranchType(RefBranchType refBranchType);
 
     // DELETE
-    void deleteRefBranchType(RefBranchTypeOLD refBranchType);
+    void deleteRefBranchType(RefBranchType refBranchType);
 
     void deleteRefBranchType(Long id);
 }

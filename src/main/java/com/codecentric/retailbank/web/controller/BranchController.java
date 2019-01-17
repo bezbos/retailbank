@@ -3,7 +3,7 @@ package com.codecentric.retailbank.web.controller;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
-import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.dto.BranchDto;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BankService;
@@ -115,7 +115,7 @@ public class BranchController {
 
                 Bank bank = bankService.getById(dto.getBank().getId());
 
-                RefBranchTypeOLD refBranchType = refBranchTypeService.getById(dto.getType().getId());
+                RefBranchType refBranchType = refBranchTypeService.getById(dto.getType().getId());
 
                 updatedBranch.setFields(
                         address,
@@ -140,7 +140,7 @@ public class BranchController {
 
                 Bank bank = bankService.getById(dto.getBank().getId());
 
-                RefBranchTypeOLD refBranchType = refBranchTypeService.getById(dto.getType().getId());
+                RefBranchType refBranchType = refBranchTypeService.getById(dto.getType().getId());
 
                 newBranch.setFields(
                         address,

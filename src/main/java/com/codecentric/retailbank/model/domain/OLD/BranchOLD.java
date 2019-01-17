@@ -2,6 +2,7 @@ package com.codecentric.retailbank.model.domain.OLD;
 
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
@@ -34,7 +35,7 @@ public class BranchOLD {
     @NotNull
     @OneToOne(targetEntity = RefBranchTypeOLD.class)
     @JoinColumn(name = "branch_type_id")
-    private RefBranchTypeOLD type;
+    private RefBranchType type;
 
     @Length(max = 255)
     @Column(name = "branch_details")
@@ -75,11 +76,11 @@ public class BranchOLD {
         this.bank = bank;
     }
 
-    public RefBranchTypeOLD getType() {
+    public RefBranchType getType() {
         return type;
     }
 
-    public void setType(RefBranchTypeOLD branchTypeCode) {
+    public void setType(RefBranchType branchTypeCode) {
         this.type = branchTypeCode;
     }
 
@@ -94,7 +95,7 @@ public class BranchOLD {
 
     public void setFields(Address address,
                           @NotNull Bank bank,
-                          @NotNull RefBranchTypeOLD type,
+                          @NotNull RefBranchType type,
                           @Length(max = 255) String details) {
         this.address = address;
         this.bank = bank;

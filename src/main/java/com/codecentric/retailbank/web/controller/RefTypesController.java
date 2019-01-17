@@ -2,8 +2,8 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.OLD.RefAccountStatus;
 import com.codecentric.retailbank.model.domain.OLD.RefAccountType;
-import com.codecentric.retailbank.model.domain.OLD.RefBranchTypeOLD;
 import com.codecentric.retailbank.model.domain.OLD.RefTransactionType;
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.dto.RefAccountStatusDto;
 import com.codecentric.retailbank.model.dto.RefAccountTypeDto;
 import com.codecentric.retailbank.model.dto.RefBranchTypeDto;
@@ -51,7 +51,7 @@ public class RefTypesController {
 
     @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
-        List<RefBranchTypeOLD> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
+        List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
         List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
         List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
         List<RefTransactionType> refTransactionTypes = refTransactionTypeService.getAllRefTransactionTypes();
@@ -69,8 +69,8 @@ public class RefTypesController {
                                     @PathVariable("id") Optional<Long> id) {
         switch (type) {
             case "branchType": {
-                RefBranchTypeOLD refBranchType = id.isPresent() ?
-                        refBranchTypeService.getById(id.get()) : new RefBranchTypeOLD(0L);
+                RefBranchType refBranchType = id.isPresent() ?
+                        refBranchTypeService.getById(id.get()) : new RefBranchType(0L);
 
                 RefBranchTypeDto refBranchTypeDto = new RefBranchTypeDto(
                         refBranchType.getId(),
@@ -144,10 +144,10 @@ public class RefTypesController {
             return CONTROLLER_NAME + "/form";
         }
 
-        // Try adding/updating RefBranchTypeOLD
+        // Try adding/updating RefBranchType
         try {
             if (dto.getId() != null && dto.getId() != 0) {
-                RefBranchTypeOLD updatedRefBranchType = refBranchTypeService.getById(dto.getId());
+                RefBranchType updatedRefBranchType = refBranchTypeService.getById(dto.getId());
                 updatedRefBranchType.setFields(
                         dto.getCode(),
                         dto.getDescription(),
@@ -157,9 +157,9 @@ public class RefTypesController {
                 );
                 refBranchTypeService.updateRefBranchType(updatedRefBranchType);
 
-                redirectAttributes.addAttribute("message", "Successfully updated RefBranchTypeOLD.");
+                redirectAttributes.addAttribute("message", "Successfully updated RefBranchType.");
             } else {
-                RefBranchTypeOLD newRefBranchType = new RefBranchTypeOLD();
+                RefBranchType newRefBranchType = new RefBranchType();
                 newRefBranchType.setFields(
                         dto.getCode(),
                         dto.getDescription(),
@@ -169,7 +169,7 @@ public class RefTypesController {
                 );
                 refBranchTypeService.addRefBranchType(newRefBranchType);
 
-                redirectAttributes.addAttribute("message", "Successfully created RefBranchTypeOLD.");
+                redirectAttributes.addAttribute("message", "Successfully created RefBranchType.");
             }
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
@@ -347,7 +347,7 @@ public class RefTypesController {
                 try {
                     refBranchTypeService.deleteRefBranchType(id);
 
-                    redirectAttributes.addAttribute("message", "Successfully deleted RefBranchTypeOLD.");
+                    redirectAttributes.addAttribute("message", "Successfully deleted RefBranchType.");
                 } catch (Exception ex) {
                     LOGGER.error(ex.getMessage());
 
