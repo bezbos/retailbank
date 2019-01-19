@@ -107,4 +107,8 @@ public class RefBranchTypeService implements IRefBranchTypeService {
         // Delete the actual refBranchType
         refBranchTypeRepositoryJDBC.delete(refBranchType);
     }
+
+    public List<RefBranchType> getRefBranchTypesBatch(Iterable<Long> ids) {
+        return refBranchTypeRepositoryJDBC.getBatchByIds(ids);
+    }
 }

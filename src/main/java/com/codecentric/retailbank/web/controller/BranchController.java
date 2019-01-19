@@ -2,9 +2,10 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
+import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.dto.BranchDto;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BankService;
 import com.codecentric.retailbank.service.BranchService;
@@ -12,7 +13,6 @@ import com.codecentric.retailbank.service.RefBranchTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,10 +46,6 @@ public class BranchController {
     @Autowired
     private RefBranchTypeService refBranchTypeService;
 
-    public BranchController() {
-        super();
-    }
-
 
     @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
@@ -60,27 +56,39 @@ public class BranchController {
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
                 0 : pageIndex;
 
-        Page<BranchOLD> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
+        ListPage<Branch> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
 
         model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", branches.getTotalPages());
-        model.addAttribute("branches", branches);
+        model.addAttribute("totalPages", branches.getPageCount());
+        model.addAttribute("branches", branches.getModels());
         return CONTROLLER_NAME + "/index";
     }
 
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
     public String getFormPage(@PathVariable("id") Optional<Long> id,
                               Model model) {
-        BranchOLD branch = id.isPresent() ?
-                branchService.getById(id.get()) : new BranchOLD(0L);
 
-        BranchDto branchDto = new BranchDto(
-                branch.getId(),
-                branch.getAddress(),
-                branch.getBank(),
-                branch.getType(),
-                branch.getDetails()
-        );
+        Branch branch;
+        BranchDto branchDto;
+        if (id.isPresent()) {
+            // Get the Branch
+            branch = branchService.getById(id.get());
+
+            // Construct the DTO
+            branchDto = new BranchDto(
+                    branch.getId(),
+                    branch.getAddress().getDto(),
+                    branch.getBank().getDto(),
+                    branch.getRefBranchType().getDto(),
+                    branch.getDetails()
+            );
+        } else {
+            // Construct new Branch
+            branch = new Branch(0L);
+
+            // Construct the DTO
+            branchDto = new BranchDto(branch.getId());
+        }
 
         model.addAttribute("branchDto", branchDto);
         model.addAttribute("allBanks", bankService.getAllBanks());
@@ -94,62 +102,53 @@ public class BranchController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
 
-        // Check if valid
+        // Check if DTO is valid
         if (dto == null || result.hasErrors()) {
+            // If not valid, return form w/ model to client.
             model.addAttribute("branchDto", dto);
             return CONTROLLER_NAME + "/form";
         }
 
         // Try adding/updating branch
         try {
+            // If Branch exists, update it
             if (dto.getId() != null && dto.getId() != 0) {
-                BranchOLD updatedBranch = branchService.getById(dto.getId());
+                // Get the existing Branch
+                Branch existingBranch = branchService.getById(dto.getId());
 
+                // Get the FK rows
                 Address address = addressService.getByLine1(dto.getAddress().getLine1());
-                if (address == null) {
-                    address = new Address();
-                    address.setLine1(dto.getAddress().getLine1());
-
-                    addressService.addAddress(address);
-                }
-
                 Bank bank = bankService.getById(dto.getBank().getId());
-
                 RefBranchType refBranchType = refBranchTypeService.getById(dto.getType().getId());
 
-                updatedBranch.setFields(
+                existingBranch.setFields(
                         address,
                         bank,
                         refBranchType,
                         dto.getDetails()
                 );
 
-                branchService.updateBranch(updatedBranch);
+                branchService.updateBranch(existingBranch);
 
                 redirectAttributes.addAttribute("message", "Successfully updated branch.");
             } else {
-                BranchOLD newBranch = new BranchOLD();
+                // If Branch doesn't exist, insert it
+                Branch branch = new Branch();
 
-                Address address = addressService.getByLine1(dto.getAddress().getLine1());
-                if (address == null) {
-                    address = new Address();
-                    address.setLine1(dto.getAddress().getLine1());
+                Address existingAddress = addressService.getByLine1(dto.getAddress().getLine1());
+                if(existingAddress == null)
+                    addressService.addAddress(dto.getAddress().getDBModel());
 
-                    addressService.addAddress(address);
-                }
-
-                Bank bank = bankService.getById(dto.getBank().getId());
-
-                RefBranchType refBranchType = refBranchTypeService.getById(dto.getType().getId());
-
-                newBranch.setFields(
-                        address,
-                        bank,
-                        refBranchType,
+                Bank existingBank = bankService.getById(dto.getBank().getId());
+                RefBranchType existingRefBranchType = refBranchTypeService.getById(dto.getType().getId());
+                branch.setFields(
+                        existingAddress,
+                        existingBank,
+                        existingRefBranchType,
                         dto.getDetails()
                 );
 
-                branchService.addBranch(newBranch);
+                branchService.addBranch(branch);
 
                 redirectAttributes.addAttribute("message", "Successfully created branch.");
             }
@@ -161,6 +160,25 @@ public class BranchController {
             model.addAttribute("branchDto", dto);
             redirectAttributes.addAttribute("error", ex.getMessage());
             return "redirect:/" + CONTROLLER_NAME + "/form";
+        }
+
+        return "redirect:/" + CONTROLLER_NAME + "/list";
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public String onDeleteSubmit(@PathVariable("id") Long id,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            branchService.deleteBranch(id);
+
+            redirectAttributes.addAttribute("message", "Successfully deleted branch.");
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+
+            // Something went wrong.
+            redirectAttributes.asMap().clear();
+            redirectAttributes.addAttribute("error", ex.getMessage());
+            return "redirect:/" + CONTROLLER_NAME + "/list";
         }
 
         return "redirect:/" + CONTROLLER_NAME + "/list";

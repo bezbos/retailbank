@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.AddressDto;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -135,5 +137,18 @@ public class Address {
         this.stateProvinceCountry = stateProvinceCountry;
         this.country = country;
         this.otherDetails = otherDetails;
+    }
+
+    public AddressDto getDto(){
+        return new AddressDto(
+                this.id,
+                this.getLine1(),
+                this.getLine2(),
+                this.getTownCity(),
+                this.getZipPostcode(),
+                this.getStateProvinceCountry(),
+                this.getCountry(),
+                this.getOtherDetails()
+        );
     }
 }

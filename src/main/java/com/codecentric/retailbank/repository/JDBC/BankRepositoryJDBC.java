@@ -542,6 +542,50 @@ public class BankRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
         }
     }
 
+    public List<Bank> getBatchByIds(Iterable<Long> ids) {
+        if (ids == null)
+            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+        List<Bank> banks = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_getBanks = conn.prepareCall("{call singleBank(?)}")) {
+
+            // Add calls to batch
+            for (Long id : ids) {
+                try {
+                    cs_getBanks.setLong(1, id);
+                    cs_getBanks.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            cs_getBanks.executeBatch();
+
+            // Transform ResultSet rows into banks
+            resultSet = cs_getBanks.getResultSet();
+            banks = new ArrayList<>();
+            while (resultSet.next()) {
+                banks.add(
+                        new Bank(
+                                resultSet.getLong(1),
+                                resultSet.getString(2)
+                        )
+                );
+            }
+
+            return banks;
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return banks;
+    }
 
     @Override public void insertBatch(Iterable<Bank> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);

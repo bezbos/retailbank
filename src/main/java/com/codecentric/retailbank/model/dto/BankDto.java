@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.Bank;
 import org.hibernate.validator.constraints.Length;
 
 public class BankDto {
@@ -11,7 +12,10 @@ public class BankDto {
 
 
     public BankDto() {
-        super();
+    }
+
+    public BankDto(Long id) {
+        this.id = id;
     }
 
     public BankDto(Long id, String details) {
@@ -34,5 +38,12 @@ public class BankDto {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public Bank getDBModel(){
+        return new Bank(
+                this.id,
+                this.details
+        );
     }
 }

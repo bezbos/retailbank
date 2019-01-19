@@ -37,20 +37,15 @@ public class AddressService implements IAddressService {
     private AddressRepositoryJDBC addressRepositoryJDBC;
 
 
-    public AddressService() {
-        super();
-    }
-
-
     @Override
     public Address getById(Long id) {
-        Address address = addressRepositoryJDBC.getSingle(id);
+        Address address = addressRepositoryJDBC.getSingleOrDefault(id);
         return address;
     }
 
     @Override
     public Address getByLine1(String line1) {
-        Address address = addressRepositoryJDBC.getSingleByLine1(line1);
+        Address address = addressRepositoryJDBC.getSingleByLine1OrDefault(line1);
         return address;
     }
 
@@ -82,10 +77,10 @@ public class AddressService implements IAddressService {
     public void deleteAddress(Address address) {
 //        // Remove any foreign key constraints
 //        branchRepository.findByAddress(address).forEach(branch -> {
-//            branch.setAddressId(null);
+//            branch.setAddress(null);
 //        });
 //        customerRepository.findByAddress(address).forEach(customer -> {
-//            customer.setAddressId(null);
+//            customer.setAddress(null);
 //        });
 
         // Delete the actual address
@@ -98,14 +93,18 @@ public class AddressService implements IAddressService {
 
 //        // Remove any foreign key constraints
 //        branchRepository.findByAddress(address).forEach(branch -> {
-//            branch.setAddressId(null);
+//            branch.setAddress(null);
 //        });
 //        customerRepository.findByAddress(address).forEach(customer -> {
-//            customer.setAddressId(null);
+//            customer.setAddress(null);
 //        });
 
         // Delete the actual address
         addressRepositoryJDBC.delete(address);
+    }
+
+    public List<Address> getAddressesBatch(Iterable<Long> ids) {
+        return addressRepositoryJDBC.getBatchByIds(ids);
     }
 
 }

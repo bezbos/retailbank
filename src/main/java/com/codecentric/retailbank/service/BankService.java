@@ -104,4 +104,8 @@ public class BankService implements IBankService {
         // Delete the actual bank
         bankRepositoryJDBC.delete(bank);
     }
+
+    public List<Bank> getBanksBatch(Iterable<Long> ids) {
+        return bankRepositoryJDBC.getBatchByIds(ids);
+    }
 }

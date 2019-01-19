@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.BankDto;
+
 import javax.validation.constraints.Size;
 
 public class Bank {
@@ -41,5 +43,12 @@ public class Bank {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public BankDto getDto(){
+        return new BankDto(
+          this.id,
+          this.details
+        );
     }
 }

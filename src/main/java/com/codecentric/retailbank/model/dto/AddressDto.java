@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.Address;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -32,7 +33,10 @@ public class AddressDto {
 
 
     public AddressDto() {
-        super();
+    }
+
+    public AddressDto(Long id) {
+        this.id = id;
     }
 
     public AddressDto(Long id,
@@ -116,5 +120,18 @@ public class AddressDto {
 
     public void setOtherDetails(String otherDetails) {
         this.otherDetails = otherDetails;
+    }
+
+    public Address getDBModel(){
+        return new Address(
+                this.id,
+                this.line1,
+                this.line2,
+                this.townCity,
+                this.zipPostcode,
+                this.stateProvinceCountry,
+                this.country,
+                this.otherDetails
+        );
     }
 }

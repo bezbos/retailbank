@@ -7,25 +7,35 @@ public class Branch {
 
     private Long id;
 
-    private Address addressId;
+    private Address address;
 
     @NotNull
-    private Bank bankId;
+    private Bank bank;
 
     @NotNull
-    private RefBranchType refBranchTypeId;
+    private RefBranchType refBranchType;
 
     @Size(max = 255)
     private String details;
 
 
     public Branch() {
-        super();
     }
 
     public Branch(Long id) {
-        super();
         this.id = id;
+    }
+
+    public Branch(Long id,
+                  Address address,
+                  @NotNull Bank bank,
+                  @NotNull RefBranchType refBranchType,
+                  @Size(max = 255) String details) {
+        this.id = id;
+        this.address = address;
+        this.bank = bank;
+        this.refBranchType = refBranchType;
+        this.details = details;
     }
 
 
@@ -37,28 +47,28 @@ public class Branch {
         this.id = id;
     }
 
-    public Address getAddressId() {
-        return addressId;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddressId(Address addressId) {
-        this.addressId = addressId;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
-    public Bank getBankId() {
-        return bankId;
+    public Bank getBank() {
+        return bank;
     }
 
-    public void setBankId(Bank bankId) {
-        this.bankId = bankId;
+    public void setBank(Bank bank) {
+        this.bank = bank;
     }
 
-    public RefBranchType getRefBranchTypeId() {
-        return refBranchTypeId;
+    public RefBranchType getRefBranchType() {
+        return refBranchType;
     }
 
-    public void setRefBranchTypeId(RefBranchType branchTypeCode) {
-        this.refBranchTypeId = branchTypeCode;
+    public void setRefBranchType(RefBranchType branchTypeCode) {
+        this.refBranchType = branchTypeCode;
     }
 
     public String getDetails() {
@@ -69,15 +79,13 @@ public class Branch {
         this.details = details;
     }
 
-
     public void setFields(Address address,
                           @NotNull Bank bank,
-                          @NotNull RefBranchType type,
+                          @NotNull RefBranchType refBranchType,
                           @Size(max = 255) String details) {
-        this.addressId = address;
-        this.bankId = bank;
-        this.refBranchTypeId = type;
+        this.address = address;
+        this.bank = bank;
+        this.refBranchType = refBranchType;
         this.details = details;
     }
-
 }

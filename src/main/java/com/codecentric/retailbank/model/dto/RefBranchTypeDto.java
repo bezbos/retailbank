@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.RefBranchType;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,10 @@ public class RefBranchTypeDto {
 
 
     public RefBranchTypeDto() {
+    }
+
+    public RefBranchTypeDto(Long id) {
+        this.id = id;
     }
 
     public RefBranchTypeDto(Long id,
@@ -64,6 +69,9 @@ public class RefBranchTypeDto {
     }
 
     public Boolean getIsLargeUrbanType() {
+        if(isLargeUrbanType == null)
+            isLargeUrbanType = false;
+
         return isLargeUrbanType;
     }
 
@@ -72,6 +80,9 @@ public class RefBranchTypeDto {
     }
 
     public Boolean getIsSmallRuralType() {
+        if(isSmallRuralType == null)
+            isSmallRuralType = false;
+
         return isSmallRuralType;
     }
 
@@ -80,10 +91,24 @@ public class RefBranchTypeDto {
     }
 
     public Boolean getIsMediumSuburbanType() {
+        if(isMediumSuburbanType == null)
+            isMediumSuburbanType = false;
+
         return isMediumSuburbanType;
     }
 
     public void setIsMediumSuburbanType(Boolean mediumSuburban) {
         isMediumSuburbanType = mediumSuburban;
+    }
+
+    public RefBranchType getDBModel(){
+        return new RefBranchType(
+                this.id,
+                this.code,
+                this.description,
+                this.getIsLargeUrbanType() ? "Y" : "N",
+                this.getIsSmallRuralType() ? "Y" : "N",
+                this.getIsMediumSuburbanType() ? "Y" : "N"
+        );
     }
 }

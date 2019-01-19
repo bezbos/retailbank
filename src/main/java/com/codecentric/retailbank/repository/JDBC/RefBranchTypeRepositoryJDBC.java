@@ -531,6 +531,54 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
         }
     }
 
+    public List<RefBranchType> getBatchByIds(Iterable<Long> ids) {
+        if (ids == null)
+            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+        List<RefBranchType> refBranchTypes = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_getRefBranchTypes = conn.prepareCall("{call singleRefBranchType(?)}")) {
+
+            // Add calls to batch
+            for (Long id : ids) {
+                try {
+                    cs_getRefBranchTypes.setLong(1, id);
+                    cs_getRefBranchTypes.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            cs_getRefBranchTypes.executeBatch();
+
+            // Transform ResultSet rows into refBranchTypes
+            resultSet = cs_getRefBranchTypes.getResultSet();
+            refBranchTypes = new ArrayList<>();
+            while (resultSet.next()) {
+                refBranchTypes.add(
+                        new RefBranchType(
+                                resultSet.getLong(1),
+                                resultSet.getString(2),
+                                resultSet.getString(3),
+                                resultSet.getString(4),
+                                resultSet.getString(5),
+                                resultSet.getString(6)
+                        )
+                );
+            }
+
+            return refBranchTypes;
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return refBranchTypes;
+    }
 
     @Override public void insertBatch(Iterable<RefBranchType> models) {
         if (models == null)

@@ -1,29 +1,29 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.OLD.BranchOLD;
-import org.springframework.data.domain.Page;
+import com.codecentric.retailbank.model.domain.Branch;
+import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 
 import java.util.List;
 
 public interface IBranchService {
 
     // GET
-    BranchOLD getById(Long id);
+    Branch getById(Long id);
 
-    BranchOLD getByDetails(String details);
+    Branch getByDetails(String details);
 
-    List<BranchOLD> getAllBranches();
+    List<Branch> getAllBranches();
 
     // CREATE
-    BranchOLD addBranch(BranchOLD branch);
+    Branch addBranch(Branch branch);
 
     // UPDATE
-    BranchOLD updateBranch(BranchOLD branch);
+    Branch updateBranch(Branch branch);
 
     // DELETE
-    void deleteBranch(BranchOLD branch);
+    void deleteBranch(Branch branch);
 
     void deleteBranch(Long id);
 
-    Page<BranchOLD> getAllBranchesByPage(Integer pageIndex, int pageSize);
+    ListPage<Branch> getAllBranchesByPage(Integer pageIndex, int pageSize);
 }

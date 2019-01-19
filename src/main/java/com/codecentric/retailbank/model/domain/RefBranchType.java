@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.RefBranchTypeDto;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -110,6 +112,17 @@ public class RefBranchType {
 
         if (isMediumSuburban != null)
             this.isMediumSuburban = isMediumSuburban.booleanValue() == true ? "Y" : "N";
+    }
+
+    public RefBranchTypeDto getDto(){
+        return new RefBranchTypeDto(
+                this.getId(),
+                this.getCode(),
+                this.getDescription(),
+                this.getIsLargeUrban(),
+                this.getIsSmallRural(),
+                this.getIsMediumSuburban()
+        );
     }
 
 }

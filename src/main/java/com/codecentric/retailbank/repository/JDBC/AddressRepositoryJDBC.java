@@ -21,7 +21,7 @@ import java.util.List;
 @Repository
 public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Address, Long> {
 
-    @Override public List findAllOrDefault() {
+    @Override public List<Address> findAllOrDefault() {
         ResultSet resultSet = null;
         List<Address> addresses = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
         return addresses.size() < 1 ? null : addresses;
     }
 
-    @Override public List findAll() {
+    @Override public List<Address> findAll() {
         ResultSet resultSet = null;
         List<Address> addresses = new ArrayList<>();
 
@@ -557,6 +557,57 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
     }
 
 
+    public List<Address> getBatchByIds(Iterable<Long> ids) {
+        if (ids == null)
+            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+        List<Address> addresses = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_getAddresses = conn.prepareCall("{call singleAddress(?)}")) {
+
+            // Add calls to batch
+            for (Long id : ids) {
+                try {
+                    cs_getAddresses.setLong(1, id);
+                    cs_getAddresses.addBatch();
+                } catch (SQLException ex) {
+                    DBUtil.showErrorMessage(ex);
+                }
+            }
+
+            // Execute batch!
+            cs_getAddresses.executeBatch();
+
+            // Transform ResultSet rows into addresses
+            resultSet = cs_getAddresses.getResultSet();
+            addresses = new ArrayList<>();
+            while (resultSet.next()) {
+                addresses.add(
+                        new Address(
+                                resultSet.getLong(1),
+                                resultSet.getString(2),
+                                resultSet.getString(3),
+                                resultSet.getString(4),
+                                resultSet.getString(5),
+                                resultSet.getString(6),
+                                resultSet.getString(7),
+                                resultSet.getString(8)
+                        )
+                );
+            }
+
+            return addresses;
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return addresses;
+    }
+
     @Override public void insertBatch(Iterable<Address> models) {
         if (models == null)
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
@@ -623,20 +674,20 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddreses = conn.prepareCall("{call deleteAddresses(?)}")) {
+             CallableStatement cs_deleteAddresses = conn.prepareCall("{call deleteAddresses(?)}")) {
 
             // Add calls to batch
             for (Address model : models) {
                 try {
-                    cs_deleteAddreses.setLong(1, model.getId());
-                    cs_deleteAddreses.addBatch();
+                    cs_deleteAddresses.setLong(1, model.getId());
+                    cs_deleteAddresses.addBatch();
                 } catch (SQLException ex) {
                     DBUtil.showErrorMessage(ex);
                 }
             }
 
             // Execute batch!
-            cs_deleteAddreses.executeBatch();
+            cs_deleteAddresses.executeBatch();
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
@@ -647,7 +698,7 @@ public class AddressRepositoryJDBC extends JDBCRepositoryUtilities implements JD
             throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
+             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddresses(?)}")) {
 
             // Add calls to batch
             for (Long id : ids) {
