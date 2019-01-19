@@ -136,8 +136,10 @@ public class BranchController {
                 Branch branch = new Branch();
 
                 Address existingAddress = addressService.getByLine1(dto.getAddress().getLine1());
-                if(existingAddress == null)
+                if(existingAddress == null){
                     addressService.addAddress(dto.getAddress().getDBModel());
+                    existingAddress = addressService.getByLine1(dto.getAddress().getLine1());
+                }
 
                 Bank existingBank = bankService.getById(dto.getBank().getId());
                 RefBranchType existingRefBranchType = refBranchTypeService.getById(dto.getType().getId());

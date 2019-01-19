@@ -844,4 +844,73 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
         }
 
     }
+
+    public List<Branch> getAllByAddressId(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        List<Branch> branches = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_allBranchesByAddressId = conn.prepareCall("{call allBranchesByAddressId(?)}")) {
+
+            // Retrieve a branches
+            cs_allBranchesByAddressId.setLong(1, id);
+            cs_allBranchesByAddressId.execute();
+
+            // Transform ResultSet row into a Branch model
+            resultSet = cs_allBranchesByAddressId.getResultSet();
+            branches = new ArrayList<>();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+                ++rowCounter;
+
+                // Transform ResultSet row into a Branch object
+                Address address = new Address(
+                        resultSet.getLong("branches.address_id"),
+                        resultSet.getString("addresses.line_1"),
+                        resultSet.getString("addresses.line_2"),
+                        resultSet.getString("addresses.town_city"),
+                        resultSet.getString("addresses.zip_postcode"),
+                        resultSet.getString("addresses.state_province_country"),
+                        resultSet.getString("addresses.country"),
+                        resultSet.getString("addresses.other_details")
+                );
+
+                Bank bank = new Bank(
+                        resultSet.getLong("branches.bank_id"),
+                        resultSet.getString("banks.bank_details")
+                );
+
+                RefBranchType refBranchType = new RefBranchType(
+                        resultSet.getLong("branches.branch_type_id"),
+                        resultSet.getString("ref_branch_types.branch_type_code"),
+                        resultSet.getString("ref_branch_types.branch_type_description"),
+                        resultSet.getString("ref_branch_types.large_urban"),
+                        resultSet.getString("ref_branch_types.small_rural"),
+                        resultSet.getString("ref_branch_types.medium_suburban")
+                );
+
+                Branch branch = new Branch(
+                        resultSet.getLong("branches.branch_id"),
+                        address,
+                        bank,
+                        refBranchType,
+                        resultSet.getString("branches.branch_details")
+                );
+
+                branches.add(branch);
+            }
+            if (rowCounter < 1)
+                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return branches;
+    }
 }

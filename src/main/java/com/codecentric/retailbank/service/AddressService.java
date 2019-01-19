@@ -1,11 +1,12 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.repository.JDBC.AddressRepositoryJDBC;
+import com.codecentric.retailbank.repository.JDBC.BranchRepositoryJDBC;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.repository.SpringData.AddressRepository;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
-import com.codecentric.retailbank.repository.SpringData.BranchRepository;
 import com.codecentric.retailbank.repository.SpringData.CustomerRepository;
 import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IAddressService;
@@ -26,7 +27,7 @@ public class AddressService implements IAddressService {
     @Autowired
     private AddressRepository addressRepository;
     @Autowired
-    private BranchRepository branchRepository;
+    private BranchRepositoryJDBC branchRepositoryJDBC;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -75,6 +76,13 @@ public class AddressService implements IAddressService {
 
     @Override
     public void deleteAddress(Address address) {
+
+        List<Branch> existingBranches = branchRepositoryJDBC.getAllByAddressId(address.getId());
+        for (Branch branch : existingBranches)
+            branch.setAddress(null);
+
+        branchRepositoryJDBC.updateBatch(existingBranches);
+
 //        // Remove any foreign key constraints
 //        branchRepository.findByAddress(address).forEach(branch -> {
 //            branch.setAddress(null);
@@ -91,6 +99,12 @@ public class AddressService implements IAddressService {
     public void deleteAddress(Long id) {
         Address address = addressRepositoryJDBC.getSingle(id);
 
+        List<Branch> existingBranches = branchRepositoryJDBC.getAllByAddressId(id);
+        for (Branch branch : existingBranches)
+            branch.setAddress(null);
+
+        branchRepositoryJDBC.updateBatch(existingBranches);
+
 //        // Remove any foreign key constraints
 //        branchRepository.findByAddress(address).forEach(branch -> {
 //            branch.setAddress(null);
@@ -101,10 +115,6 @@ public class AddressService implements IAddressService {
 
         // Delete the actual address
         addressRepositoryJDBC.delete(address);
-    }
-
-    public List<Address> getAddressesBatch(Iterable<Long> ids) {
-        return addressRepositoryJDBC.getBatchByIds(ids);
     }
 
 }
