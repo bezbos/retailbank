@@ -40,6 +40,11 @@ public class Address {
         this.id = id;
     }
 
+    public Address(Long id, @NotNull @Size(max = 255) String line1) {
+        this.id = id;
+        this.line1 = line1;
+    }
+
     public Address(Long id,
                    @NotNull String line1,
                    String line2,

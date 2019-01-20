@@ -1,6 +1,9 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.OLD.Customer;
+import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.model.domain.Branch;
+import com.codecentric.retailbank.model.domain.Customer;
+import com.codecentric.retailbank.repository.JDBC.CustomerRepositoryJDBC;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BranchService;
 import com.codecentric.retailbank.service.CustomerService;
@@ -31,14 +34,20 @@ public class CustomerController {
     private BranchService branchService;
 
 
-    public CustomerController() {
-        super();
-    }
-
-
-    @RequestMapping(value = {"", "/", "/index"})
+    @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
-        List<Customer> customers = customerService.getAllCustomers();
+        CustomerRepositoryJDBC jdbc = new CustomerRepositoryJDBC();
+        List<Customer> customers = jdbc.findAllOrDefault();
+        List<Customer> test1 = jdbc.findAll();
+        List<Customer> test2 = jdbc.findAllRange(0, 4).getModels();
+        List<Customer> test3 = jdbc.findAllRangeOrDefault(0, 4).getModels();
+        Customer test4 = jdbc.getSingle(1L);
+        Customer test5 = jdbc.getSingleOrDefault(1L);
+        Customer test6 = jdbc.add(new Customer(new Address(1L), new Branch(1L), "JDBC TEST", "JDBC TEST"));
+        Customer test7 = jdbc.update(new Customer(2L ,new Address(2L), new Branch(2L), "JDBC UPDATE TEST", "JDBC UPDATE TEST"));
+
+
+//        List<Customer> customers = customerService.getAllCustomers();
 
         model.addAttribute("customers", customers);
         return CONTROLLER_NAME + "/index";

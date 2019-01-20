@@ -761,7 +761,6 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
-
     }
 
     @Override public void updateBatch(Iterable<Branch> models) {
@@ -793,7 +792,6 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
-
     }
 
     @Override public void deleteBatch(Iterable<Branch> models) {
@@ -842,7 +840,6 @@ public class BranchRepositoryJDBC extends JDBCRepositoryUtilities implements JDB
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
-
     }
 
     public List<Branch> getAllByAddressId(Long id) {

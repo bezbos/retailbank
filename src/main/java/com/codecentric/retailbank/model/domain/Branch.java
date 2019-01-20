@@ -26,6 +26,11 @@ public class Branch {
         this.id = id;
     }
 
+    public Branch(Long id, @Size(max = 255) String details) {
+        this.id = id;
+        this.details = details;
+    }
+
     public Branch(Long id,
                   Address address,
                   @NotNull Bank bank,
