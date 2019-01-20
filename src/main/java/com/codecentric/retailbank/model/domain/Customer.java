@@ -20,6 +20,11 @@ public class Customer {
     @Size(max = 255)
     private String contactDetails;
 
+
+    public Customer(Long id) {
+        this.id = id;
+    }
+
     public Customer(Address address,
                     @NotNull Branch branch,
                     @NotNull @Size(max = 255) String personalDetails,
@@ -46,6 +51,7 @@ public class Customer {
         this.personalDetails = personalDetails;
         this.contactDetails = contactDetails;
     }
+
 
     public Long getId() {
         return id;

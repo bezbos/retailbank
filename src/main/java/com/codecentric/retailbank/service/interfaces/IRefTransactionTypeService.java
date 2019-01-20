@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.service.interfaces;
 
-import com.codecentric.retailbank.model.domain.OLD.RefTransactionType;
+import com.codecentric.retailbank.model.domain.RefTransactionType;
 
 import java.util.List;
 

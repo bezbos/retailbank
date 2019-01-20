@@ -1,7 +1,7 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.OLD.Transaction;
-import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
+import com.codecentric.retailbank.model.domain.Transaction;
+import com.codecentric.retailbank.repository.JDBC.TransactionRepositoryJDBC;
 import com.codecentric.retailbank.service.interfaces.ITransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,54 +15,49 @@ import java.util.List;
 @Transactional
 public class TransactionService implements ITransactionService {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private TransactionRepository repo;
-
-
-    public TransactionService() {
-        super();
-    }
+    private TransactionRepositoryJDBC transactionRepositoryJDBC;
 
 
     @Override
     public Transaction getById(Long id) {
-        Transaction transaction = repo.getOne(id);
+        Transaction transaction = transactionRepositoryJDBC.getSingle(id);
         return transaction;
     }
 
     @Override
     public Transaction getByDetails(String details) {
-        Transaction transaction = repo.findByDetails(details);
+        Transaction transaction = transactionRepositoryJDBC.getSingleByDetails(details);
         return transaction;
     }
 
     @Override
     public List<Transaction> getAllTransactions() {
-        List<Transaction> transactions = repo.findAll();
+        List<Transaction> transactions = transactionRepositoryJDBC.findAll();
         return transactions;
     }
 
     @Override
     public Transaction addTransaction(Transaction transaction) {
-        Transaction result = repo.save(transaction);
+        Transaction result = transactionRepositoryJDBC.add(transaction);
         return result;
     }
 
     @Override
     public Transaction updateTransaction(Transaction transaction) {
-        Transaction result = repo.save(transaction);
+        Transaction result = transactionRepositoryJDBC.update(transaction);
         return result;
     }
 
     @Override
     public void deleteTransaction(Transaction transaction) {
-        repo.delete(transaction);
+        transactionRepositoryJDBC.delete(transaction);
     }
 
     @Override
     public void deleteTransaction(Long id) {
-        repo.deleteById(id);
+        transactionRepositoryJDBC.deleteById(id);
     }
 }
