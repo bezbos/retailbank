@@ -50,7 +50,7 @@ public class RefBranchTypeService implements IRefBranchTypeService {
 
     @Override
     public List<RefBranchType> getAllRefBranchTypes() {
-        List<RefBranchType> refBranchTypes = refBranchTypeRepositoryJDBC.findAllOrDefault();
+        List<RefBranchType> refBranchTypes = refBranchTypeRepositoryJDBC.findAll();
         return refBranchTypes;
     }
 

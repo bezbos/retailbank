@@ -35,7 +35,7 @@ public class BankService implements IBankService {
 
 
     @Override public Bank getById(Long id) {
-        Bank bank = bankRepositoryJDBC.getSingleOrDefault(id);
+        Bank bank = bankRepositoryJDBC.getSingle(id);
         return bank;
     }
 
@@ -45,7 +45,7 @@ public class BankService implements IBankService {
     }
 
     @Override public List<Bank> getAllBanks() {
-        List<Bank> banks = bankRepositoryJDBC.findAllOrDefault();
+        List<Bank> banks = bankRepositoryJDBC.findAll();
         return banks;
     }
 

@@ -1,9 +1,7 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.dto.BankDto;
-import com.codecentric.retailbank.repository.JDBC.BranchRepositoryJDBC;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
 import com.codecentric.retailbank.service.BankService;
 import org.slf4j.Logger;
@@ -21,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
@@ -44,9 +41,6 @@ public class BankController {
     @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
                                Model model) throws SQLException {
-
-        BranchRepositoryJDBC jdbc = new BranchRepositoryJDBC();
-        List<Branch> test = jdbc.findAllOrDefault();
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;

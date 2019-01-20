@@ -40,13 +40,13 @@ public class AddressService implements IAddressService {
 
     @Override
     public Address getById(Long id) {
-        Address address = addressRepositoryJDBC.getSingleOrDefault(id);
+        Address address = addressRepositoryJDBC.getSingle(id);
         return address;
     }
 
     @Override
     public Address getByLine1(String line1) {
-        Address address = addressRepositoryJDBC.getSingleByLine1OrDefault(line1);
+        Address address = addressRepositoryJDBC.getSingleByLine1(line1);
         return address;
     }
 
@@ -58,7 +58,7 @@ public class AddressService implements IAddressService {
 
     @Override
     public ListPage<Address> getAllAddressesByPage(int pageIndex, int pageSize) {
-        ListPage<Address> addresses = addressRepositoryJDBC.findAllRangeOrDefault(pageIndex, pageSize);
+        ListPage<Address> addresses = addressRepositoryJDBC.findAllRange(pageIndex, pageSize);
         return addresses;
     }
 

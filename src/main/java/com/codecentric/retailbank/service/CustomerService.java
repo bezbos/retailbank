@@ -23,13 +23,13 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public Customer getById(Long id) {
-        Customer customer = customerRepositoryJDBC.getSingleOrDefault(id);
+        Customer customer = customerRepositoryJDBC.getSingle(id);
         return customer;
     }
 
     @Override
     public Customer getByPersonalDetails(String details) {
-        Customer customer = customerRepositoryJDBC.getSingleByPersonalDetailsOrDefault(details);
+        Customer customer = customerRepositoryJDBC.getSingleByPersonalDetails(details);
         return customer;
     }
 

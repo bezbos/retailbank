@@ -7,7 +7,6 @@ import com.codecentric.retailbank.repository.JDBC.configuration.DBType;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBUtil;
 import com.codecentric.retailbank.repository.JDBC.exceptions.ArgumentNullException;
 import com.codecentric.retailbank.repository.JDBC.exceptions.InvalidOperationException;
-import com.codecentric.retailbank.repository.JDBC.exceptions.SourceCollectionIsEmptyException;
 import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
@@ -24,50 +23,6 @@ import java.util.List;
 @Repository
 public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Customer, Long> {
 
-    @Override public List<Customer> findAllOrDefault() {
-        ResultSet resultSet = null;
-        List<Customer> customers = new ArrayList<>();
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allCustomers = conn.prepareCall("{call allCustomers()}")) {
-
-            // Retrieve findAll customers
-            cs_allCustomers.execute();
-
-            // Transform each ResultSet row into a Customer model and add to "customers" list
-            resultSet = cs_allCustomers.getResultSet();
-            while (resultSet.next()) {
-
-                Address address = new Address(
-                        resultSet.getLong("customers.address_id"),
-                        resultSet.getString("addresses.line_1")
-                );
-
-                Branch branch = new Branch(
-                        resultSet.getLong("customers.branch_id"),
-                        resultSet.getString("branches.branch_details")
-                );
-
-                Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
-                        address,
-                        branch,
-                        resultSet.getString("customers.personal_details"),
-                        resultSet.getString("customers.contact_details")
-                );
-
-                customers.add(customer);
-            }
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return customers.size() < 1 ? null : customers;
-    }
-
     @Override public List<Customer> findAll() {
         ResultSet resultSet = null;
         List<Customer> customers = new ArrayList<>();
@@ -80,9 +35,7 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
 
             // Transform each ResultSet row into a Customer model and add to "customers" list
             resultSet = cs_allCustomers.getResultSet();
-            byte rowCounter = 0;
             while (resultSet.next()) {
-                ++rowCounter;
 
                 Address address = new Address(
                         resultSet.getLong("customers.address_id"),
@@ -105,9 +58,6 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
                 customers.add(customer);
             }
 
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
-
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         } finally {
@@ -117,7 +67,7 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
         return customers.size() < 1 ? null : customers;
     }
 
-    @Override public ListPage<Customer> findAllRangeOrDefault(int pageIndex, int pageSize) {
+    @Override public ListPage<Customer> findAllRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Customer> customerListPage = new ListPage<>();
 
@@ -174,125 +124,6 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
         return customerListPage.getModels().size() < 1 ? null : customerListPage;
     }
 
-    @Override public ListPage<Customer> findAllRange(int pageIndex, int pageSize) {
-        ResultSet resultSet = null;
-        ListPage<Customer> customerListPage = new ListPage<>();
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allCustomersRange = conn.prepareCall("{call allCustomersRange(?,?)}");
-             CallableStatement cs_allCustomersCount = conn.prepareCall("{call allCustomersCount()}")) {
-
-            // Retrieve all customers
-            cs_allCustomersRange.setInt(1, Math.abs(pageIndex * pageSize));
-            cs_allCustomersRange.setInt(2, Math.abs(pageSize));
-            cs_allCustomersRange.execute();
-
-            // Transform each ResultSet row into a Customer model and add to "customers" list
-            resultSet = cs_allCustomersRange.getResultSet();
-            List<Customer> customers = new ArrayList<>();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-                ++rowCounter;
-
-                Address address = new Address(
-                        resultSet.getLong("customers.address_id"),
-                        resultSet.getString("addresses.line_1")
-                );
-
-                Branch branch = new Branch(
-                        resultSet.getLong("customers.branch_id"),
-                        resultSet.getString("branches.branch_details")
-                );
-
-                Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
-                        address,
-                        branch,
-                        resultSet.getString("customers.personal_details"),
-                        resultSet.getString("customers.contact_details")
-                );
-
-                customers.add(customer);
-            }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
-
-            // Get the total number of customers in DB
-            cs_allCustomersCount.execute();
-            resultSet = cs_allCustomersCount.getResultSet();
-            rowCounter = 0;
-            while (resultSet.next()) {
-                ++rowCounter;
-                customerListPage.setPageCount(resultSet.getLong(1), pageSize);
-            }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
-
-            // Add customers to ListPage transfer object
-            customerListPage.setModels(customers);
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return customerListPage.getModels().size() < 1 ? null : customerListPage;
-    }
-
-    @Override public Customer getSingleOrDefault(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        Customer customer = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleCustomer = conn.prepareCall("{call singleCustomer(?)}")) {
-
-            // Retrieve a single customer
-            cs_singleCustomer.setLong(1, id);
-            cs_singleCustomer.execute();
-
-            // Transform ResultSet row into a Branch model
-            byte rowCounter = 0;
-            resultSet = cs_singleCustomer.getResultSet();
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a Branch object
-                Address address = new Address(
-                        resultSet.getLong("customers.address_id"),
-                        resultSet.getString("addresses.line_1")
-                );
-
-                Branch branch = new Branch(
-                        resultSet.getLong("customers.branch_id"),
-                        resultSet.getString("branches.branch_details")
-                );
-
-                customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
-                        address,
-                        branch,
-                        resultSet.getString("customers.personal_details"),
-                        resultSet.getString("customers.contact_details")
-                );
-
-            }
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return customer;
-    }
-
     @Override public Customer getSingle(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
@@ -337,8 +168,6 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
                 );
 
             }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         } finally {
@@ -397,70 +226,15 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
         return model;
     }
 
-    @Override public void deleteOrDefault(Customer model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
-
-            // Delete an existing customer
-            cs_deleteCustomer.setLong(1, model.getId());
-            cs_deleteCustomer.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
     @Override public void delete(Customer model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}");
-             CallableStatement cs_singleCustomer = conn.prepareCall("{call singleCustomer(?)}")) {
-
-            // Check if the customer exists
-            cs_singleCustomer.setLong(1, model.getId());
-            cs_singleCustomer.execute();
-
-            // Validate the result set
-            resultSet = cs_singleCustomer.getResultSet();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-            }
-
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
-
-            // Delete an existing customer
-            cs_deleteCustomer.setLong(1, model.getId());
-            cs_deleteCustomer.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-    }
-
-    @Override public void deleteByIdOrDefault(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
 
             // Delete an existing customer
-            cs_deleteCustomer.setLong(1, id);
+            cs_deleteCustomer.setLong(1, model.getId());
             cs_deleteCustomer.execute();
 
         } catch (SQLException ex) {
@@ -472,29 +246,8 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        ResultSet resultSet = null;
-
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}");
-             CallableStatement cs_singleCustomer = conn.prepareCall("{call singleCustomer(?)}")) {
-
-            // Check if the customer exists
-            cs_singleCustomer.setLong(1, id);
-            cs_singleCustomer.execute();
-
-            // Validate the result set
-            resultSet = cs_singleCustomer.getResultSet();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-            }
-
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
 
             // Delete an existing customer
             cs_deleteCustomer.setLong(1, id);
@@ -502,8 +255,6 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
         }
     }
 
@@ -616,59 +367,6 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
         }
     }
 
-    public Customer getSingleByPersonalDetailsOrDefault(String personalDetails) {
-        if (personalDetails == null)
-            throw new ArgumentNullException("The personalDetails argument must have a value/cannot be null.");
-
-        Customer customer = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleCustomer = conn.prepareCall("{call singleCustomerByPersonalDetails(?)}")) {
-
-            // Retrieve a single customer
-            cs_singleCustomer.setString(1, personalDetails);
-            cs_singleCustomer.execute();
-
-            // Transform ResultSet row into a Branch model
-            byte rowCounter = 0;
-            resultSet = cs_singleCustomer.getResultSet();
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a Branch object
-                Address address = new Address(
-                        resultSet.getLong("customers.address_id"),
-                        resultSet.getString("addresses.line_1")
-                );
-
-                Branch branch = new Branch(
-                        resultSet.getLong("customers.branch_id"),
-                        resultSet.getString("branches.branch_details")
-                );
-
-                customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
-                        address,
-                        branch,
-                        resultSet.getString("customers.personal_details"),
-                        resultSet.getString("customers.contact_details")
-                );
-
-            }
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return customer;
-    }
-
     public Customer getSingleByPersonalDetails(String personalDetails) {
         if (personalDetails == null)
             throw new ArgumentNullException("The personalDetails argument must have a value/cannot be null.");
@@ -713,8 +411,6 @@ public class CustomerRepositoryJDBC extends JDBCRepositoryUtilities implements J
                 );
 
             }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         } finally {

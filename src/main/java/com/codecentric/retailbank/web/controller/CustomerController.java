@@ -37,12 +37,12 @@ public class CustomerController {
     @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
         CustomerRepositoryJDBC jdbc = new CustomerRepositoryJDBC();
-        List<Customer> customers = jdbc.findAllOrDefault();
+        List<Customer> customers = jdbc.findAll();
         List<Customer> test1 = jdbc.findAll();
         List<Customer> test2 = jdbc.findAllRange(0, 4).getModels();
-        List<Customer> test3 = jdbc.findAllRangeOrDefault(0, 4).getModels();
+        List<Customer> test3 = jdbc.findAllRange(0, 4).getModels();
         Customer test4 = jdbc.getSingle(1L);
-        Customer test5 = jdbc.getSingleOrDefault(1L);
+        Customer test5 = jdbc.getSingle(1L);
         Customer test6 = jdbc.add(new Customer(new Address(1L), new Branch(1L), "JDBC TEST", "JDBC TEST"));
         Customer test7 = jdbc.update(new Customer(2L ,new Address(2L), new Branch(2L), "JDBC UPDATE TEST", "JDBC UPDATE TEST"));
 

@@ -5,7 +5,6 @@ import com.codecentric.retailbank.repository.JDBC.configuration.DBType;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBUtil;
 import com.codecentric.retailbank.repository.JDBC.exceptions.ArgumentNullException;
 import com.codecentric.retailbank.repository.JDBC.exceptions.InvalidOperationException;
-import com.codecentric.retailbank.repository.JDBC.exceptions.SourceCollectionIsEmptyException;
 import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.JDBC.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
@@ -21,40 +20,6 @@ import java.util.List;
 @Repository
 public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCRepositoryBase<RefBranchType, Long> {
 
-    @Override public List<RefBranchType> findAllOrDefault() {
-        ResultSet resultSet = null;
-        List<RefBranchType> branchTypes = new ArrayList<>();
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allRefBranchTypes = conn.prepareCall("{call allRefBranchTypes()}")) {
-
-            // Retrieve findAll branchTypes
-            cs_allRefBranchTypes.execute();
-
-            // Transform each ResultSet row into RefBranchType model and add to "branchTypes" list
-            resultSet = cs_allRefBranchTypes.getResultSet();
-            while (resultSet.next()) {
-                branchTypes.add(
-                        new RefBranchType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6)
-                        )
-                );
-            }
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return branchTypes.size() < 1 ? null : branchTypes;
-    }
-
     @Override public List<RefBranchType> findAll() {
         ResultSet resultSet = null;
         List<RefBranchType> branchTypes = new ArrayList<>();
@@ -67,7 +32,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
 
             // Transform each ResultSet row into RefBranchType model and add to "branchTypes" list
             resultSet = cs_allRefBranchTypes.getResultSet();
-            byte rowCounter = 0;
             while (resultSet.next()) {
                 branchTypes.add(
                         new RefBranchType(
@@ -81,9 +45,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
                 );
             }
 
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
-
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         } finally {
@@ -91,54 +52,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
         }
 
         return branchTypes.size() < 1 ? null : branchTypes;
-    }
-
-
-    @Override public ListPage<RefBranchType> findAllRangeOrDefault(int pageIndex, int pageSize) {
-        ResultSet resultSet = null;
-        ListPage<RefBranchType> refBranchTypeListPage = new ListPage<>();
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allRefBranchTypesRange = conn.prepareCall("{call allRefBranchTypesRange(?,?)}");
-             CallableStatement cs_allRefBranchTypesCount = conn.prepareCall("{call allRefBranchTypesCount()}")) {
-
-            // Retrieve findAll RefBranchTypes
-            cs_allRefBranchTypesRange.setInt(1, Math.abs(pageIndex * pageSize));
-            cs_allRefBranchTypesRange.setInt(2, Math.abs(pageSize));
-            cs_allRefBranchTypesRange.execute();
-
-            // Transform each ResultSet row into RefBranchType model and add to "refBranchTypes" list
-            resultSet = cs_allRefBranchTypesRange.getResultSet();
-            List<RefBranchType> refBranchTypes = new ArrayList<>();
-            while (resultSet.next()) {
-                refBranchTypes.add(
-                        new RefBranchType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6)
-                        )
-                );
-            }
-
-            // Get the total number of RefBranchType-s in DB
-            cs_allRefBranchTypesCount.execute();
-            resultSet = cs_allRefBranchTypesCount.getResultSet();
-            while (resultSet.next())
-                refBranchTypeListPage.setPageCount(resultSet.getLong(1), pageSize);
-
-            // Add refBranchTypes to ListPage transfer object
-            refBranchTypeListPage.setModels(refBranchTypes);
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
     }
 
     @Override public ListPage<RefBranchType> findAllRange(int pageIndex, int pageSize) {
@@ -157,7 +70,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
             // Transform each ResultSet row into RefBranchType model and add to "refBranchTypes" list
             resultSet = cs_allRefBranchTypesRange.getResultSet();
             List<RefBranchType> refBranchTypes = new ArrayList<>();
-            byte rowCounter = 0;
             while (resultSet.next()) {
                 refBranchTypes.add(
                         new RefBranchType(
@@ -170,17 +82,12 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
                         )
                 );
             }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
 
             // Get the total number of RefBranchType-s in DB
             cs_allRefBranchTypesCount.execute();
             resultSet = cs_allRefBranchTypesCount.getResultSet();
-            rowCounter = 0;
             while (resultSet.next())
                 refBranchTypeListPage.setPageCount(resultSet.getLong(1), pageSize);
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
 
             // Add refBranchTypes to ListPage transfer object
             refBranchTypeListPage.setModels(refBranchTypes);
@@ -192,50 +99,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
         }
 
         return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
-    }
-
-
-    @Override public RefBranchType getSingleOrDefault(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        RefBranchType refBranchType = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
-
-            // Retrieve a getSingle RefBranchType
-            cs_singleRefBranchType.setLong(1, id);
-            cs_singleRefBranchType.execute();
-
-            // Transform ResultSet row into a RefBranchType model
-            byte rowCounter = 0;
-            resultSet = cs_singleRefBranchType.getResultSet();
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a RefBranchType object
-                refBranchType = new RefBranchType(
-                        resultSet.getLong(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getString(4),
-                        resultSet.getString(5),
-                        resultSet.getString(6)
-                );
-            }
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return refBranchType;
     }
 
     @Override public RefBranchType getSingle(Long id) {
@@ -253,8 +116,8 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
             cs_singleRefBranchType.execute();
 
             // Transform ResultSet row into a RefBranchType model
-            resultSet = cs_singleRefBranchType.getResultSet();
             byte rowCounter = 0;
+            resultSet = cs_singleRefBranchType.getResultSet();
             while (resultSet.next()) {
 
                 // Check if more than one element matches id parameter
@@ -272,9 +135,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
                         resultSet.getString(6)
                 );
             }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
-
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         } finally {
@@ -284,8 +144,7 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
         return refBranchType;
     }
 
-
-    public RefBranchType getSingleByCodeOrDefault(String code) {
+    public RefBranchType getSingleByCode(String code) {
         if (code == null)
             throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
@@ -327,53 +186,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
 
         return refBranchType;
     }
-
-    public RefBranchType getSingleByCode(String code) {
-        if (code == null)
-            throw new ArgumentNullException("The code argument must have a value/cannot be null.");
-
-        RefBranchType refBranchType = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
-
-            // Retrieve a getSingle RefBranchType
-            cs_singleRefBranchType.setString(1, code);
-            cs_singleRefBranchType.execute();
-
-            // Transform ResultSet row into a RefBranchType model
-            resultSet = cs_singleRefBranchType.getResultSet();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a RefBranchType object
-                refBranchType = new RefBranchType(
-                        resultSet.getLong(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getString(4),
-                        resultSet.getString(5),
-                        resultSet.getString(6)
-                );
-            }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return refBranchType;
-    }
-
 
     @Override public RefBranchType add(RefBranchType model) {
         if (model == null)
@@ -420,71 +232,15 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
         return model;
     }
 
-
-    @Override public void deleteOrDefault(RefBranchType model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
-
-            // Delete an existing RefBranchType
-            cs_deleteRefBranchType.setLong(1, model.getId());
-            cs_deleteRefBranchType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
     @Override public void delete(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}");
-             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
-
-            // Check if the RefBranchType exists
-            cs_singleRefBranchType.setLong(1, model.getId());
-            cs_singleRefBranchType.execute();
-
-            // Validate the result set
-            resultSet = cs_singleRefBranchType.getResultSet();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-            }
-
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
-
-            // Delete an existing RefBranchType
-            cs_deleteRefBranchType.setLong(1, model.getId());
-            cs_deleteRefBranchType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-    }
-
-    @Override public void deleteByIdOrDefault(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
 
             // Delete an existing RefBranchType
-            cs_deleteRefBranchType.setLong(1, id);
+            cs_deleteRefBranchType.setLong(1, model.getId());
             cs_deleteRefBranchType.execute();
 
         } catch (SQLException ex) {
@@ -496,29 +252,8 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        ResultSet resultSet = null;
-
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}");
-             CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
-
-            // Check if the RefBranchType exists
-            cs_singleRefBranchType.setLong(1, id);
-            cs_singleRefBranchType.execute();
-
-            // Validate the result set
-            resultSet = cs_singleRefBranchType.getResultSet();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-            }
-
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does contain not any rows.");
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
 
             // Delete an existing RefBranchType
             cs_deleteRefBranchType.setLong(1, id);
@@ -526,8 +261,6 @@ public class RefBranchTypeRepositoryJDBC extends JDBCRepositoryUtilities impleme
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
         }
     }
 
