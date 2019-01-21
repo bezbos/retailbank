@@ -1,6 +1,5 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.security.Log;
 import com.codecentric.retailbank.repository.SpringData.security.LogRepository;
 import com.codecentric.retailbank.service.interfaces.ILogService;
 import org.springframework.beans.factory.annotation.Autowired;

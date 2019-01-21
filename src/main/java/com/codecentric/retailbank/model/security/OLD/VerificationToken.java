@@ -1,16 +1,31 @@
-package com.codecentric.retailbank.model.security;
+package com.codecentric.retailbank.model.security.OLD;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
+@Entity
+@Table(name = "verification_token")
 public class VerificationToken {
-    private static final int EXPIRATION = 60 * 24;
+    private static int EXPIRATION = 60 * 24;
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String token;
 
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
     private Date expiryDate;
@@ -21,10 +36,14 @@ public class VerificationToken {
     }
 
     public VerificationToken(String token) {
+
+
         this.token = token;
     }
 
     public VerificationToken(String token, User user) {
+
+
         this.token = token;
         this.user = user;
     }
@@ -75,6 +94,8 @@ public class VerificationToken {
     }
 
 
+    @org.jetbrains.annotations.NotNull
+    @org.jetbrains.annotations.Contract("_ -> new")
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Timestamp(cal.getTime().getTime()));

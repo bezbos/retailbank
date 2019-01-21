@@ -188,7 +188,7 @@ public class RefTransactionTypeRepositoryJDBC extends JDBCRepositoryUtilities im
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addRefTransactionType = conn.prepareCall("{call addRefTransactionType(?,?,?,?,?)}")) {
+             CallableStatement cs_addRefTransactionType = conn.prepareCall("{call addRefTransactionType(?,?,?,?)}")) {
 
             // Add a new RefTransactionType to DB
             cs_addRefTransactionType.setString(1, model.getCode());
@@ -209,7 +209,7 @@ public class RefTransactionTypeRepositoryJDBC extends JDBCRepositoryUtilities im
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateRefTransactionType = conn.prepareCall("{call updateRefTransactionType(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefTransactionType = conn.prepareCall("{call updateRefTransactionType(?,?,?,?,?)}")) {
 
             // Add a new RefTransactionType to DB
             cs_updateRefTransactionType.setLong(1, model.getId());
@@ -311,7 +311,7 @@ public class RefTransactionTypeRepositoryJDBC extends JDBCRepositoryUtilities im
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addRefTransactionType = conn.prepareCall("{call addRefTransactionType(?,?,?,?,?)}")) {
+             CallableStatement cs_addRefTransactionType = conn.prepareCall("{call addRefTransactionType(?,?,?,?)}")) {
 
             // Add calls to batch
             for (RefTransactionType model : models) {
@@ -338,7 +338,7 @@ public class RefTransactionTypeRepositoryJDBC extends JDBCRepositoryUtilities im
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateRefTransactionType = conn.prepareCall("{call updateRefTransactionType(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefTransactionType = conn.prepareCall("{call updateRefTransactionType(?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (RefTransactionType model : models) {

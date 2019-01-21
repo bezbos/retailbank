@@ -1,27 +1,34 @@
-package com.codecentric.retailbank.model.security;
+package com.codecentric.retailbank.model.security.OLD;
 
+import com.codecentric.retailbank.model.security.Role;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Collection;
 
+@Entity
 public class Privilege {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
 
+    @ManyToMany(mappedBy = "privileges")
     private Collection<Role> roles;
 
 
     public Privilege() {
+        super();
     }
 
-    public Privilege(String name) {
+    public Privilege(final String name) {
+        super();
         this.name = name;
-    }
-
-    public Privilege(Long id, String name, Collection<Role> roles) {
-        this.id = id;
-        this.name = name;
-        this.roles = roles;
     }
 
 
@@ -29,7 +36,7 @@ public class Privilege {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -37,7 +44,7 @@ public class Privilege {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -45,14 +52,14 @@ public class Privilege {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(final Collection<Role> roles) {
         this.roles = roles;
     }
 
 
     @Override
     public int hashCode() {
-        int prime = 31;
+        final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
@@ -77,7 +84,7 @@ public class Privilege {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("Privilege [name=").append(name).append("]").append("[id=").append(id).append("]");
         return builder.toString();
     }

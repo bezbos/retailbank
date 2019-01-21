@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.sql.SQLException;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
@@ -40,7 +39,7 @@ public class BankController {
 
     @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
-                               Model model) throws SQLException {
+                               Model model) {
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;

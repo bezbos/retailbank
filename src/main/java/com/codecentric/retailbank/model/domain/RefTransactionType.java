@@ -23,6 +23,10 @@ public class RefTransactionType {
     public RefTransactionType() {
     }
 
+    public RefTransactionType(Long id) {
+        this.id = id;
+    }
+
     public RefTransactionType(Long id, @Size(max = 15) String code) {
         this.id = id;
         this.code = code;

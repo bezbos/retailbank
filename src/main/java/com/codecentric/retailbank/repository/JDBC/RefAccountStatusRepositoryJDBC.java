@@ -25,7 +25,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
         List<RefAccountStatus> branchTypes = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allRefAccountStatuses = conn.prepareCall("{call allRefAccountStatuses()}")) {
+             CallableStatement cs_allRefAccountStatuses = conn.prepareCall("{call allRefAccountStatus()}")) {
 
             // Retrieve findAll branchTypes
             cs_allRefAccountStatuses.execute();
@@ -58,8 +58,8 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
         ListPage<RefAccountStatus> refBranchTypeListPage = new ListPage<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allRefAccountStatusesRange = conn.prepareCall("{call allRefAccountStatusesRange(?,?)}");
-             CallableStatement cs_allRefAccountStatusesCount = conn.prepareCall("{call allRefAccountStatusesCount()}")) {
+             CallableStatement cs_allRefAccountStatusesRange = conn.prepareCall("{call allRefAccountStatusRange(?,?)}");
+             CallableStatement cs_allRefAccountStatusesCount = conn.prepareCall("{call allRefAccountStatusCount()}")) {
 
             // Retrieve findAll RefAccountStatuses
             cs_allRefAccountStatusesRange.setInt(1, Math.abs(pageIndex * pageSize));
@@ -188,7 +188,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addRefAccountStatus = conn.prepareCall("{call addRefAccountStatus(?,?,?,?,?)}")) {
+             CallableStatement cs_addRefAccountStatus = conn.prepareCall("{call addRefAccountStatus(?,?,?,?)}")) {
 
             // Add a new RefAccountStatus to DB
             cs_addRefAccountStatus.setString(1, model.getCode());
@@ -209,7 +209,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateRefAccountStatus = conn.prepareCall("{call updateRefAccountStatus(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefAccountStatus = conn.prepareCall("{call updateRefAccountStatus(?,?,?,?,?)}")) {
 
             // Add a new RefAccountStatus to DB
             cs_updateRefAccountStatus.setLong(1, model.getId());
@@ -311,7 +311,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addRefAccountStatus = conn.prepareCall("{call addRefAccountStatus(?,?,?,?,?)}")) {
+             CallableStatement cs_addRefAccountStatus = conn.prepareCall("{call addRefAccountStatus(?,?,?,?)}")) {
 
             // Add calls to batch
             for (RefAccountStatus model : models) {
@@ -338,7 +338,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateRefAccountStatus = conn.prepareCall("{call updateRefAccountStatus(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefAccountStatus = conn.prepareCall("{call updateRefAccountStatus(?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (RefAccountStatus model : models) {
@@ -366,7 +366,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefAccountStatuses = conn.prepareCall("{call deleteRefAccountStatuses(?)}")) {
+             CallableStatement cs_deleteRefAccountStatuses = conn.prepareCall("{call deleteRefAccountStatus(?)}")) {
 
             // Add calls to batch
             for (RefAccountStatus model : models) {
@@ -390,7 +390,7 @@ public class RefAccountStatusRepositoryJDBC extends JDBCRepositoryUtilities impl
             throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefAccountStatuses = conn.prepareCall("{call deleteRefAccountStatuses(?)}")) {
+             CallableStatement cs_deleteRefAccountStatuses = conn.prepareCall("{call deleteRefAccountStatus(?)}")) {
 
             // Add calls to batch
             for (Long id : ids) {

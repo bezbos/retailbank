@@ -42,5 +42,17 @@ public class JDBCRepositoryUtilities {
             }
         }
     }
+
+    protected void closeConnections(ResultSet... resultSet) {
+        for (ResultSet rs : resultSet){
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
 

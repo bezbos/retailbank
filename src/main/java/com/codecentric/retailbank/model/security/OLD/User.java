@@ -1,19 +1,38 @@
-package com.codecentric.retailbank.model.security;
+package com.codecentric.retailbank.model.security.OLD;
 
+import com.codecentric.retailbank.model.security.Role;
 import org.jboss.aerogear.security.otp.api.Base32;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Collection;
 
+@Entity
+@Table(name = "user_account")
 public class User {
 
+    @Id
+    @Column(unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "last_name")
     private String lastName;
 
     private String email;
 
+    @Column(name = "user_password", length = 60)
     private String password;
 
     private boolean enabled;
@@ -22,37 +41,15 @@ public class User {
 
     private String secret;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_account_user_role", joinColumns = @JoinColumn(name = "user_account", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_role", referencedColumnName = "id"))
     private Collection<Role> roles;
 
 
     public User() {
+        super();
         this.secret = Base32.random();
         this.enabled = false;
-    }
-
-    public User(Long id, String email) {
-        this.id = id;
-        this.email = email;
-    }
-
-    public User(Long id,
-                String firstName,
-                String lastName,
-                String email,
-                String password,
-                boolean enabled,
-                boolean isUsing2FA,
-                String secret,
-                Collection<Role> roles) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.enabled = enabled;
-        this.isUsing2FA = isUsing2FA;
-        this.secret = secret;
-        this.roles = roles;
     }
 
 
@@ -60,7 +57,7 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -68,7 +65,7 @@ public class User {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
@@ -76,7 +73,7 @@ public class User {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
 
@@ -84,7 +81,7 @@ public class User {
         return email;
     }
 
-    public void setEmail(String username) {
+    public void setEmail(final String username) {
         this.email = username;
     }
 
@@ -92,7 +89,7 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -100,7 +97,7 @@ public class User {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(final Collection<Role> roles) {
         this.roles = roles;
     }
 
@@ -108,7 +105,7 @@ public class User {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -131,14 +128,14 @@ public class User {
 
     @Override
     public int hashCode() {
-        int prime = 31;
+        final int prime = 31;
         int result = 1;
         result = (prime * result) + ((email == null) ? 0 : email.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -148,7 +145,7 @@ public class User {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        User user = (User) obj;
+        final User user = (User) obj;
         if (!email.equals(user.email)) {
             return false;
         }
@@ -157,7 +154,7 @@ public class User {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("User [id=").append(id).append(", firstName=").append(firstName).append(", lastName=").append(lastName).append(", email=").append(email).append(", password=").append(password).append(", enabled=").append(enabled).append(", isUsing2FA=")
                 .append(isUsing2FA).append(", secret=").append(secret).append(", roles=").append(roles).append("]");
         return builder.toString();

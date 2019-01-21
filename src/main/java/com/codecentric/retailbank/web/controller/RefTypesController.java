@@ -1,9 +1,9 @@
 package com.codecentric.retailbank.web.controller;
 
-import com.codecentric.retailbank.model.domain.OLD.RefAccountStatus;
-import com.codecentric.retailbank.model.domain.OLD.RefAccountType;
-import com.codecentric.retailbank.model.domain.OLD.RefTransactionType;
+import com.codecentric.retailbank.model.domain.RefAccountStatus;
+import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.model.domain.RefBranchType;
+import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.model.dto.RefAccountStatusDto;
 import com.codecentric.retailbank.model.dto.RefAccountTypeDto;
 import com.codecentric.retailbank.model.dto.RefBranchTypeDto;

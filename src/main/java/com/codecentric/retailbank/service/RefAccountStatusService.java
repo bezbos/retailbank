@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.service;
 
-import com.codecentric.retailbank.model.domain.OLD.RefAccountStatus;
+import com.codecentric.retailbank.model.domain.RefAccountStatus;
+import com.codecentric.retailbank.repository.JDBC.RefAccountStatusRepositoryJDBC;
 import com.codecentric.retailbank.repository.SpringData.BankAccountRepository;
-import com.codecentric.retailbank.repository.SpringData.RefAccountStatusRepository;
 import com.codecentric.retailbank.repository.SpringData.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IRefAccountStatusService;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ public class RefAccountStatusService implements IRefAccountStatusService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private RefAccountStatusRepository refAccountStatusRepository;
+    private RefAccountStatusRepositoryJDBC refAccountStatusRepositoryJDBC;
     @Autowired
     private BankAccountRepository bankAccountRepository;
     @Autowired
@@ -34,61 +34,61 @@ public class RefAccountStatusService implements IRefAccountStatusService {
 
     @Override
     public RefAccountStatus getById(Long id) {
-        RefAccountStatus refAccountStatus = refAccountStatusRepository.getOne(id);
+        RefAccountStatus refAccountStatus = refAccountStatusRepositoryJDBC.getSingle(id);
         return refAccountStatus;
     }
 
     @Override
     public RefAccountStatus getByCode(String code) {
-        RefAccountStatus refAccountStatus = refAccountStatusRepository.getByCode(code);
+        RefAccountStatus refAccountStatus = refAccountStatusRepositoryJDBC.getSingleByCode(code);
         return refAccountStatus;
     }
 
     @Override
     public List<RefAccountStatus> getAllRefAccountStatus() {
-        List<RefAccountStatus> refAccountStatuses = refAccountStatusRepository.findAll();
+        List<RefAccountStatus> refAccountStatuses = refAccountStatusRepositoryJDBC.findAll();
         return refAccountStatuses;
     }
 
     @Override
     public RefAccountStatus addRefAccountStatus(RefAccountStatus refAccountStatus) {
-        RefAccountStatus result = refAccountStatusRepository.save(refAccountStatus);
+        RefAccountStatus result = refAccountStatusRepositoryJDBC.add(refAccountStatus);
         return result;
     }
 
     @Override
     public RefAccountStatus updateRefAccountStatus(RefAccountStatus refAccountStatus) {
-        RefAccountStatus result = refAccountStatusRepository.save(refAccountStatus);
+        RefAccountStatus result = refAccountStatusRepositoryJDBC.update(refAccountStatus);
         return result;
     }
 
     @Override
     public void deleteRefAccountStatus(RefAccountStatus refAccountStatus) {
         // Recursively find and delete any FK constraints to this refAccountStatus
-        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
-            transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
-                transactionRepository.delete(transaction);
-            });
-            bankAccountRepository.delete(bankAccount);
-        });
+//        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
+//            transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
+//                transactionRepository.delete(transaction);
+//            });
+//            bankAccountRepository.delete(bankAccount);
+//        });
 
         // Delete the actual refAccountStatus
-        refAccountStatusRepository.delete(refAccountStatus);
+        refAccountStatusRepositoryJDBC.delete(refAccountStatus);
     }
 
     @Override
     public void deleteRefAccountStatus(Long id) {
-        RefAccountStatus refAccountStatus = refAccountStatusRepository.getOne(id);
+        RefAccountStatus refAccountStatus = refAccountStatusRepositoryJDBC.getSingle(id);
 
         // Recursively find and delete any FK constraints to this refAccountStatus
-        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
-            transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
-                transactionRepository.delete(transaction);
-            });
-            bankAccountRepository.delete(bankAccount);
-        });
+//        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
+//            transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
+//                transactionRepository.delete(transaction);
+//            });
+//            bankAccountRepository.delete(bankAccount);
+//        });
 
         // Delete the actual refAccountStatus
-        refAccountStatusRepository.delete(refAccountStatus);
+        refAccountStatusRepositoryJDBC.delete(refAccountStatus);
     }
 }

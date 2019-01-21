@@ -1,33 +1,22 @@
 package com.codecentric.retailbank.model.security;
 
-import javax.persistence.*;
-import java.util.Collection;
-
-@Entity
-@Table(name = "user_role")
 public class Role {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
-
-    @ManyToMany
-    @JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "user_role", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_privilege", referencedColumnName = "id"))
-    private Collection<Privilege> privileges;
-
-    @Column(name = "role_name")
     private String name;
 
 
     public Role() {
-        super();
+
     }
 
-    public Role(final String name) {
-        super();
+    public Role(String name) {
+        this.name = name;
+    }
+
+    public Role(Long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -36,7 +25,7 @@ public class Role {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -44,37 +33,21 @@ public class Role {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Collection<User> getUsers() {
-        return users;
-    }
 
-    public void setUsers(final Collection<User> users) {
-        this.users = users;
-    }
-
-    public Collection<Privilege> getPrivileges() {
-        return privileges;
-    }
-
-    public void setPrivileges(final Collection<Privilege> privileges) {
-        this.privileges = privileges;
-    }
-
-    
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -84,7 +57,7 @@ public class Role {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Role role = (Role) obj;
+        Role role = (Role) obj;
         if (!role.equals(role.name)) {
             return false;
         }
@@ -93,7 +66,7 @@ public class Role {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         builder.append("Role [name=").append(name).append("]").append("[id=").append(id).append("]");
         return builder.toString();
     }

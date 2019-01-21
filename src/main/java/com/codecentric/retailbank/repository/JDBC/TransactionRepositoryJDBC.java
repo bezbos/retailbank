@@ -1,10 +1,7 @@
 package com.codecentric.retailbank.repository.JDBC;
 
 import com.codecentric.retailbank.model.domain.BankAccount;
-import com.codecentric.retailbank.model.domain.Customer;
 import com.codecentric.retailbank.model.domain.Merchant;
-import com.codecentric.retailbank.model.domain.RefAccountStatus;
-import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.model.domain.Transaction;
 import com.codecentric.retailbank.repository.JDBC.configuration.DBType;
@@ -41,32 +38,20 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
             resultSet = cs_allTransactions.getResultSet();
             while (resultSet.next()) {
 
-                RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
-                        resultSet.getString("ref_account_status.account_status_code")
-                );
-
-                RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
-                        resultSet.getString("ref_account_types.account_type_code")
-                );
-
-                Customer customer = new Customer(resultSet.getLong("customers.customer_id"));
-
                 BankAccount account = new BankAccount(
-                        resultSet.getLong("accounts.account_number"),
-                        refAccountStatus,
-                        refAccountType,
-                        customer,
+                        resultSet.getLong("transactions.account_number"),
                         resultSet.getBigDecimal("accounts.current_balance"),
                         resultSet.getString("accounts.other_details")
                 );
 
-                Merchant merchant = new Merchant(resultSet.getLong("merchants.merchant_id"));
+                Merchant merchant = new Merchant(
+                        resultSet.getLong("transactions.merchant_id"),
+                        resultSet.getString("merchants.merchant_details")
+                );
 
                 RefTransactionType refTransactionType = new RefTransactionType(
-                        resultSet.getLong("transactions.transaction_type_id"),
-                        resultSet.getString("transactions.transaction_type_code")
+                        resultSet.getLong("ref_transaction_types.transaction_type_id"),
+                        resultSet.getString("ref_transaction_types.transaction_type_code")
                 );
 
                 Transaction transaction = new Transaction(
@@ -108,32 +93,20 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
             resultSet = cs_allTransactionsRange.getResultSet();
             List<Transaction> transactions = new ArrayList<>();
             while (resultSet.next()) {
-                RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
-                        resultSet.getString("ref_account_status.account_status_code")
-                );
-
-                RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
-                        resultSet.getString("ref_account_types.account_type_code")
-                );
-
-                Customer customer = new Customer(resultSet.getLong("customers.customer_id"));
-
                 BankAccount account = new BankAccount(
-                        resultSet.getLong("accounts.account_number"),
-                        refAccountStatus,
-                        refAccountType,
-                        customer,
+                        resultSet.getLong("transactions.account_number"),
                         resultSet.getBigDecimal("accounts.current_balance"),
                         resultSet.getString("accounts.other_details")
                 );
 
-                Merchant merchant = new Merchant(resultSet.getLong("merchants.merchant_id"));
+                Merchant merchant = new Merchant(
+                        resultSet.getLong("transactions.merchant_id"),
+                        resultSet.getString("merchants.merchant_details")
+                );
 
                 RefTransactionType refTransactionType = new RefTransactionType(
-                        resultSet.getLong("transactions.transaction_type_id"),
-                        resultSet.getString("transactions.transaction_type_code")
+                        resultSet.getLong("ref_transaction_types.transaction_type_id"),
+                        resultSet.getString("ref_transaction_types.transaction_type_code")
                 );
 
                 Transaction transaction = new Transaction(
@@ -192,32 +165,20 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a Transaction object
-                RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
-                        resultSet.getString("ref_account_status.account_status_code")
-                );
-
-                RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
-                        resultSet.getString("ref_account_types.account_type_code")
-                );
-
-                Customer customer = new Customer(resultSet.getLong("customers.customer_id"));
-
                 BankAccount account = new BankAccount(
-                        resultSet.getLong("accounts.account_number"),
-                        refAccountStatus,
-                        refAccountType,
-                        customer,
+                        resultSet.getLong("transactions.account_number"),
                         resultSet.getBigDecimal("accounts.current_balance"),
                         resultSet.getString("accounts.other_details")
                 );
 
-                Merchant merchant = new Merchant(resultSet.getLong("merchants.merchant_id"));
+                Merchant merchant = new Merchant(
+                        resultSet.getLong("transactions.merchant_id"),
+                        resultSet.getString("merchants.merchant_details")
+                );
 
                 RefTransactionType refTransactionType = new RefTransactionType(
-                        resultSet.getLong("transactions.transaction_type_id"),
-                        resultSet.getString("transactions.transaction_type_code")
+                        resultSet.getLong("ref_transaction_types.transaction_type_id"),
+                        resultSet.getString("ref_transaction_types.transaction_type_code")
                 );
 
                 transaction = new Transaction(
@@ -244,14 +205,14 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addTransaction = conn.prepareCall("{call addTransaction(?,?,?,?,?)}")) {
+             CallableStatement cs_addTransaction = conn.prepareCall("{call addTransaction(?,?,?,?,?,?)}")) {
 
             // Add a new Transaction to DB
             cs_addTransaction.setLong("p_account_number", model.getAccount().getId());
             cs_addTransaction.setLong("p_merchant_id", model.getMerchant().getId());
             cs_addTransaction.setLong("p_transaction_type_id", model.getType().getId());
             cs_addTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-            cs_addTransaction.setString("p_transaction_amount", model.getDetails());
+            cs_addTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
             cs_addTransaction.setString("p_other_details", model.getDetails());
             cs_addTransaction.execute();
 
@@ -267,15 +228,15 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateTransaction = conn.prepareCall("{call updateTransaction(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateTransaction = conn.prepareCall("{call updateTransaction(?,?,?,?,?,?,?)}")) {
 
             // Update an existing Transaction
-            cs_updateTransaction.setLong("p_transaction_id", model.getAccount().getId());
+            cs_updateTransaction.setLong("p_transaction_id", model.getId());
             cs_updateTransaction.setLong("p_account_number", model.getAccount().getId());
             cs_updateTransaction.setLong("p_merchant_id", model.getMerchant().getId());
             cs_updateTransaction.setLong("p_transaction_type_id", model.getType().getId());
             cs_updateTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-            cs_updateTransaction.setString("p_transaction_amount", model.getDetails());
+            cs_updateTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
             cs_updateTransaction.setString("p_other_details", model.getDetails());
             cs_updateTransaction.execute();
 
@@ -323,7 +284,7 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addTransaction = conn.prepareCall("{call addTransaction(?,?,?,?,?)}")) {
+             CallableStatement cs_addTransaction = conn.prepareCall("{call addTransaction(?,?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (Transaction model : models) {
@@ -332,7 +293,7 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
                     cs_addTransaction.setLong("p_merchant_id", model.getMerchant().getId());
                     cs_addTransaction.setLong("p_transaction_type_id", model.getType().getId());
                     cs_addTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-                    cs_addTransaction.setString("p_transaction_amount", model.getDetails());
+                    cs_addTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
                     cs_addTransaction.setString("p_other_details", model.getDetails());
                     cs_addTransaction.addBatch();
                 } catch (SQLException ex) {
@@ -352,17 +313,17 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateTransaction = conn.prepareCall("{call updateTransaction(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateTransaction = conn.prepareCall("{call updateTransaction(?,?,?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (Transaction model : models) {
                 try {
-                    cs_updateTransaction.setLong("p_transaction_id", model.getAccount().getId());
+                    cs_updateTransaction.setLong("p_transaction_id", model.getId());
                     cs_updateTransaction.setLong("p_account_number", model.getAccount().getId());
                     cs_updateTransaction.setLong("p_merchant_id", model.getMerchant().getId());
                     cs_updateTransaction.setLong("p_transaction_type_id", model.getType().getId());
                     cs_updateTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-                    cs_updateTransaction.setString("p_transaction_amount", model.getDetails());
+                    cs_updateTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
                     cs_updateTransaction.setString("p_other_details", model.getDetails());
                     cs_updateTransaction.addBatch();
                 } catch (SQLException ex) {
@@ -450,32 +411,20 @@ public class TransactionRepositoryJDBC extends JDBCRepositoryUtilities implement
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a Transaction object
-                RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
-                        resultSet.getString("ref_account_status.account_status_code")
-                );
-
-                RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
-                        resultSet.getString("ref_account_types.account_type_code")
-                );
-
-                Customer customer = new Customer(resultSet.getLong("customers.customer_id"));
-
                 BankAccount account = new BankAccount(
-                        resultSet.getLong("accounts.account_number"),
-                        refAccountStatus,
-                        refAccountType,
-                        customer,
+                        resultSet.getLong("transactions.account_number"),
                         resultSet.getBigDecimal("accounts.current_balance"),
                         resultSet.getString("accounts.other_details")
                 );
 
-                Merchant merchant = new Merchant(resultSet.getLong("merchants.merchant_id"));
+                Merchant merchant = new Merchant(
+                        resultSet.getLong("transactions.merchant_id"),
+                        resultSet.getString("merchants.merchant_details")
+                );
 
                 RefTransactionType refTransactionType = new RefTransactionType(
-                        resultSet.getLong("transactions.transaction_type_id"),
-                        resultSet.getString("transactions.transaction_type_code")
+                        resultSet.getLong("ref_transaction_types.transaction_type_id"),
+                        resultSet.getString("ref_transaction_types.transaction_type_code")
                 );
 
                 transaction = new Transaction(

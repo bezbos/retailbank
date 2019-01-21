@@ -28,7 +28,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
         List<BankAccount> bankAccounts = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allBankAccounts = conn.prepareCall("{call allBankAccounts()}")) {
+             CallableStatement cs_allBankAccounts = conn.prepareCall("{call allAccounts()}")) {
 
             // Retrieve all bankAccounts
             cs_allBankAccounts.execute();
@@ -38,17 +38,17 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             while (resultSet.next()) {
 
                 RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
+                        resultSet.getLong("accounts.account_status_id"),
                         resultSet.getString("ref_account_status.account_status_code")
                 );
 
                 RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
+                        resultSet.getLong("accounts.account_type_id"),
                         resultSet.getString("ref_account_types.account_type_code")
                 );
 
                 Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
+                        resultSet.getLong("accounts.customer_id"),
                         resultSet.getString("customers.personal_details")
                 );
 
@@ -78,8 +78,8 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
         ListPage<BankAccount> bankAccountListPage = new ListPage<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allBankAccountsRange = conn.prepareCall("{call allBankAccountsRange(?,?)}");
-             CallableStatement cs_allBankAccountsCount = conn.prepareCall("{call allBankAccountsCount()}")) {
+             CallableStatement cs_allBankAccountsRange = conn.prepareCall("{call allAccountsRange(?,?)}");
+             CallableStatement cs_allBankAccountsCount = conn.prepareCall("{call allAccountsCount()}")) {
 
             // Retrieve findAll BankAccounts
             cs_allBankAccountsRange.setInt(1, Math.abs(pageIndex * pageSize));
@@ -91,17 +91,17 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             List<BankAccount> bankAccounts = new ArrayList<>();
             while (resultSet.next()) {
                 RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
+                        resultSet.getLong("accounts.account_status_id"),
                         resultSet.getString("ref_account_status.account_status_code")
                 );
 
                 RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
+                        resultSet.getLong("accounts.account_type_id"),
                         resultSet.getString("ref_account_types.account_type_code")
                 );
 
                 Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
+                        resultSet.getLong("accounts.customer_id"),
                         resultSet.getString("customers.personal_details")
                 );
 
@@ -143,7 +143,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleBankAccount = conn.prepareCall("{call singleBankAccount(?)}")) {
+             CallableStatement cs_singleBankAccount = conn.prepareCall("{call singleAccount(?)}")) {
 
             // Retrieve a getSingle BankAccount
             cs_singleBankAccount.setLong(1, id);
@@ -161,17 +161,17 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
 
                 // Transform ResultSet row into a BankAccount object
                 RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
+                        resultSet.getLong("accounts.account_status_id"),
                         resultSet.getString("ref_account_status.account_status_code")
                 );
 
                 RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
+                        resultSet.getLong("accounts.account_type_id"),
                         resultSet.getString("ref_account_types.account_type_code")
                 );
 
                 Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
+                        resultSet.getLong("accounts.customer_id"),
                         resultSet.getString("customers.personal_details")
                 );
 
@@ -198,7 +198,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addBankAccount = conn.prepareCall("{call addBankAccount(?,?,?,?,?)}")) {
+             CallableStatement cs_addBankAccount = conn.prepareCall("{call addAccount(?,?,?,?,?)}")) {
 
             // Add a new BankAccount to DB
             cs_addBankAccount.setLong("p_account_status_id", model.getStatus().getId());
@@ -220,7 +220,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateBankAccount = conn.prepareCall("{call updateBankAccount(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateBankAccount = conn.prepareCall("{call updateAccount(?,?,?,?,?,?)}")) {
 
             // Update an existing BankAccount
             cs_updateBankAccount.setLong("p_account_number", model.getId());
@@ -243,7 +243,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteBankAccount(?)}")) {
+             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteAccount(?)}")) {
 
             // Delete an existing BankAccount
             cs_deleteBankAccount.setLong(1, model.getId());
@@ -259,7 +259,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteBankAccount(?)}")) {
+             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteAccount(?)}")) {
 
             // Delete an existing BankAccount
             cs_deleteBankAccount.setLong(1, id);
@@ -275,7 +275,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addBankAccount = conn.prepareCall("{call addBankAccount(?,?,?,?,?)}")) {
+             CallableStatement cs_addBankAccount = conn.prepareCall("{call addAccount(?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (BankAccount model : models) {
@@ -303,7 +303,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateBankAccount = conn.prepareCall("{call updateBankAccount(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateBankAccount = conn.prepareCall("{call updateAccount(?,?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (BankAccount model : models) {
@@ -332,7 +332,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The models argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBankAccounts = conn.prepareCall("{call deleteBankAccounts(?)}")) {
+             CallableStatement cs_deleteBankAccounts = conn.prepareCall("{call deleteAccounts(?)}")) {
 
             // Add calls to batch
             for (BankAccount model : models) {
@@ -356,7 +356,7 @@ public class BankAccountRepositoryJDBC extends JDBCRepositoryUtilities implement
             throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBankAccounts = conn.prepareCall("{call deleteBankAccounts(?)}")) {
+             CallableStatement cs_deleteBankAccounts = conn.prepareCall("{call deleteAccounts(?)}")) {
 
             // Add calls to batch
             for (Long id : ids) {

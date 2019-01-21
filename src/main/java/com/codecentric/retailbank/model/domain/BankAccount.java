@@ -24,6 +24,19 @@ public class BankAccount {
     private String details;
 
 
+    public BankAccount() {
+    }
+
+    public BankAccount(Long id) {
+        this.id = id;
+    }
+
+    public BankAccount(Long id, @NotNull BigDecimal balance, @Size(max = 255) String details) {
+        this.id = id;
+        this.balance = balance;
+        this.details = details;
+    }
+
     public BankAccount(Long id,
                        @NotNull RefAccountStatus status,
                        @NotNull RefAccountType type,
