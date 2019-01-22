@@ -2,7 +2,7 @@ package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.dto.AddressDto;
-import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

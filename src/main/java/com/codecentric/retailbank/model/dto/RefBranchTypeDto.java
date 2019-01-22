@@ -26,9 +26,6 @@ public class RefBranchTypeDto {
     public RefBranchTypeDto() {
     }
 
-    public RefBranchTypeDto(Long id) {
-        this.id = id;
-    }
 
     public RefBranchTypeDto(Long id,
                             @NotNull @Length(max = 15) String code,
@@ -43,6 +40,7 @@ public class RefBranchTypeDto {
         this.isSmallRuralType = isSmallRural != null ? isSmallRural.equalsIgnoreCase("Y") : false;
         this.isMediumSuburbanType = isMediumSuburban != null ? isMediumSuburban.equalsIgnoreCase("Y") : false;
     }
+
 
     public Long getId() {
         return id;
@@ -69,7 +67,7 @@ public class RefBranchTypeDto {
     }
 
     public Boolean getIsLargeUrbanType() {
-        if(isLargeUrbanType == null)
+        if (isLargeUrbanType == null)
             isLargeUrbanType = false;
 
         return isLargeUrbanType;
@@ -80,7 +78,7 @@ public class RefBranchTypeDto {
     }
 
     public Boolean getIsSmallRuralType() {
-        if(isSmallRuralType == null)
+        if (isSmallRuralType == null)
             isSmallRuralType = false;
 
         return isSmallRuralType;
@@ -91,7 +89,7 @@ public class RefBranchTypeDto {
     }
 
     public Boolean getIsMediumSuburbanType() {
-        if(isMediumSuburbanType == null)
+        if (isMediumSuburbanType == null)
             isMediumSuburbanType = false;
 
         return isMediumSuburbanType;
@@ -101,7 +99,7 @@ public class RefBranchTypeDto {
         isMediumSuburbanType = mediumSuburban;
     }
 
-    public RefBranchType getDBModel(){
+    public RefBranchType getDBModel() {
         return new RefBranchType(
                 this.id,
                 this.code,

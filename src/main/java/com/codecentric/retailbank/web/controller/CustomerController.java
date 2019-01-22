@@ -3,7 +3,7 @@ package com.codecentric.retailbank.web.controller;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.domain.Customer;
-import com.codecentric.retailbank.repository.JDBC.CustomerRepositoryJDBC;
+import com.codecentric.retailbank.repository.CustomerRepository;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BranchService;
 import com.codecentric.retailbank.service.CustomerService;
@@ -36,7 +36,7 @@ public class CustomerController {
 
     @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
-        CustomerRepositoryJDBC jdbc = new CustomerRepositoryJDBC();
+        CustomerRepository jdbc = new CustomerRepository();
         List<Customer> customers = jdbc.findAll();
         List<Customer> test1 = jdbc.findAll();
         List<Customer> test2 = jdbc.findAllRange(0, 4).getModels();

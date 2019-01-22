@@ -16,19 +16,6 @@ public class VerificationToken {
     private Date expiryDate;
 
 
-    public VerificationToken() {
-
-    }
-
-    public VerificationToken(String token) {
-        this.token = token;
-    }
-
-    public VerificationToken(String token, User user) {
-        this.token = token;
-        this.user = user;
-    }
-
     public VerificationToken(String token, User user, Date expiryDate) {
 
 
@@ -37,10 +24,6 @@ public class VerificationToken {
         this.expiryDate = expiryDate;
     }
 
-
-    public static int getEXPIRATION() {
-        return EXPIRATION;
-    }
 
     public Long getId() {
         return id;
@@ -88,8 +71,7 @@ public class VerificationToken {
     }
 
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + ((expiryDate == null) ? 0 : expiryDate.hashCode());
@@ -98,8 +80,7 @@ public class VerificationToken {
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -134,8 +115,7 @@ public class VerificationToken {
         return true;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Token [String=").append(token).append("]").append("[Expires").append(expiryDate).append("]");
         return builder.toString();

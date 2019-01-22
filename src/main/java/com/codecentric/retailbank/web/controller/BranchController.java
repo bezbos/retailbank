@@ -5,7 +5,7 @@ import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.dto.BranchDto;
-import com.codecentric.retailbank.repository.JDBC.wrappers.ListPage;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.service.BankService;
 import com.codecentric.retailbank.service.BranchService;

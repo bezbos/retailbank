@@ -3,8 +3,8 @@ package com.codecentric.retailbank.model.security;
 import java.util.Date;
 
 public class PasswordResetToken {
-    private static final int EXPIRATION = 60 * 24;
 
+    private static final int EXPIRATION = 60 * 24;
 
     private Long id;
 
@@ -15,22 +15,7 @@ public class PasswordResetToken {
     private Date expiryDate;
 
 
-    public PasswordResetToken() {
-    }
-
-    public PasswordResetToken(User user, String token) {
-        this.user = user;
-        this.token = token;
-    }
-
     public PasswordResetToken(String token, User user, Date expiryDate) {
-        this.token = token;
-        this.user = user;
-        this.expiryDate = expiryDate;
-    }
-
-    public PasswordResetToken(Long id, String token, User user, Date expiryDate) {
-        this.id = id;
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;

@@ -7,14 +7,6 @@ public class Role {
     private String name;
 
 
-    public Role() {
-
-    }
-
-    public Role(String name) {
-        this.name = name;
-    }
-
     public Role(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -38,16 +30,14 @@ public class Role {
     }
 
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -64,8 +54,7 @@ public class Role {
         return true;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Role [name=").append(name).append("]").append("[id=").append(id).append("]");
         return builder.toString();

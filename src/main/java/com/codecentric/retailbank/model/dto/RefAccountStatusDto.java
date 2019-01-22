@@ -21,12 +21,6 @@ public class RefAccountStatusDto {
 
 
     public RefAccountStatusDto() {
-        super();
-    }
-
-    public RefAccountStatusDto(Long id) {
-        super();
-        this.id = id;
     }
 
     public RefAccountStatusDto(Long id,
@@ -34,7 +28,6 @@ public class RefAccountStatusDto {
                                @Length(max = 255) String description,
                                @Length(max = 1) String isActiveStatus,
                                @Length(max = 1) String isClosedStatus) {
-        super();
         this.id = id;
         this.code = code;
         this.description = description;

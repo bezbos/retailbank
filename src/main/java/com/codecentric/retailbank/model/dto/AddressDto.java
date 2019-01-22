@@ -35,10 +35,6 @@ public class AddressDto {
     public AddressDto() {
     }
 
-    public AddressDto(Long id) {
-        this.id = id;
-    }
-
     public AddressDto(Long id,
                       @NotNull @Length(max = 255) String line1,
                       @Length(max = 255) String line2,
@@ -122,7 +118,7 @@ public class AddressDto {
         this.otherDetails = otherDetails;
     }
 
-    public Address getDBModel(){
+    public Address getDBModel() {
         return new Address(
                 this.id,
                 this.line1,

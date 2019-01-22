@@ -27,12 +27,6 @@ public class RefAccountTypeDto {
 
 
     public RefAccountTypeDto() {
-        super();
-    }
-
-    public RefAccountTypeDto(Long id) {
-        super();
-        this.id = id;
     }
 
     public RefAccountTypeDto(Long id,
@@ -43,7 +37,6 @@ public class RefAccountTypeDto {
                              String isCertificateOfDepositType,
                              String isMoneyMarketType,
                              String isIndividualRetirementType) {
-        super();
         this.id = id;
         this.code = code;
         this.description = description;

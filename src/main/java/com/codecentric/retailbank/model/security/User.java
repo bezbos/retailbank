@@ -129,16 +129,14 @@ public class User {
     }
 
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int prime = 31;
         int result = 1;
         result = (prime * result) + ((email == null) ? 0 : email.hashCode());
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -155,8 +153,7 @@ public class User {
         return true;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("User [id=").append(id).append(", firstName=").append(firstName).append(", lastName=").append(lastName).append(", email=").append(email).append(", password=").append(password).append(", enabled=").append(enabled).append(", isUsing2FA=")
                 .append(isUsing2FA).append(", secret=").append(secret).append(", roles=").append(roles).append("]");

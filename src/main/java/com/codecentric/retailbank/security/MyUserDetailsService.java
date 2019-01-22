@@ -2,7 +2,7 @@ package com.codecentric.retailbank.security;
 
 import com.codecentric.retailbank.model.security.Role;
 import com.codecentric.retailbank.model.security.User;
-import com.codecentric.retailbank.repository.JDBC.security.UserRepositoryJDBC;
+import com.codecentric.retailbank.repository.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,20 +10,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 public class MyUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserRepositoryJDBC userRepositoryJDBC;
 
     @Autowired
-    private HttpServletRequest request;
+    private UserRepository userRepository;
 
 
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -37,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
         // Handle user login
         try {
             // Check if incoming user exists
-            User user = userRepositoryJDBC.getSingleByUsername(email);
+            User user = userRepository.getSingleByUsername(email);
             if (user == null)
                 throw new UsernameNotFoundException("No user found with this username/email: " + email);
 

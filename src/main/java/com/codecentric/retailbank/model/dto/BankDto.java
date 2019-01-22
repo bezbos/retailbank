@@ -14,10 +14,6 @@ public class BankDto {
     public BankDto() {
     }
 
-    public BankDto(Long id) {
-        this.id = id;
-    }
-
     public BankDto(Long id, String details) {
         this.id = id;
         this.details = details;
@@ -40,7 +36,7 @@ public class BankDto {
         this.details = details;
     }
 
-    public Bank getDBModel(){
+    public Bank getDBModel() {
         return new Bank(
                 this.id,
                 this.details

@@ -1,7 +1,17 @@
 package com.codecentric.retailbank.model.validation;
 
 import com.codecentric.retailbank.model.validation.annotation.ValidPassword;
-import org.passay.*;
+import org.passay.AlphabeticalSequenceRule;
+import org.passay.DigitCharacterRule;
+import org.passay.LengthRule;
+import org.passay.NumericalSequenceRule;
+import org.passay.PasswordData;
+import org.passay.PasswordValidator;
+import org.passay.QwertySequenceRule;
+import org.passay.RuleResult;
+import org.passay.SpecialCharacterRule;
+import org.passay.UppercaseCharacterRule;
+import org.passay.WhitespaceRule;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -9,12 +19,10 @@ import java.util.Arrays;
 
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
-    @Override
-    public void initialize(ValidPassword constraintAnnotation) {
+    @Override public void initialize(ValidPassword constraintAnnotation) {
     }
 
-    @Override
-    public boolean isValid(String password, ConstraintValidatorContext context) {
+    @Override public boolean isValid(String password, ConstraintValidatorContext context) {
 
         PasswordValidator validator = new PasswordValidator(Arrays.asList(
                 new LengthRule(8, 30),

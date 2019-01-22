@@ -4,17 +4,19 @@ import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
-import com.codecentric.retailbank.repository.JDBC.security.PasswordResetTokenRepositoryJDBC;
-import com.codecentric.retailbank.repository.JDBC.security.RoleRepositoryJDBC;
-import com.codecentric.retailbank.repository.JDBC.security.UserRepositoryJDBC;
-import com.codecentric.retailbank.repository.JDBC.security.VerificationTokenRepositoryJDBC;
+import com.codecentric.retailbank.repository.security.PasswordResetTokenRepository;
+import com.codecentric.retailbank.repository.security.RoleRepository;
+import com.codecentric.retailbank.repository.security.UserRepository;
+import com.codecentric.retailbank.repository.security.VerificationTokenRepository;
 import com.codecentric.retailbank.service.interfaces.IUserService;
 import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,24 +25,22 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserService implements IUserService {
-    @Autowired
-    private UserRepositoryJDBC userRepositoryJDBC;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private RoleRepositoryJDBC roleRepositoryJDBC;
-
+    private UserRepository userRepository;
     @Autowired
-    private VerificationTokenRepositoryJDBC verificationTokenRepositoryJDBC;
-
+    private RoleRepository roleRepository;
     @Autowired
-    private PasswordResetTokenRepositoryJDBC passwordResetTokenRepositoryJDBC;
-
+    private VerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
 
-    @Override
-    public User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistsException {
+    @Override public User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistsException {
         if (emailExists(accountDto.getEmail()))
             throw new UserAlreadyExistsException("An account with an email \"" + accountDto.getEmail() + "\" address already exists.");
 
@@ -50,66 +50,56 @@ public class UserService implements IUserService {
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         user.setUsing2FA(accountDto.isUsing2FA());
-        user.setRoles(Arrays.asList(roleRepositoryJDBC.getSingleByName("ROLE_USER")));
-        return userRepositoryJDBC.add(user);
+        user.setRoles(Arrays.asList(roleRepository.getSingleByName("ROLE_USER")));
+        return userRepository.add(user);
     }
 
-    @Override
-    public void createVerificationTokenForUser(User user, String token) {
+    @Override public void createVerificationTokenForUser(User user, String token) {
 //        VerificationToken verificationToken = new VerificationToken(token, user, getExpiryDate());
-//        verificationTokenRepositoryJDBC.save(verificationToken);
+//        verificationTokenRepository.save(verificationToken);
     }
 
-    @Override
-    public VerificationToken getVerificationToken(String token) {
-        return verificationTokenRepositoryJDBC.getSingleByToken(token);
+    @Override public VerificationToken getVerificationToken(String token) {
+        return verificationTokenRepository.getSingleByToken(token);
     }
 
-    @Override
-    public void saveRegisteredUser(User user) {
-        userRepositoryJDBC.update(user);
+    @Override public void saveRegisteredUser(User user) {
+        userRepository.update(user);
     }
 
-    @Override
-    public User getUser(String verificationToken) {
-        User user = verificationTokenRepositoryJDBC.getSingleByToken(verificationToken).getUser();
+    @Override public User getUser(String verificationToken) {
+        User user = verificationTokenRepository.getSingleByToken(verificationToken).getUser();
         return user;
     }
 
-    @Override
-    public VerificationToken generateNewVerificationToken(String existingVerificationToken) {
-        VerificationToken vToken = verificationTokenRepositoryJDBC.getSingleByToken(existingVerificationToken);
+    @Override public VerificationToken generateNewVerificationToken(String existingVerificationToken) {
+        VerificationToken vToken = verificationTokenRepository.getSingleByToken(existingVerificationToken);
         vToken.updateToken(UUID.randomUUID().toString());
         vToken.setExpiryDate(getExpiryDate());
-        vToken = verificationTokenRepositoryJDBC.add(vToken);
+        vToken = verificationTokenRepository.add(vToken);
         return vToken;
     }
 
-    @Override
-    public User findUserByMail(String userMail) {
-        return userRepositoryJDBC.getSingleByUsername(userMail);
+    @Override public User findUserByMail(String userMail) {
+        return userRepository.getSingleByUsername(userMail);
     }
 
-    @Override
-    public void createPasswordResetTokenForUser(User user, String token) {
+    @Override public void createPasswordResetTokenForUser(User user, String token) {
 //        PasswordResetToken myToken = new PasswordResetToken(user, token);
 //        myToken.setExpiryDate(getExpiryDate());
-//        passwordResetTokenRepositoryJDBC.save(myToken);
+//        passwordResetTokenRepository.save(myToken);
     }
 
-    @Override
-    public PasswordResetToken getPasswordResetToken(String token) {
-        return passwordResetTokenRepositoryJDBC.getSingleByToken(token);
+    @Override public PasswordResetToken getPasswordResetToken(String token) {
+        return passwordResetTokenRepository.getSingleByToken(token);
     }
 
-    @Override
-    public void changeUserPassword(User user, String password) {
+    @Override public void changeUserPassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(password));
-        userRepositoryJDBC.update(user);
+        userRepository.update(user);
     }
 
-    @Override
-    public boolean checkIfValidOldPassword(User user, String password) {
+    @Override public boolean checkIfValidOldPassword(User user, String password) {
         boolean result = passwordEncoder.matches(password, user.getPassword());
 
         return result;
@@ -117,7 +107,7 @@ public class UserService implements IUserService {
 
 
     private boolean emailExists(String email) {
-        return userRepositoryJDBC.getSingleByUsername(email) != null;
+        return userRepository.getSingleByUsername(email) != null;
     }
 
     private Date getExpiryDate() {
