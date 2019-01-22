@@ -1,6 +1,5 @@
 package com.codecentric.retailbank.model.security.OLD;
 
-import com.codecentric.retailbank.model.security.Role;
 import org.jboss.aerogear.security.otp.api.Base32;
 
 import javax.persistence.Column;

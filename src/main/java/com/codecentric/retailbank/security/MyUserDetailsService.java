@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.security;
 
-import com.codecentric.retailbank.model.security.OLD.User;
 import com.codecentric.retailbank.model.security.Role;
-import com.codecentric.retailbank.repository.SpringData.security.UserRepository;
+import com.codecentric.retailbank.model.security.User;
+import com.codecentric.retailbank.repository.JDBC.security.UserRepositoryJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +20,7 @@ import java.util.List;
 @Transactional
 public class MyUserDetailsService implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository;
+    private UserRepositoryJDBC userRepositoryJDBC;
 
     @Autowired
     private HttpServletRequest request;
@@ -37,7 +37,7 @@ public class MyUserDetailsService implements UserDetailsService {
         // Handle user login
         try {
             // Check if incoming user exists
-            User user = userRepository.findByEmail(email);
+            User user = userRepositoryJDBC.getSingleByUsername(email);
             if (user == null)
                 throw new UsernameNotFoundException("No user found with this username/email: " + email);
 

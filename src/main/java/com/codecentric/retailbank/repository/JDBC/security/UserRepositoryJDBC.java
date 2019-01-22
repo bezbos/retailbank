@@ -42,7 +42,7 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
                 List<Role> roles = new ArrayList<>();
 
                 // Retrieve all user roles
-                cs_userRoles.setLong("user_role.id", resultSet.getLong("user_account.id"));
+                cs_userRoles.setLong("p_user_account_id", resultSet.getLong("user_account.id"));
                 cs_userRoles.execute();
 
                 // Transform each ResultSet row into Role model and add to "roles" list
@@ -102,12 +102,12 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
                 List<Role> roles = new ArrayList<>();
 
                 // Retrieve all user roles
-                cs_userRoles.setLong("user_role.id", resultSet.getLong("user_account.id"));
+                cs_userRoles.setLong("p_user_account_id", resultSet.getLong("user_account.id"));
                 cs_userRoles.execute();
 
                 // Transform each ResultSet row into Role model and add to "roles" list
                 rolesResultSet = cs_userRoles.getResultSet();
-                while (resultSet.next()) {
+                while (rolesResultSet.next()) {
                     roles.add(
                             new Role(
                                     rolesResultSet.getLong("user_role.id"),
@@ -179,12 +179,12 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
                 List<Role> roles = new ArrayList<>();
 
                 // Retrieve all user roles
-                cs_userRoles.setLong("user_role.id", resultSet.getLong("user_account.id"));
+                cs_userRoles.setLong("p_user_account_id", resultSet.getLong("user_account.id"));
                 cs_userRoles.execute();
 
                 // Transform each ResultSet row into Role model and add to "roles" list
                 rolesResultSet = cs_userRoles.getResultSet();
-                while (resultSet.next()) {
+                while (rolesResultSet.next()) {
                     roles.add(
                             new Role(
                                     rolesResultSet.getLong("user_role.id"),
@@ -246,12 +246,12 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
                 List<Role> roles = new ArrayList<>();
 
                 // Retrieve all user roles
-                cs_userRoles.setLong("user_role.id", resultSet.getLong("user_account.id"));
+                cs_userRoles.setLong("p_user_account_id", resultSet.getLong("user_account.id"));
                 cs_userRoles.execute();
 
                 // Transform each ResultSet row into Role model and add to "roles" list
                 rolesResultSet = cs_userRoles.getResultSet();
-                while (resultSet.next()) {
+                while (rolesResultSet.next()) {
                     roles.add(
                             new Role(
                                     rolesResultSet.getLong("user_role.id"),
@@ -290,19 +290,19 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
              CallableStatement cs_setRoleToUser = conn.prepareCall("{call setRoleToUser(?,?)}")) {
 
             // Add a user to DB
-            cs_addUser.setString("first_name", model.getFirstName());
-            cs_addUser.setString("last_name", model.getLastName());
-            cs_addUser.setString("email", model.getEmail());
-            cs_addUser.setString("user_password", model.getPassword());
-            cs_addUser.setBoolean("enabled", model.isEnabled());
-            cs_addUser.setBoolean("is_using2fa", model.isUsing2FA());
-            cs_addUser.setString("secret", model.getSecret());
-            cs_addUser.setNull("last_login", Types.TIMESTAMP);
+            cs_addUser.setString("p_first_name", model.getFirstName());
+            cs_addUser.setString("p_last_name", model.getLastName());
+            cs_addUser.setString("p_email", model.getEmail());
+            cs_addUser.setString("p_user_password", model.getPassword());
+            cs_addUser.setBoolean("p_enabled", model.isEnabled());
+            cs_addUser.setBoolean("p_is_using2fa", model.isUsing2FA());
+            cs_addUser.setString("p_secret", model.getSecret());
+            cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
             cs_addUser.execute();
 
             // Add roles to user
-            cs_setRoleToUser.setLong("user_account", model.getId());
-            cs_setRoleToUser.setLong("user_role", 2L);
+            cs_setRoleToUser.setLong("p_user_id", model.getId());
+            cs_setRoleToUser.setLong("p_role_id", 2L);
             cs_setRoleToUser.execute();
 
 
@@ -322,14 +322,14 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
              CallableStatement cs_setRoleToUser = conn.prepareCall("{call setRoleToUser(?,?)}")) {
 
             // Add a user to DB
-            cs_addUser.setString("first_name", model.getFirstName());
-            cs_addUser.setString("last_name", model.getLastName());
-            cs_addUser.setString("email", model.getEmail());
-            cs_addUser.setString("user_password", model.getPassword());
-            cs_addUser.setBoolean("enabled", true);
-            cs_addUser.setBoolean("is_using2fa", model.isUsing2FA());
-            cs_addUser.setString("secret", model.getSecret());
-            cs_addUser.setNull("last_login", Types.TIMESTAMP);
+            cs_addUser.setString("p_first_name", model.getFirstName());
+            cs_addUser.setString("p_last_name", model.getLastName());
+            cs_addUser.setString("p_email", model.getEmail());
+            cs_addUser.setString("p_user_password", model.getPassword());
+            cs_addUser.setBoolean("p_enabled", true);
+            cs_addUser.setBoolean("p_is_using2fa", model.isUsing2FA());
+            cs_addUser.setString("p_secret", model.getSecret());
+            cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
             cs_addUser.execute();
 
             // Add roles to user
@@ -337,8 +337,8 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
             cs_setRoleToUser.setLong("user_role", 1L);
             cs_setRoleToUser.execute();
 
-            cs_setRoleToUser.setLong("user_account", model.getId());
-            cs_setRoleToUser.setLong("user_role", 2L);
+            cs_setRoleToUser.setLong("p_user_id", model.getId());
+            cs_setRoleToUser.setLong("p_role_id", 2L);
             cs_setRoleToUser.execute();
 
         } catch (SQLException ex) {
@@ -368,8 +368,8 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
             cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
             cs_addUser.execute();
 
-            cs_setRoleToUser.setLong("user_account", model.getId());
-            cs_setRoleToUser.setLong("user_role", 2L);
+            cs_setRoleToUser.setLong("p_user_id", model.getId());
+            cs_setRoleToUser.setLong("p_role_id", 2L);
             cs_setRoleToUser.execute();
 
         } catch (SQLException ex) {
@@ -431,8 +431,8 @@ public class UserRepositoryJDBC extends JDBCRepositoryUtilities implements JDBCR
                     cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
 
                     // Add role to user
-                    cs_setRoleToUser.setLong("user_account", model.getId());
-                    cs_setRoleToUser.setLong("user_role", 2L);
+                    cs_setRoleToUser.setLong("p_user_id", model.getId());
+                    cs_setRoleToUser.setLong("p_role_id", 2L);
 
                     cs_addUser.addBatch();
                     cs_setRoleToUser.addBatch();

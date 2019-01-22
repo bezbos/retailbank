@@ -1,7 +1,5 @@
 package com.codecentric.retailbank.model.security.OLD;
 
-import com.codecentric.retailbank.model.security.Role;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
