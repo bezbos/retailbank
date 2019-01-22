@@ -201,6 +201,52 @@ public class VerificationTokenRepositoryJDBC extends JDBCRepositoryUtilities imp
         return verificationToken;
     }
 
+    public VerificationToken getSingleByToken(String token) {
+        if (token == null)
+            throw new ArgumentNullException("The token argument must have a value/cannot be null.");
+
+        VerificationToken verificationToken = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csSingleVerificationToken = conn.prepareCall("{call singleVerificationTokenByToken(?)}")) {
+
+            // Retrieve a getSingle verificationToken
+            csSingleVerificationToken.setString(1, token);
+            csSingleVerificationToken.execute();
+
+            // Transform ResultSet row into a VerificationToken model
+            resultSet = csSingleVerificationToken.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a VerificationToken object
+                User user = new User(
+                        resultSet.getLong("user_account.id"),
+                        resultSet.getString("user_account.token")
+                );
+
+                verificationToken = new VerificationToken(
+                        resultSet.getString("verification_token.token"),
+                        user,
+                        resultSet.getDate("verification_token.expiry_date")
+                );
+
+            }
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return verificationToken;
+    }
+
 
     @Override public VerificationToken add(VerificationToken model) {
         if (model == null)

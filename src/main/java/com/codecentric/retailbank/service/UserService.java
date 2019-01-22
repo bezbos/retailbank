@@ -1,13 +1,13 @@
 package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.dto.UserDto;
-import com.codecentric.retailbank.model.security.OLD.PasswordResetToken;
-import com.codecentric.retailbank.model.security.OLD.VerificationToken;
+import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
+import com.codecentric.retailbank.model.security.VerificationToken;
+import com.codecentric.retailbank.repository.JDBC.security.PasswordResetTokenRepositoryJDBC;
+import com.codecentric.retailbank.repository.JDBC.security.RoleRepositoryJDBC;
 import com.codecentric.retailbank.repository.JDBC.security.UserRepositoryJDBC;
-import com.codecentric.retailbank.repository.SpringData.security.PasswordResetTokenRepository;
-import com.codecentric.retailbank.repository.SpringData.security.RoleRepository;
-import com.codecentric.retailbank.repository.SpringData.security.TokenRepository;
+import com.codecentric.retailbank.repository.JDBC.security.VerificationTokenRepositoryJDBC;
 import com.codecentric.retailbank.service.interfaces.IUserService;
 import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +27,13 @@ public class UserService implements IUserService {
     private UserRepositoryJDBC userRepositoryJDBC;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleRepositoryJDBC roleRepositoryJDBC;
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private VerificationTokenRepositoryJDBC verificationTokenRepositoryJDBC;
 
     @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
+    private PasswordResetTokenRepositoryJDBC passwordResetTokenRepositoryJDBC;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,19 +50,19 @@ public class UserService implements IUserService {
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         user.setUsing2FA(accountDto.isUsing2FA());
-        user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+        user.setRoles(Arrays.asList(roleRepositoryJDBC.getSingleByName("ROLE_USER")));
         return userRepositoryJDBC.add(user);
     }
 
     @Override
     public void createVerificationTokenForUser(User user, String token) {
 //        VerificationToken verificationToken = new VerificationToken(token, user, getExpiryDate());
-//        tokenRepository.save(verificationToken);
+//        verificationTokenRepositoryJDBC.save(verificationToken);
     }
 
     @Override
     public VerificationToken getVerificationToken(String token) {
-        return tokenRepository.findByToken(token);
+        return verificationTokenRepositoryJDBC.getSingleByToken(token);
     }
 
     @Override
@@ -72,16 +72,16 @@ public class UserService implements IUserService {
 
     @Override
     public User getUser(String verificationToken) {
-        User user = tokenRepository.findByToken(verificationToken).getUser();
+        User user = verificationTokenRepositoryJDBC.getSingleByToken(verificationToken).getUser();
         return user;
     }
 
     @Override
     public VerificationToken generateNewVerificationToken(String existingVerificationToken) {
-        VerificationToken vToken = tokenRepository.findByToken(existingVerificationToken);
+        VerificationToken vToken = verificationTokenRepositoryJDBC.getSingleByToken(existingVerificationToken);
         vToken.updateToken(UUID.randomUUID().toString());
         vToken.setExpiryDate(getExpiryDate());
-        vToken = tokenRepository.save(vToken);
+        vToken = verificationTokenRepositoryJDBC.add(vToken);
         return vToken;
     }
 
@@ -94,12 +94,12 @@ public class UserService implements IUserService {
     public void createPasswordResetTokenForUser(User user, String token) {
 //        PasswordResetToken myToken = new PasswordResetToken(user, token);
 //        myToken.setExpiryDate(getExpiryDate());
-//        passwordResetTokenRepository.save(myToken);
+//        passwordResetTokenRepositoryJDBC.save(myToken);
     }
 
     @Override
     public PasswordResetToken getPasswordResetToken(String token) {
-        return passwordResetTokenRepository.findByToken(token);
+        return passwordResetTokenRepositoryJDBC.getSingleByToken(token);
     }
 
     @Override

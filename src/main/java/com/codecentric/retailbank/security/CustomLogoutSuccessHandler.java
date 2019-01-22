@@ -1,7 +1,5 @@
 package com.codecentric.retailbank.security;
 
-import com.codecentric.retailbank.service.LogService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
@@ -12,13 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
-    @Autowired
-    private LogService logService;
-
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        logService.persistLog("Logout from: " + request.getHeader("Referer"));
+
+        // TODO
+
         super.onLogoutSuccess(request, response, authentication);
     }
 }

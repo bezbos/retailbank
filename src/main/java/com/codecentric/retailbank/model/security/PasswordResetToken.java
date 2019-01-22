@@ -23,6 +23,19 @@ public class PasswordResetToken {
         this.token = token;
     }
 
+    public PasswordResetToken(String token, User user, Date expiryDate) {
+        this.token = token;
+        this.user = user;
+        this.expiryDate = expiryDate;
+    }
+
+    public PasswordResetToken(Long id, String token, User user, Date expiryDate) {
+        this.id = id;
+        this.token = token;
+        this.user = user;
+        this.expiryDate = expiryDate;
+    }
+
 
     public Long getId() {
         return id;
