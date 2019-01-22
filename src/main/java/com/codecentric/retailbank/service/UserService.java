@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.service;
 
+import com.codecentric.retailbank.exception.runtime.UserAlreadyExistsException;
 import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
@@ -9,7 +10,6 @@ import com.codecentric.retailbank.repository.security.RoleRepository;
 import com.codecentric.retailbank.repository.security.UserRepository;
 import com.codecentric.retailbank.repository.security.VerificationTokenRepository;
 import com.codecentric.retailbank.service.interfaces.IUserService;
-import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,11 @@ import java.util.UUID;
 @Transactional
 public class UserService implements IUserService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -36,10 +39,15 @@ public class UserService implements IUserService {
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
+    //endregion
+
+    //region DEPENDENCIES
     @Autowired
     private PasswordEncoder passwordEncoder;
+    //endregion
 
 
+    //region USER
     @Override public User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistsException {
         if (emailExists(accountDto.getEmail()))
             throw new UserAlreadyExistsException("An account with an email \"" + accountDto.getEmail() + "\" address already exists.");
@@ -50,17 +58,8 @@ public class UserService implements IUserService {
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         user.setUsing2FA(accountDto.isUsing2FA());
-        user.setRoles(Arrays.asList(roleRepository.getSingleByName("ROLE_USER")));
+        user.setRoles(Arrays.asList(roleRepository.singleByName("ROLE_USER")));
         return userRepository.add(user);
-    }
-
-    @Override public void createVerificationTokenForUser(User user, String token) {
-//        VerificationToken verificationToken = new VerificationToken(token, user, getExpiryDate());
-//        verificationTokenRepository.save(verificationToken);
-    }
-
-    @Override public VerificationToken getVerificationToken(String token) {
-        return verificationTokenRepository.getSingleByToken(token);
     }
 
     @Override public void saveRegisteredUser(User user) {
@@ -72,6 +71,12 @@ public class UserService implements IUserService {
         return user;
     }
 
+    @Override public User findUserByMail(String userMail) {
+        return userRepository.singleByUsername(userMail);
+    }
+    //endregion
+
+    //region TOKENS
     @Override public VerificationToken generateNewVerificationToken(String existingVerificationToken) {
         VerificationToken vToken = verificationTokenRepository.getSingleByToken(existingVerificationToken);
         vToken.updateToken(UUID.randomUUID().toString());
@@ -80,10 +85,17 @@ public class UserService implements IUserService {
         return vToken;
     }
 
-    @Override public User findUserByMail(String userMail) {
-        return userRepository.getSingleByUsername(userMail);
+    @Override public void createVerificationTokenForUser(User user, String token) {
+//        VerificationToken verificationToken = new VerificationToken(token, user, getExpiryDate());
+//        verificationTokenRepository.save(verificationToken);
     }
 
+    @Override public VerificationToken getVerificationToken(String token) {
+        return verificationTokenRepository.getSingleByToken(token);
+    }
+    //endregion
+
+    //region PASSWORD
     @Override public void createPasswordResetTokenForUser(User user, String token) {
 //        PasswordResetToken myToken = new PasswordResetToken(user, token);
 //        myToken.setExpiryDate(getExpiryDate());
@@ -91,7 +103,7 @@ public class UserService implements IUserService {
     }
 
     @Override public PasswordResetToken getPasswordResetToken(String token) {
-        return passwordResetTokenRepository.getSingleByToken(token);
+        return passwordResetTokenRepository.singleByToken(token);
     }
 
     @Override public void changeUserPassword(User user, String password) {
@@ -104,10 +116,11 @@ public class UserService implements IUserService {
 
         return result;
     }
+    //endregion
 
-
+    //region HELPERS
     private boolean emailExists(String email) {
-        return userRepository.getSingleByUsername(email) != null;
+        return userRepository.singleByUsername(email) != null;
     }
 
     private Date getExpiryDate() {
@@ -119,5 +132,6 @@ public class UserService implements IUserService {
 
         return expiryDate;
     }
+    //endregion
 
 }

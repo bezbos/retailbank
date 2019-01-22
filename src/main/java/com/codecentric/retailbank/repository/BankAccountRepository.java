@@ -1,13 +1,13 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.BankAccount;
 import com.codecentric.retailbank.model.domain.Customer;
 import com.codecentric.retailbank.model.domain.RefAccountStatus;
 import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -23,7 +23,8 @@ import java.util.List;
 @Repository
 public class BankAccountRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<BankAccount, Long> {
 
-    @Override public List<BankAccount> findAll() {
+    //region READ
+    @Override public List<BankAccount> all() {
         ResultSet resultSet = null;
         List<BankAccount> bankAccounts = new ArrayList<>();
 
@@ -70,10 +71,10 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return bankAccounts.size() < 1 ? null : bankAccounts;
+        return bankAccounts;
     }
 
-    @Override public ListPage<BankAccount> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<BankAccount> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<BankAccount> bankAccountListPage = new ListPage<>();
 
@@ -81,7 +82,7 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
              CallableStatement cs_allBankAccountsRange = conn.prepareCall("{call allAccountsRange(?,?)}");
              CallableStatement cs_allBankAccountsCount = conn.prepareCall("{call allAccountsCount()}")) {
 
-            // Retrieve findAll BankAccounts
+            // Retrieve all BankAccounts
             cs_allBankAccountsRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allBankAccountsRange.setInt(2, Math.abs(pageSize));
             cs_allBankAccountsRange.execute();
@@ -132,10 +133,10 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return bankAccountListPage.getModels().size() < 1 ? null : bankAccountListPage;
+        return bankAccountListPage;
     }
 
-    @Override public BankAccount getSingle(Long id) {
+    @Override public BankAccount single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -145,7 +146,7 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleBankAccount = conn.prepareCall("{call singleAccount(?)}")) {
 
-            // Retrieve a getSingle BankAccount
+            // Retrieve a single BankAccount
             cs_singleBankAccount.setLong(1, id);
             cs_singleBankAccount.execute();
 
@@ -193,6 +194,66 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
         return bankAccount;
     }
 
+    public BankAccount getSingleByDetails(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        BankAccount bankAccount = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_singleBankAccount = conn.prepareCall("{call singleBankAccountByDetails(?)}")) {
+
+            // Retrieve a single BankAccount
+            cs_singleBankAccount.setString(1, details);
+            cs_singleBankAccount.execute();
+
+            // Transform ResultSet row into a BankAccount model
+            byte rowCounter = 0;
+            resultSet = cs_singleBankAccount.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches details parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a BankAccount object
+                RefAccountStatus refAccountStatus = new RefAccountStatus(
+                        resultSet.getLong("ref_account_status.account_status_id"),
+                        resultSet.getString("ref_account_status.account_status_code")
+                );
+
+                RefAccountType refAccountType = new RefAccountType(
+                        resultSet.getLong("ref_account_types.account_type_id"),
+                        resultSet.getString("ref_account_types.account_type_code")
+                );
+
+                Customer customer = new Customer(
+                        resultSet.getLong("customers.customer_id"),
+                        resultSet.getString("customers.personal_details")
+                );
+
+                bankAccount = new BankAccount(
+                        resultSet.getLong("accounts.account_number"),
+                        refAccountStatus,
+                        refAccountType,
+                        customer,
+                        resultSet.getBigDecimal("accounts.current_balance"),
+                        resultSet.getString("accounts.other_details")
+                );
+            }
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return bankAccount;
+    }
+    //endregion
+
+    //region WRITE
     @Override public BankAccount add(BankAccount model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -236,38 +297,6 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
         }
 
         return model;
-    }
-
-    @Override public void delete(BankAccount model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteAccount(?)}")) {
-
-            // Delete an existing BankAccount
-            cs_deleteBankAccount.setLong(1, model.getId());
-            cs_deleteBankAccount.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteAccount(?)}")) {
-
-            // Delete an existing BankAccount
-            cs_deleteBankAccount.setLong(1, id);
-            cs_deleteBankAccount.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
     }
 
     @Override public void insertBatch(Iterable<BankAccount> models) {
@@ -326,6 +355,40 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(BankAccount model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteAccount(?)}")) {
+
+            // Delete an existing BankAccount
+            cs_deleteBankAccount.setLong(1, model.getId());
+            cs_deleteBankAccount.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteBankAccount = conn.prepareCall("{call deleteAccount(?)}")) {
+
+            // Delete an existing BankAccount
+            cs_deleteBankAccount.setLong(1, id);
+            cs_deleteBankAccount.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<BankAccount> models) {
         if (models == null)
@@ -374,62 +437,5 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             DBUtil.showErrorMessage(ex);
         }
     }
-
-    public BankAccount getSingleByDetails(String details) {
-        if (details == null)
-            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
-
-        BankAccount bankAccount = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleBankAccount = conn.prepareCall("{call singleBankAccountByDetails(?)}")) {
-
-            // Retrieve a getSingle BankAccount
-            cs_singleBankAccount.setString(1, details);
-            cs_singleBankAccount.execute();
-
-            // Transform ResultSet row into a BankAccount model
-            byte rowCounter = 0;
-            resultSet = cs_singleBankAccount.getResultSet();
-            while (resultSet.next()) {
-
-                // Check if more than one element matches details parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a BankAccount object
-                RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
-                        resultSet.getString("ref_account_status.account_status_code")
-                );
-
-                RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
-                        resultSet.getString("ref_account_types.account_type_code")
-                );
-
-                Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
-                        resultSet.getString("customers.personal_details")
-                );
-
-                bankAccount = new BankAccount(
-                        resultSet.getLong("accounts.account_number"),
-                        refAccountStatus,
-                        refAccountType,
-                        customer,
-                        resultSet.getBigDecimal("accounts.current_balance"),
-                        resultSet.getString("accounts.other_details")
-                );
-            }
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return bankAccount;
-    }
+    //endregion
 }

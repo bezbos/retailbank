@@ -4,6 +4,7 @@ import javax.validation.constraints.Size;
 
 public class RefAccountStatus {
 
+    //region FIELDS
     private Long id;
 
     @Size(max = 15)
@@ -17,8 +18,9 @@ public class RefAccountStatus {
 
     @Size(max = 1)
     private String isClosed;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public RefAccountStatus() {
     }
 
@@ -42,8 +44,9 @@ public class RefAccountStatus {
         this.isActive = isActive;
         this.isClosed = isClosed;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -83,7 +86,9 @@ public class RefAccountStatus {
     public void setIsClosed(String isClosed) {
         this.isClosed = isClosed;
     }
+    //endregion
 
+    //region HELPERS
     public void setFields(@Size(max = 15) String code,
                           @Size(max = 255) String description,
                           Boolean isActive,
@@ -97,4 +102,5 @@ public class RefAccountStatus {
         if(isClosed != null)
             this.isClosed = isClosed.booleanValue() == true ? "Y" : "N";;
     }
+    //endregion
 }

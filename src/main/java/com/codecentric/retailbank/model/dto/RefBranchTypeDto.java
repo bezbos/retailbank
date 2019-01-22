@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 public class RefBranchTypeDto {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -21,11 +22,11 @@ public class RefBranchTypeDto {
     private Boolean isSmallRuralType;
 
     private Boolean isMediumSuburbanType;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public RefBranchTypeDto() {
     }
-
 
     public RefBranchTypeDto(Long id,
                             @NotNull @Length(max = 15) String code,
@@ -40,8 +41,9 @@ public class RefBranchTypeDto {
         this.isSmallRuralType = isSmallRural != null ? isSmallRural.equalsIgnoreCase("Y") : false;
         this.isMediumSuburbanType = isMediumSuburban != null ? isMediumSuburban.equalsIgnoreCase("Y") : false;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -98,7 +100,9 @@ public class RefBranchTypeDto {
     public void setIsMediumSuburbanType(Boolean mediumSuburban) {
         isMediumSuburbanType = mediumSuburban;
     }
+    //endregion
 
+    //region HELPERS
     public RefBranchType getDBModel() {
         return new RefBranchType(
                 this.id,
@@ -109,4 +113,5 @@ public class RefBranchTypeDto {
                 this.getIsMediumSuburbanType() ? "Y" : "N"
         );
     }
+    //endregion
 }

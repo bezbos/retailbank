@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Length;
 
 public class RefTransactionTypeDto {
 
+    //region FIELDS
     private Long id;
 
     @Length(max = 15)
@@ -15,8 +16,9 @@ public class RefTransactionTypeDto {
     private Boolean isDepositType;
 
     private Boolean isWithdrawalType;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public RefTransactionTypeDto() {
     }
 
@@ -31,8 +33,9 @@ public class RefTransactionTypeDto {
         this.isDepositType = isDepositType != null ? isDepositType.equalsIgnoreCase("Y") : false;
         this.isWithdrawalType = isWithdrawalType != null ? isWithdrawalType.equalsIgnoreCase("Y") : false;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -72,4 +75,5 @@ public class RefTransactionTypeDto {
     public void setIsWithdrawalType(Boolean withdrawalType) {
         isWithdrawalType = withdrawalType;
     }
+    //endregion
 }

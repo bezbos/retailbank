@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<RefTransactionType, Long> {
 
-    @Override public List<RefTransactionType> findAll() {
+    //region READ
+    @Override public List<RefTransactionType> all() {
         ResultSet resultSet = null;
         List<RefTransactionType> transactionTypes = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allRefTransactionTypes = conn.prepareCall("{call allRefTransactionTypes()}")) {
 
-            // Retrieve findAll transactionTypes
+            // Retrieve all transactionTypes
             cs_allRefTransactionTypes.execute();
 
             // Transform each ResultSet row into RefTransactionType model and add to "transactionTypes" list
@@ -50,10 +51,10 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             closeConnections(resultSet);
         }
 
-        return transactionTypes.size() < 1 ? null : transactionTypes;
+        return transactionTypes;
     }
 
-    @Override public ListPage<RefTransactionType> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<RefTransactionType> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<RefTransactionType> refBranchTypeListPage = new ListPage<>();
 
@@ -61,7 +62,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
              CallableStatement cs_allRefTransactionTypesRange = conn.prepareCall("{call allRefTransactionTypesRange(?,?)}");
              CallableStatement cs_allRefTransactionTypesCount = conn.prepareCall("{call allRefTransactionTypesCount()}")) {
 
-            // Retrieve findAll RefTransactionTypes
+            // Retrieve all RefTransactionTypes
             cs_allRefTransactionTypesRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allRefTransactionTypesRange.setInt(2, Math.abs(pageSize));
             cs_allRefTransactionTypesRange.execute();
@@ -96,10 +97,10 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             closeConnections(resultSet);
         }
 
-        return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
+        return refBranchTypeListPage;
     }
 
-    @Override public RefTransactionType getSingle(Long id) {
+    @Override public RefTransactionType single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -109,7 +110,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleRefTransactionType = conn.prepareCall("{call singleRefTransactionType(?)}")) {
 
-            // Retrieve a getSingle RefTransactionType
+            // Retrieve a single RefTransactionType
             cs_singleRefTransactionType.setLong(1, id);
             cs_singleRefTransactionType.execute();
 
@@ -125,12 +126,12 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
 
                 // Transform ResultSet row into a RefTransactionType object
                 refBranchType = new RefTransactionType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(4)
-                        );
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(4)
+                );
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -141,7 +142,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         return refBranchType;
     }
 
-    public RefTransactionType getSingleByCode(String code) {
+    public RefTransactionType singleByCode(String code) {
         if (code == null)
             throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
@@ -151,7 +152,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleRefTransactionType = conn.prepareCall("{call singleRefTransactionTypeByCode(?)}")) {
 
-            // Retrieve a getSingle RefTransactionType
+            // Retrieve a single RefTransactionType
             cs_singleRefTransactionType.setString(1, code);
             cs_singleRefTransactionType.execute();
 
@@ -167,12 +168,12 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
 
                 // Transform ResultSet row into a RefTransactionType object
                 refBranchType = new RefTransactionType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(4)
-                        );
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(4)
+                );
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -182,7 +183,9 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
 
         return refBranchType;
     }
+    //endregion
 
+    //region WRITE
     @Override public RefTransactionType add(RefTransactionType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -224,86 +227,6 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         }
 
         return model;
-    }
-
-    @Override public void delete(RefTransactionType model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefTransactionType = conn.prepareCall("{call deleteRefTransactionType(?)}")) {
-
-            // Delete an existing RefTransactionType
-            cs_deleteRefTransactionType.setLong(1, model.getId());
-            cs_deleteRefTransactionType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefTransactionType = conn.prepareCall("{call deleteRefTransactionType(?)}")) {
-
-            // Delete an existing RefTransactionType
-            cs_deleteRefTransactionType.setLong(1, id);
-            cs_deleteRefTransactionType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<RefTransactionType> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<RefTransactionType> refBranchTypes = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getRefTransactionTypes = conn.prepareCall("{call singleRefTransactionType(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getRefTransactionTypes.setLong(1, id);
-                    cs_getRefTransactionTypes.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getRefTransactionTypes.executeBatch();
-
-            // Transform ResultSet rows into refBranchTypes
-            resultSet = cs_getRefTransactionTypes.getResultSet();
-            refBranchTypes = new ArrayList<>();
-            while (resultSet.next()) {
-                refBranchTypes.add(
-                        new RefTransactionType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(4)
-                        )
-                );
-            }
-
-            return refBranchTypes;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return refBranchTypes;
     }
 
     @Override public void insertBatch(Iterable<RefTransactionType> models) {
@@ -360,6 +283,40 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(RefTransactionType model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteRefTransactionType = conn.prepareCall("{call deleteRefTransactionType(?)}")) {
+
+            // Delete an existing RefTransactionType
+            cs_deleteRefTransactionType.setLong(1, model.getId());
+            cs_deleteRefTransactionType.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteRefTransactionType = conn.prepareCall("{call deleteRefTransactionType(?)}")) {
+
+            // Delete an existing RefTransactionType
+            cs_deleteRefTransactionType.setLong(1, id);
+            cs_deleteRefTransactionType.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<RefTransactionType> models) {
         if (models == null)
@@ -408,4 +365,5 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

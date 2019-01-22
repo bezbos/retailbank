@@ -4,13 +4,15 @@ import java.util.Collection;
 
 public class Privilege {
 
+    //region FIELDS
     private Long id;
 
     private String name;
 
     private Collection<Role> roles;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public Privilege() {
     }
 
@@ -23,8 +25,9 @@ public class Privilege {
         this.name = name;
         this.roles = roles;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -48,8 +51,9 @@ public class Privilege {
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
+    //endregion
 
-
+    //region OVERRIDES
     @Override public int hashCode() {
         int prime = 31;
         int result = 1;
@@ -78,4 +82,5 @@ public class Privilege {
         builder.append("Privilege [name=").append(name).append("]").append("[id=").append(id).append("]");
         return builder.toString();
     }
+    //endregion
 }

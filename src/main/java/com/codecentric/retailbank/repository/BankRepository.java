@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Bank, Long> {
 
-    @Override public List<Bank> findAll() {
+    //region READ
+    @Override public List<Bank> all() {
         ResultSet resultSet = null;
         List<Bank> banks = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAllBanks = conn.prepareCall("{call allBanks()}")) {
 
-            // Retrieve findAll banks
+            // Retrieve all banks
             csAllBanks.execute();
 
             // Transform each ResultSet row into Bank model and add to "banks" list
@@ -44,10 +45,10 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
             closeConnections(resultSet);
         }
 
-        return banks.size() < 1 ? null : banks;
+        return banks;
     }
 
-    @Override public ListPage<Bank> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Bank> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Bank> bankListPage = new ListPage<>();
 
@@ -84,10 +85,10 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
             closeConnections(resultSet);
         }
 
-        return bankListPage.getModels().size() < 1 ? null : bankListPage;
+        return bankListPage;
     }
 
-    public List<Bank> findAllByDetails(String details) {
+    public List<Bank> allByDetails(String details) {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -97,7 +98,7 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement callableStatement = conn.prepareCall("{call allBanksByDetails(?)}")) {
 
-            // Retrieve findAll banks
+            // Retrieve all banks
             callableStatement.setString(1, details);
             callableStatement.execute();
 
@@ -115,10 +116,10 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
             closeConnections(resultSet);
         }
 
-        return banks.size() < 1 ? null : banks;
+        return banks;
     }
 
-    @Override public Bank getSingle(Long id) {
+    @Override public Bank single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -128,7 +129,7 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleBank = conn.prepareCall("{call singleBank(?)}")) {
 
-            // Retrieve a getSingle bank
+            // Retrieve a single bank
             csSingleBank.setLong(1, id);
             csSingleBank.execute();
 
@@ -154,7 +155,7 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return bank;
     }
 
-    public Bank getSingleByDetails(String details) {
+    public Bank singleByDetails(String details) {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -164,7 +165,7 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleBank = conn.prepareCall("{call singleBankByDetails(?)}")) {
 
-            // Retrieve a getSingle bank
+            // Retrieve a single bank
             csSingleBank.setString(1, details);
             csSingleBank.execute();
 
@@ -189,7 +190,9 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
         return bank;
     }
+    //endregion
 
+    //region WRITE
     @Override public Bank add(Bank model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -225,84 +228,6 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         }
 
         return model;
-    }
-
-
-    @Override public void delete(Bank model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}")) {
-
-            // Delete bank
-            csDeleteBank.setLong(1, model.getId());
-            csDeleteBank.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}")) {
-
-            // Delete bank
-            csDeleteBank.setLong(1, id);
-            csDeleteBank.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<Bank> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<Bank> banks = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getBanks = conn.prepareCall("{call singleBank(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getBanks.setLong(1, id);
-                    cs_getBanks.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getBanks.executeBatch();
-
-            // Transform ResultSet rows into banks
-            resultSet = cs_getBanks.getResultSet();
-            banks = new ArrayList<>();
-            while (resultSet.next()) {
-                banks.add(
-                        new Bank(
-                                resultSet.getLong(1),
-                                resultSet.getString(2)
-                        )
-                );
-            }
-
-            return banks;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return banks;
     }
 
     @Override public void insertBatch(Iterable<Bank> models) {
@@ -343,6 +268,40 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
             // Execute batch!
             cstmtUpdateBank.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Bank model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}")) {
+
+            // Delete bank
+            csDeleteBank.setLong(1, model.getId());
+            csDeleteBank.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteBank = conn.prepareCall("{call deleteBank(?)}")) {
+
+            // Delete bank
+            csDeleteBank.setLong(1, id);
+            csDeleteBank.execute();
+
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
@@ -389,4 +348,5 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

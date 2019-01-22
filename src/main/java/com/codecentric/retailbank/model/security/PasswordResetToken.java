@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class PasswordResetToken {
 
+    //region FIELDS
     private static final int EXPIRATION = 60 * 24;
 
     private Long id;
@@ -13,15 +14,17 @@ public class PasswordResetToken {
     private User user;
 
     private Date expiryDate;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public PasswordResetToken(String token, User user, Date expiryDate) {
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -53,4 +56,5 @@ public class PasswordResetToken {
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
+    //endregion
 }

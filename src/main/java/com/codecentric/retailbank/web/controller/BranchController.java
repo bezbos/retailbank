@@ -30,13 +30,13 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @Controller
 @RequestMapping("/branch")
 public class BranchController {
+
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Represents the name of the current controller context.
-     */
     private String CONTROLLER_NAME = "branch";
+    //endregion
 
+    //region SERVICES
     @Autowired
     private BranchService branchService;
     @Autowired
@@ -45,8 +45,9 @@ public class BranchController {
     private BankService bankService;
     @Autowired
     private RefBranchTypeService refBranchTypeService;
+    //endregion
 
-
+    //region INDEX
     @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
                                Model model) {
@@ -63,7 +64,9 @@ public class BranchController {
         model.addAttribute("branches", branches.getModels());
         return CONTROLLER_NAME + "/index";
     }
+    //endregion
 
+    //region FORM
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
     public String getFormPage(@PathVariable("id") Optional<Long> id,
                               Model model) {
@@ -136,7 +139,7 @@ public class BranchController {
                 Branch branch = new Branch();
 
                 Address existingAddress = addressService.getByLine1(dto.getAddress().getLine1());
-                if(existingAddress == null){
+                if (existingAddress == null) {
                     addressService.addAddress(dto.getAddress().getDBModel());
                     existingAddress = addressService.getByLine1(dto.getAddress().getLine1());
                 }
@@ -166,7 +169,9 @@ public class BranchController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+    //endregion
 
+    //region DELETE
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String onDeleteSubmit(@PathVariable("id") Long id,
                                  RedirectAttributes redirectAttributes) {
@@ -185,4 +190,6 @@ public class BranchController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+    //endregion
+
 }

@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class VerificationToken {
+
+    //region FIELDS
     private static final int EXPIRATION = 60 * 24;
 
     private Long id;
@@ -14,17 +16,17 @@ public class VerificationToken {
     private User user;
 
     private Date expiryDate;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public VerificationToken(String token, User user, Date expiryDate) {
-
-
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -56,8 +58,9 @@ public class VerificationToken {
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
+    //endregion
 
-
+    //region HELPERS
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Timestamp(cal.getTime().getTime()));
@@ -69,8 +72,9 @@ public class VerificationToken {
         this.token = token;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
+    //endregion
 
-
+    //region OVERRIDES
     @Override public int hashCode() {
         int prime = 31;
         int result = 1;
@@ -120,4 +124,5 @@ public class VerificationToken {
         builder.append("Token [String=").append(token).append("]").append("[Expires").append(expiryDate).append("]");
         return builder.toString();
     }
+    //endregion
 }

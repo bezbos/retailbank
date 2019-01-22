@@ -16,32 +16,39 @@ import java.util.List;
 @Transactional
 public class BranchService implements IBranchService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private BranchRepository branchRepository;
+    //endregion
 
 
+    //region READ
     @Override public Branch getById(Long id) {
-        Branch branch = branchRepository.getSingle(id);
+        Branch branch = branchRepository.single(id);
         return branch;
     }
 
     @Override public Branch getByDetails(String details) {
-        Branch branch = branchRepository.getSingleByDetails(details);
+        Branch branch = branchRepository.singleByDetails(details);
         return branch;
     }
 
     @Override public List<Branch> getAllBranches() {
-        List<Branch> branches = branchRepository.findAll();
+        List<Branch> branches = branchRepository.all();
         return branches;
     }
 
     @Override public ListPage<Branch> getAllBranchesByPage(Integer pageIndex, int pageSize) {
-        ListPage<Branch> branches = branchRepository.findAllRange(pageIndex, pageSize);
+        ListPage<Branch> branches = branchRepository.allRange(pageIndex, pageSize);
         return branches;
     }
+    //endregion
 
+    //region WRITE
     @Override public Branch addBranch(Branch branch) {
         Branch result = branchRepository.add(branch);
         return result;
@@ -51,7 +58,9 @@ public class BranchService implements IBranchService {
         Branch result = branchRepository.update(branch);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteBranch(Branch branch) {
         branchRepository.delete(branch);
     }
@@ -59,4 +68,5 @@ public class BranchService implements IBranchService {
     @Override public void deleteBranch(Long id) {
         branchRepository.deleteById(id);
     }
+    //endregion
 }

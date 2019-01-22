@@ -1,11 +1,11 @@
 package com.codecentric.retailbank.repository.security;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -22,14 +22,15 @@ import java.util.List;
 @Repository
 public class VerificationTokenRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<VerificationToken, Long> {
 
-    @Override public List<VerificationToken> findAll() {
+    //region READ
+    @Override public List<VerificationToken> all() {
         ResultSet resultSet = null;
         List<VerificationToken> verificationTokens = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAllVerificationTokens = conn.prepareCall("{call allVerificationTokens()}")) {
 
-            // Retrieve findAll verificationTokens
+            // Retrieve all verificationTokens
             csAllVerificationTokens.execute();
 
             // Transform each ResultSet row into VerificationToken model and add to "verificationTokens" list
@@ -59,7 +60,7 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
         return verificationTokens.size() < 1 ? null : verificationTokens;
     }
 
-    @Override public ListPage<VerificationToken> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<VerificationToken> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<VerificationToken> verificationTokenListPage = new ListPage<>();
 
@@ -108,7 +109,7 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
         return verificationTokenListPage.getModels().size() < 1 ? null : verificationTokenListPage;
     }
 
-    @Override public VerificationToken getSingle(Long id) {
+    @Override public VerificationToken single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -118,7 +119,7 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleVerificationToken = conn.prepareCall("{call singleVerificationToken(?)}")) {
 
-            // Retrieve a getSingle verificationToken
+            // Retrieve a single verificationToken
             csSingleVerificationToken.setLong(1, id);
             csSingleVerificationToken.execute();
 
@@ -165,7 +166,7 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleVerificationToken = conn.prepareCall("{call singleVerificationTokenByEmail(?)}")) {
 
-            // Retrieve a getSingle verificationToken
+            // Retrieve a single verificationToken
             csSingleVerificationToken.setString(1, email);
             csSingleVerificationToken.execute();
 
@@ -211,7 +212,7 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleVerificationToken = conn.prepareCall("{call singleVerificationTokenByToken(?)}")) {
 
-            // Retrieve a getSingle verificationToken
+            // Retrieve a single verificationToken
             csSingleVerificationToken.setString(1, token);
             csSingleVerificationToken.execute();
 
@@ -246,8 +247,9 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
 
         return verificationToken;
     }
+    //endregion
 
-
+    //region WRITE
     @Override public VerificationToken add(VerificationToken model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -287,39 +289,6 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
         }
 
         return model;
-    }
-
-
-    @Override public void delete(VerificationToken model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteVerificationToken = conn.prepareCall("{call deleteVerificationToken(?)}")) {
-
-            // Delete verificationToken
-            csDeleteVerificationToken.setLong(1, model.getId());
-            csDeleteVerificationToken.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteVerificationToken = conn.prepareCall("{call deleteVerificationToken(?)}")) {
-
-            // Delete verificationToken
-            csDeleteVerificationToken.setLong(1, id);
-            csDeleteVerificationToken.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
     }
 
     @Override public void insertBatch(Iterable<VerificationToken> models) {
@@ -368,6 +337,40 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(VerificationToken model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteVerificationToken = conn.prepareCall("{call deleteVerificationToken(?)}")) {
+
+            // Delete verificationToken
+            csDeleteVerificationToken.setLong(1, model.getId());
+            csDeleteVerificationToken.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteVerificationToken = conn.prepareCall("{call deleteVerificationToken(?)}")) {
+
+            // Delete verificationToken
+            csDeleteVerificationToken.setLong(1, id);
+            csDeleteVerificationToken.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<VerificationToken> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -410,4 +413,5 @@ public class VerificationTokenRepository extends JDBCRepositoryUtilities impleme
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

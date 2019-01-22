@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 public class Branch {
 
+    //region FIELDS
     private Long id;
 
     private Address address;
@@ -17,8 +18,9 @@ public class Branch {
 
     @Size(max = 255)
     private String details;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public Branch() {
     }
 
@@ -42,8 +44,9 @@ public class Branch {
         this.refBranchType = refBranchType;
         this.details = details;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -83,7 +86,9 @@ public class Branch {
     public void setDetails(String details) {
         this.details = details;
     }
+    //endregion
 
+    //region HELPERS
     public void setFields(Address address,
                           @NotNull Bank bank,
                           @NotNull RefBranchType refBranchType,
@@ -93,4 +98,5 @@ public class Branch {
         this.refBranchType = refBranchType;
         this.details = details;
     }
+    //endregion
 }

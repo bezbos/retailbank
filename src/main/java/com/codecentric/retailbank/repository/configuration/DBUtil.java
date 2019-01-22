@@ -5,16 +5,18 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBUtil {
-    // ORACLE
+
+    //region ORACLE
     private static final String ORACLE_USERNAME = "hr";
     private static final String ORACLE_PASSWORD = "hr";
     private static final String ORACLE_CONNECTION_STRING = "ORACLE_DB_CONNECTION_STRING";
+    //endregion
 
-    // MYSQL
+    //region MYSQL
     private static final String MY_SQL_USERNAME = "root";
     private static final String MY_SQL_PASSWORD = "root";
     private static final String MY_SQL_CONNECTION_STRING = "jdbc:mysql://localhost:3306/bankcentric";
-
+    //endregion
 
     public static Connection getConnection(DBType dbType) throws SQLException {
         switch (dbType) {

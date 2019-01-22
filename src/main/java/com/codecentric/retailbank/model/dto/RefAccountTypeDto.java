@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class RefAccountTypeDto {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -24,8 +25,9 @@ public class RefAccountTypeDto {
     private Boolean isMoneyMarketType;
 
     private Boolean isIndividualRetirementType;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public RefAccountTypeDto() {
     }
 
@@ -46,8 +48,9 @@ public class RefAccountTypeDto {
         this.isMoneyMarketType = isMoneyMarketType != null ? isMoneyMarketType.equalsIgnoreCase("Y") : false;
         this.isIndividualRetirementType = isIndividualRetirementType != null ? isIndividualRetirementType.equalsIgnoreCase("Y") : false;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -111,4 +114,5 @@ public class RefAccountTypeDto {
     public void setIsIndividualRetirementType(Boolean individualRetirementType) {
         isIndividualRetirementType = individualRetirementType;
     }
+    //endregion
 }

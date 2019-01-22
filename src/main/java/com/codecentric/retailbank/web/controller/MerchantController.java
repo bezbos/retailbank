@@ -15,20 +15,17 @@ import java.util.List;
 @RequestMapping("/merchant")
 public class MerchantController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Represents the name of the current controller context.
-     */
     private String CONTROLLER_NAME = "merchant";
+    //endregion
 
+    //region SERVICES
     @Autowired
     private MerchantService merchantService;
+    //endregion
 
-
-    public MerchantController(){super();}
-
-
+    //region INDEX
     @RequestMapping(value = {"", "/", "/index"})
     public String getIndexPage(Model model){
         List<Merchant> merchants = merchantService.getAllMerchants();
@@ -36,5 +33,6 @@ public class MerchantController {
         model.addAttribute("merchants", merchants);
         return CONTROLLER_NAME + "/index";
     }
+    //endregion
 
 }

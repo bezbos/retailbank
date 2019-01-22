@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository.security;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.security.Role;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Role, Long> {
 
-    @Override public List<Role> findAll() {
+    //region READ
+    @Override public List<Role> all() {
         ResultSet resultSet = null;
         List<Role> roles = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAllRoles = conn.prepareCall("{call allRoles()}")) {
 
-            // Retrieve findAll roles
+            // Retrieve all roles
             csAllRoles.execute();
 
             // Transform each ResultSet row into Role model and add to "roles" list
@@ -47,7 +48,7 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return roles.size() < 1 ? null : roles;
     }
 
-    @Override public ListPage<Role> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Role> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Role> roleListPage = new ListPage<>();
 
@@ -87,7 +88,7 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return roleListPage.getModels().size() < 1 ? null : roleListPage;
     }
 
-    @Override public Role getSingle(Long id) {
+    @Override public Role single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -97,7 +98,7 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleRole = conn.prepareCall("{call singleRole(?)}")) {
 
-            // Retrieve a getSingle role
+            // Retrieve a single role
             csSingleRole.setLong(1, id);
             csSingleRole.execute();
 
@@ -123,7 +124,7 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return role;
     }
 
-    public Role getSingleByName(String name) {
+    public Role singleByName(String name) {
         if (name == null)
             throw new ArgumentNullException("The name argument must have a value/cannot be null.");
 
@@ -133,7 +134,7 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleRole = conn.prepareCall("{call singleRoleByName(?)}")) {
 
-            // Retrieve a getSingle role
+            // Retrieve a single role
             csSingleRole.setString(1, name);
             csSingleRole.execute();
 
@@ -158,7 +159,9 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
         return role;
     }
+    //endregion
 
+    //region WRITE
     @Override public Role add(Role model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -194,84 +197,6 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
         }
 
         return model;
-    }
-
-
-    @Override public void delete(Role model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteRole = conn.prepareCall("{call deleteRole(?)}")) {
-
-            // Delete role
-            csDeleteRole.setLong(1, model.getId());
-            csDeleteRole.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteRole = conn.prepareCall("{call deleteRole(?)}")) {
-
-            // Delete role
-            csDeleteRole.setLong(1, id);
-            csDeleteRole.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<Role> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<Role> roles = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getRoles = conn.prepareCall("{call singleRole(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getRoles.setLong(1, id);
-                    cs_getRoles.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getRoles.executeBatch();
-
-            // Transform ResultSet rows into roles
-            resultSet = cs_getRoles.getResultSet();
-            roles = new ArrayList<>();
-            while (resultSet.next()) {
-                roles.add(
-                        new Role(
-                                resultSet.getLong(1),
-                                resultSet.getString(2)
-                        )
-                );
-            }
-
-            return roles;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return roles;
     }
 
     @Override public void insertBatch(Iterable<Role> models) {
@@ -312,6 +237,40 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
             // Execute batch!
             cs_UpdateRole.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Role model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteRole = conn.prepareCall("{call deleteRole(?)}")) {
+
+            // Delete role
+            csDeleteRole.setLong(1, model.getId());
+            csDeleteRole.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteRole = conn.prepareCall("{call deleteRole(?)}")) {
+
+            // Delete role
+            csDeleteRole.setLong(1, id);
+            csDeleteRole.execute();
+
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
@@ -358,4 +317,5 @@ public class RoleRepository extends JDBCRepositoryUtilities implements JDBCRepos
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

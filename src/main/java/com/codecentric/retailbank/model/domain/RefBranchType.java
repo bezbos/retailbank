@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 
 public class RefBranchType {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -24,8 +25,9 @@ public class RefBranchType {
 
     @Size(max = 1)
     private String isMediumSuburban;  // Y or N
+    //endregion
 
-
+    //region CONSTRUCTORS
     public RefBranchType() {
     }
 
@@ -46,7 +48,9 @@ public class RefBranchType {
         this.isSmallRural = isSmallRural;
         this.isMediumSuburban = isMediumSuburban;
     }
+    //endregion
 
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -94,8 +98,9 @@ public class RefBranchType {
     public void setIsMediumSuburban(String mediumSuburban) {
         this.isMediumSuburban = mediumSuburban;
     }
+    //endregion
 
-
+    //region HELPERS
     public void setFields(String code,
                           @Size(max = 255) String description,
                           Boolean isLargeUrban,
@@ -124,5 +129,6 @@ public class RefBranchType {
                 this.getIsMediumSuburban()
         );
     }
+    //endregion
 
 }

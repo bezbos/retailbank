@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 public class RefTransactionType {
 
+    //region FIELDS
     private Long id;
 
     @Size(max = 15)
@@ -18,8 +19,9 @@ public class RefTransactionType {
 
     @Size(max = 1)
     private String isWithdrawal;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public RefTransactionType() {
     }
 
@@ -43,8 +45,9 @@ public class RefTransactionType {
         this.isDeposit = isDeposit;
         this.isWithdrawal = isWithdrawal;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -84,7 +87,9 @@ public class RefTransactionType {
     public void setIsWithdrawal(String isWithdrawal) {
         this.isWithdrawal = isWithdrawal;
     }
+    //endregion
 
+    //region HELPERS
     public void setFields(@Size(max = 15) String code,
                           @Size(max = 255) String description,
                           Boolean isDeposit,
@@ -97,6 +102,6 @@ public class RefTransactionType {
 
         if (isWithdrawal != null)
             this.isWithdrawal = isWithdrawal.booleanValue() == true ? "Y" : "N";
-        ;
     }
+    //endregion
 }

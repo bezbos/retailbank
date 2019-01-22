@@ -17,31 +17,38 @@ import java.util.List;
 @Transactional
 public class RefAccountStatusService implements IRefAccountStatusService {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    //region FIELDS
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private RefAccountStatusRepository refAccountStatusRepository;
     @Autowired
     private BankAccountRepository bankAccountRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+    //endregion
 
 
+    //region READ
     @Override public RefAccountStatus getById(Long id) {
-        RefAccountStatus refAccountStatus = refAccountStatusRepository.getSingle(id);
+        RefAccountStatus refAccountStatus = refAccountStatusRepository.single(id);
         return refAccountStatus;
     }
 
     @Override public RefAccountStatus getByCode(String code) {
-        RefAccountStatus refAccountStatus = refAccountStatusRepository.getSingleByCode(code);
+        RefAccountStatus refAccountStatus = refAccountStatusRepository.singleByCode(code);
         return refAccountStatus;
     }
 
     @Override public List<RefAccountStatus> getAllRefAccountStatus() {
-        List<RefAccountStatus> refAccountStatuses = refAccountStatusRepository.findAll();
+        List<RefAccountStatus> refAccountStatuses = refAccountStatusRepository.all();
         return refAccountStatuses;
     }
+    //endregion
 
+    //region WRITE
     @Override public RefAccountStatus addRefAccountStatus(RefAccountStatus refAccountStatus) {
         RefAccountStatus result = refAccountStatusRepository.add(refAccountStatus);
         return result;
@@ -51,7 +58,9 @@ public class RefAccountStatusService implements IRefAccountStatusService {
         RefAccountStatus result = refAccountStatusRepository.update(refAccountStatus);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteRefAccountStatus(RefAccountStatus refAccountStatus) {
         // Recursively find and delete any FK constraints to this refAccountStatus
 //        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
@@ -66,7 +75,7 @@ public class RefAccountStatusService implements IRefAccountStatusService {
     }
 
     @Override public void deleteRefAccountStatus(Long id) {
-        RefAccountStatus refAccountStatus = refAccountStatusRepository.getSingle(id);
+        RefAccountStatus refAccountStatus = refAccountStatusRepository.single(id);
 
         // Recursively find and delete any FK constraints to this refAccountStatus
 //        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
@@ -79,4 +88,5 @@ public class RefAccountStatusService implements IRefAccountStatusService {
         // Delete the actual refAccountStatus
         refAccountStatusRepository.delete(refAccountStatus);
     }
+    //endregion
 }

@@ -1,12 +1,12 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.domain.Customer;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -23,14 +23,15 @@ import java.util.List;
 @Repository
 public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Customer, Long> {
 
-    @Override public List<Customer> findAll() {
+    //region READ
+    @Override public List<Customer> all() {
         ResultSet resultSet = null;
         List<Customer> customers = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allCustomers = conn.prepareCall("{call allCustomers()}")) {
 
-            // Retrieve findAll customers
+            // Retrieve all customers
             cs_allCustomers.execute();
 
             // Transform each ResultSet row into a Customer model and add to "customers" list
@@ -64,10 +65,10 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             closeConnections(resultSet);
         }
 
-        return customers.size() < 1 ? null : customers;
+        return customers;
     }
 
-    @Override public ListPage<Customer> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Customer> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Customer> customerListPage = new ListPage<>();
 
@@ -121,10 +122,10 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             closeConnections(resultSet);
         }
 
-        return customerListPage.getModels().size() < 1 ? null : customerListPage;
+        return customerListPage;
     }
 
-    @Override public Customer getSingle(Long id) {
+    @Override public Customer single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -177,6 +178,61 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
         return customer;
     }
 
+    public Customer getSingleByPersonalDetails(String personalDetails) {
+        if (personalDetails == null)
+            throw new ArgumentNullException("The personalDetails argument must have a value/cannot be null.");
+
+        Customer customer = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_singleCustomer = conn.prepareCall("{call singleCustomerByPersonalDetails(?)}")) {
+
+            // Retrieve a single customer
+            cs_singleCustomer.setString(1, personalDetails);
+            cs_singleCustomer.execute();
+
+            // Transform ResultSet row into a Branch model
+            byte rowCounter = 0;
+            resultSet = cs_singleCustomer.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Branch object
+                Address address = new Address(
+                        resultSet.getLong("customers.address_id"),
+                        resultSet.getString("addresses.line_1")
+                );
+
+                Branch branch = new Branch(
+                        resultSet.getLong("customers.branch_id"),
+                        resultSet.getString("branches.branch_details")
+                );
+
+                customer = new Customer(
+                        resultSet.getLong("customers.customer_id"),
+                        address,
+                        branch,
+                        resultSet.getString("customers.personal_details"),
+                        resultSet.getString("customers.contact_details")
+                );
+
+            }
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return customer;
+    }
+    //endregion
+
+    //region WRITE
     @Override public Customer add(Customer model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -224,38 +280,6 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
         }
 
         return model;
-    }
-
-    @Override public void delete(Customer model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
-
-            // Delete an existing customer
-            cs_deleteCustomer.setLong(1, model.getId());
-            cs_deleteCustomer.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
-
-            // Delete an existing customer
-            cs_deleteCustomer.setLong(1, id);
-            cs_deleteCustomer.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
     }
 
     @Override public void insertBatch(Iterable<Customer> models) {
@@ -318,6 +342,40 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Customer model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
+
+            // Delete an existing customer
+            cs_deleteCustomer.setLong(1, model.getId());
+            cs_deleteCustomer.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteCustomer = conn.prepareCall("{call deleteCustomer(?)}")) {
+
+            // Delete an existing customer
+            cs_deleteCustomer.setLong(1, id);
+            cs_deleteCustomer.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<Customer> models) {
         if (models == null)
@@ -366,57 +424,5 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             DBUtil.showErrorMessage(ex);
         }
     }
-
-    public Customer getSingleByPersonalDetails(String personalDetails) {
-        if (personalDetails == null)
-            throw new ArgumentNullException("The personalDetails argument must have a value/cannot be null.");
-
-        Customer customer = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleCustomer = conn.prepareCall("{call singleCustomerByPersonalDetails(?)}")) {
-
-            // Retrieve a single customer
-            cs_singleCustomer.setString(1, personalDetails);
-            cs_singleCustomer.execute();
-
-            // Transform ResultSet row into a Branch model
-            byte rowCounter = 0;
-            resultSet = cs_singleCustomer.getResultSet();
-            while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a Branch object
-                Address address = new Address(
-                        resultSet.getLong("customers.address_id"),
-                        resultSet.getString("addresses.line_1")
-                );
-
-                Branch branch = new Branch(
-                        resultSet.getLong("customers.branch_id"),
-                        resultSet.getString("branches.branch_details")
-                );
-
-                customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
-                        address,
-                        branch,
-                        resultSet.getString("customers.personal_details"),
-                        resultSet.getString("customers.contact_details")
-                );
-
-            }
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return customer;
-    }
+    //endregion
 }

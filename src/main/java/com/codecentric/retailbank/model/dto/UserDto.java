@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 
 @PasswordMatches
 public class UserDto {
+
+    //region FIELDS
     @NotNull
     @NotEmpty
     private String firstName;
@@ -30,8 +32,9 @@ public class UserDto {
     private String email;
 
     private boolean isUsing2FA;
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public String getFirstName() {
         return firstName;
     }
@@ -79,4 +82,5 @@ public class UserDto {
     public void setUsing2FA(boolean using2FA) {
         isUsing2FA = using2FA;
     }
+    //endregion
 }

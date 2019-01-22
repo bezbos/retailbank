@@ -26,29 +26,29 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private JavaMailSender mailSender;
 
-    @Override
-    public void onApplicationEvent(OnRegistrationCompleteEvent event) {
+
+    @Override public void onApplicationEvent(OnRegistrationCompleteEvent event) {
         this.confirmRegistration(event);
     }
 
     private void confirmRegistration(OnRegistrationCompleteEvent event) {
-        final User user = event.getUser();
-        final String token = UUID.randomUUID().toString();
+        User user = event.getUser();
+        String token = UUID.randomUUID().toString();
         service.createVerificationTokenForUser(user, token);
 
-        final SimpleMailMessage email = constructEmailMessage(event, user, token);
+        SimpleMailMessage email = constructEmailMessage(event, user, token);
         mailSender.send(email);
     }
 
-    private final SimpleMailMessage constructEmailMessage(final OnRegistrationCompleteEvent event,
-                                                          final User user,
-                                                          final String token) {
-        final String recipientAddress = user.getEmail();
-        final String subject = "Registration Confirmation";
-        final String confirmationUrl = event.getAppUrl() + "/account/registrationConfirm?token=" + token;
-        final String message = messages.getMessage("message.regSucc", null, event.getLocale());
+    private SimpleMailMessage constructEmailMessage(OnRegistrationCompleteEvent event,
+                                                    User user,
+                                                    String token) {
+        String recipientAddress = user.getEmail();
+        String subject = "Registration Confirmation";
+        String confirmationUrl = event.getAppUrl() + "/account/registrationConfirm?token=" + token;
+        String message = messages.getMessage("message.regSucc", null, event.getLocale());
 
-        final SimpleMailMessage email = new SimpleMailMessage();
+        SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
         email.setSubject(subject);
         email.setText(message + " \r\n" + "http://localhost:8080" + confirmationUrl);

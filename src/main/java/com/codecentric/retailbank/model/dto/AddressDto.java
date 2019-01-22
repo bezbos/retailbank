@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 public class AddressDto {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -30,8 +31,9 @@ public class AddressDto {
 
     @Length(max = 255)
     private String otherDetails;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public AddressDto() {
     }
 
@@ -43,7 +45,6 @@ public class AddressDto {
                       @Length(max = 50) String stateProvinceCountry,
                       @Length(max = 50) String country,
                       @Length(max = 255) String otherDetails) {
-        super();
         this.id = id;
         this.line1 = line1;
         this.line2 = line2;
@@ -53,7 +54,9 @@ public class AddressDto {
         this.country = country;
         this.otherDetails = otherDetails;
     }
+    //endregion
 
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -117,7 +120,9 @@ public class AddressDto {
     public void setOtherDetails(String otherDetails) {
         this.otherDetails = otherDetails;
     }
+    //endregion
 
+    //region HELPERS
     public Address getDBModel() {
         return new Address(
                 this.id,
@@ -130,4 +135,5 @@ public class AddressDto {
                 this.otherDetails
         );
     }
+    //endregion
 }

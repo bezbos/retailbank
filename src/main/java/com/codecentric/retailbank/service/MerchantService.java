@@ -15,27 +15,34 @@ import java.util.List;
 @Transactional
 public class MerchantService implements IMerchantService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private MerchantRepository merchantRepository;
+    //endregion
 
 
+    //region READ
     @Override public Merchant getById(Long id) {
-        Merchant merchant = merchantRepository.getSingle(id);
+        Merchant merchant = merchantRepository.single(id);
         return merchant;
     }
 
     @Override public Merchant getByDetails(String details) {
-        Merchant merchant = merchantRepository.getSingleByDetails(details);
+        Merchant merchant = merchantRepository.singleByDetails(details);
         return merchant;
     }
 
     @Override public List<Merchant> getAllMerchants() {
-        List<Merchant> merchants = merchantRepository.findAll();
+        List<Merchant> merchants = merchantRepository.all();
         return merchants;
     }
+    //endregion
 
+    //region WRITE
     @Override public Merchant addMerchant(Merchant merchant) {
         Merchant result = merchantRepository.add(merchant);
         return result;
@@ -45,7 +52,9 @@ public class MerchantService implements IMerchantService {
         Merchant result = merchantRepository.update(merchant);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteMerchant(Merchant merchant) {
         merchantRepository.delete(merchant);
     }
@@ -53,4 +62,5 @@ public class MerchantService implements IMerchantService {
     @Override public void deleteMerchant(Long id) {
         merchantRepository.deleteById(id);
     }
+    //endregion
 }

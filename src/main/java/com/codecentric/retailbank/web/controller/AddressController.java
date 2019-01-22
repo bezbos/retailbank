@@ -26,17 +26,17 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/address")
 public class AddressController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Represents the name of the current controller context.
-     */
     private String CONTROLLER_NAME = "address";
+    //endregion
 
+    //region SERVICES
     @Autowired
     private AddressService addressService;
+    //endregion
 
-
+    //region INDEX
     @RequestMapping(value = {"", "/", "/index", "/list", "/list/{pageIdx}"}, method = RequestMethod.GET)
     public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
                                Model model) {
@@ -53,7 +53,9 @@ public class AddressController {
         model.addAttribute("addresses", addresses == null ? null : addresses.getModels());
         return CONTROLLER_NAME + "/index";
     }
+    //endregion
 
+    //region FORM
     @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
     public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
         Address address = id.isPresent() ?
@@ -127,7 +129,9 @@ public class AddressController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+    //endregion
 
+    //region DELETE
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String onDeleteSubmit(@PathVariable("id") Long id,
                                  RedirectAttributes redirectAttributes) {
@@ -146,4 +150,6 @@ public class AddressController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+    //endregion
+
 }

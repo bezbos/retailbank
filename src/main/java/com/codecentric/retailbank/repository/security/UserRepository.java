@@ -1,11 +1,11 @@
 package com.codecentric.retailbank.repository.security;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.security.Role;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -22,7 +22,8 @@ import java.util.List;
 @Repository
 public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<User, Long> {
 
-    @Override public List<User> findAll() {
+    //region READ
+    @Override public List<User> all() {
         ResultSet resultSet = null;
         ResultSet rolesResultSet = null;
         List<User> users = new ArrayList<>();
@@ -79,7 +80,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return users.size() < 1 ? null : users;
     }
 
-    @Override public ListPage<User> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<User> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ResultSet rolesResultSet = null;
         ListPage<User> userListPage = new ListPage<>();
@@ -149,7 +150,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return userListPage.getModels().size() < 1 ? null : userListPage;
     }
 
-    @Override public User getSingle(Long id) {
+    @Override public User single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -161,7 +162,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
              CallableStatement cs_singleUserAccount = conn.prepareCall("{call singleUserAccount(?)}");
              CallableStatement cs_userRoles = conn.prepareCall("{call getUserRoles(?)}")) {
 
-            // Retrieve a getSingle user
+            // Retrieve a single user
             cs_singleUserAccount.setLong(1, id);
             cs_singleUserAccount.execute();
 
@@ -216,7 +217,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return user;
     }
 
-    public User getSingleByUsername(String username) {
+    public User singleByUsername(String username) {
         if (username == null)
             throw new ArgumentNullException("The username argument must have a value/cannot be null.");
 
@@ -228,7 +229,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
              CallableStatement csSingleUser = conn.prepareCall("{call singleUserAccountByUsername(?)}");
              CallableStatement cs_userRoles = conn.prepareCall("{call getUserRoles(?)}")) {
 
-            // Retrieve a getSingle user
+            // Retrieve a single user
             csSingleUser.setString(1, username);
             csSingleUser.execute();
 
@@ -280,7 +281,9 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
         return user;
     }
+    //endregion
 
+    //region WRITE
     @Override public User add(User model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -393,38 +396,6 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return model;
     }
 
-    @Override public void delete(User model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteUser = conn.prepareCall("{call deleteUserAccount(?)}")) {
-
-            // Delete user
-            cs_deleteUser.setLong(1, model.getId());
-            cs_deleteUser.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteUser = conn.prepareCall("{call deleteUserAccount(?)}")) {
-
-            // Delete user
-            csDeleteUser.setLong(1, id);
-            csDeleteUser.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
     @Override public void insertBatch(Iterable<User> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?)}");
@@ -493,6 +464,40 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(User model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteUser = conn.prepareCall("{call deleteUserAccount(?)}")) {
+
+            // Delete user
+            cs_deleteUser.setLong(1, model.getId());
+            cs_deleteUser.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteUser = conn.prepareCall("{call deleteUserAccount(?)}")) {
+
+            // Delete user
+            csDeleteUser.setLong(1, id);
+            csDeleteUser.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<User> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -535,4 +540,5 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

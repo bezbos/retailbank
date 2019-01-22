@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<RefBranchType, Long> {
 
-    @Override public List<RefBranchType> findAll() {
+    //region READ
+    @Override public List<RefBranchType> all() {
         ResultSet resultSet = null;
         List<RefBranchType> branchTypes = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allRefBranchTypes = conn.prepareCall("{call allRefBranchTypes()}")) {
 
-            // Retrieve findAll branchTypes
+            // Retrieve all branchTypes
             cs_allRefBranchTypes.execute();
 
             // Transform each ResultSet row into RefBranchType model and add to "branchTypes" list
@@ -51,10 +52,10 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
             closeConnections(resultSet);
         }
 
-        return branchTypes.size() < 1 ? null : branchTypes;
+        return branchTypes;
     }
 
-    @Override public ListPage<RefBranchType> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<RefBranchType> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<RefBranchType> refBranchTypeListPage = new ListPage<>();
 
@@ -62,7 +63,7 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
              CallableStatement cs_allRefBranchTypesRange = conn.prepareCall("{call allRefBranchTypesRange(?,?)}");
              CallableStatement cs_allRefBranchTypesCount = conn.prepareCall("{call allRefBranchTypesCount()}")) {
 
-            // Retrieve findAll RefBranchTypes
+            // Retrieve all RefBranchTypes
             cs_allRefBranchTypesRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allRefBranchTypesRange.setInt(2, Math.abs(pageSize));
             cs_allRefBranchTypesRange.execute();
@@ -98,10 +99,10 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
             closeConnections(resultSet);
         }
 
-        return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
+        return refBranchTypeListPage;
     }
 
-    @Override public RefBranchType getSingle(Long id) {
+    @Override public RefBranchType single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -111,7 +112,7 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchType(?)}")) {
 
-            // Retrieve a getSingle RefBranchType
+            // Retrieve a single RefBranchType
             cs_singleRefBranchType.setLong(1, id);
             cs_singleRefBranchType.execute();
 
@@ -144,7 +145,7 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
         return refBranchType;
     }
 
-    public RefBranchType getSingleByCode(String code) {
+    public RefBranchType singleByCode(String code) {
         if (code == null)
             throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
@@ -154,7 +155,7 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleRefBranchType = conn.prepareCall("{call singleRefBranchTypeByCode(?)}")) {
 
-            // Retrieve a getSingle RefBranchType
+            // Retrieve a single RefBranchType
             cs_singleRefBranchType.setString(1, code);
             cs_singleRefBranchType.execute();
 
@@ -186,7 +187,9 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
 
         return refBranchType;
     }
+    //endregion
 
+    //region WRITE
     @Override public RefBranchType add(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -230,87 +233,6 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
         }
 
         return model;
-    }
-
-    @Override public void delete(RefBranchType model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
-
-            // Delete an existing RefBranchType
-            cs_deleteRefBranchType.setLong(1, model.getId());
-            cs_deleteRefBranchType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
-
-            // Delete an existing RefBranchType
-            cs_deleteRefBranchType.setLong(1, id);
-            cs_deleteRefBranchType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<RefBranchType> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<RefBranchType> refBranchTypes = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getRefBranchTypes = conn.prepareCall("{call singleRefBranchType(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getRefBranchTypes.setLong(1, id);
-                    cs_getRefBranchTypes.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getRefBranchTypes.executeBatch();
-
-            // Transform ResultSet rows into refBranchTypes
-            resultSet = cs_getRefBranchTypes.getResultSet();
-            refBranchTypes = new ArrayList<>();
-            while (resultSet.next()) {
-                refBranchTypes.add(
-                        new RefBranchType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6)
-                        )
-                );
-            }
-
-            return refBranchTypes;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return refBranchTypes;
     }
 
     @Override public void insertBatch(Iterable<RefBranchType> models) {
@@ -369,6 +291,40 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(RefBranchType model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
+
+            // Delete an existing RefBranchType
+            cs_deleteRefBranchType.setLong(1, model.getId());
+            cs_deleteRefBranchType.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteRefBranchType = conn.prepareCall("{call deleteRefBranchType(?)}")) {
+
+            // Delete an existing RefBranchType
+            cs_deleteRefBranchType.setLong(1, id);
+            cs_deleteRefBranchType.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<RefBranchType> models) {
         if (models == null)
@@ -417,4 +373,5 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

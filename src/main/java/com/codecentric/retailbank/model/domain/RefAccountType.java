@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 public class RefAccountType {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -28,8 +29,9 @@ public class RefAccountType {
 
     @Size(max = 1)
     private String isIndividualRetirementType;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public RefAccountType() {
     }
 
@@ -59,8 +61,9 @@ public class RefAccountType {
         this.isMoneyMarketType = isMoneyMarketType;
         this.isIndividualRetirementType = isIndividualRetirementType;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -124,7 +127,9 @@ public class RefAccountType {
     public void setIsIndividualRetirementType(String isIndividualRetirementType) {
         this.isIndividualRetirementType = isIndividualRetirementType;
     }
+    //endregion
 
+    //region HELPERS
     public void setFields(@NotNull @Size(max = 15) String code,
                           @Size(max = 255) String description,
                           Boolean isCheckingType,
@@ -150,4 +155,5 @@ public class RefAccountType {
         if (isIndividualRetirementType != null)
             this.isIndividualRetirementType = isIndividualRetirementType.booleanValue() == true ? "Y" : "N";
     }
+    //endregion
 }

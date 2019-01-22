@@ -16,29 +16,36 @@ import java.util.List;
 @Transactional
 public class RefTransactionTypeService implements IRefTransactionTypeService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private RefTransactionTypeRepository refTransactionTypeRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+    //endregion
 
 
+    //region READ
     @Override public RefTransactionType getById(Long id) {
-        RefTransactionType refTransactionType = refTransactionTypeRepository.getSingle(id);
+        RefTransactionType refTransactionType = refTransactionTypeRepository.single(id);
         return refTransactionType;
     }
 
     @Override public RefTransactionType getByCode(String code) {
-        RefTransactionType refTransactionType = refTransactionTypeRepository.getSingleByCode(code);
+        RefTransactionType refTransactionType = refTransactionTypeRepository.singleByCode(code);
         return refTransactionType;
     }
 
     @Override public List<RefTransactionType> getAllRefTransactionTypes() {
-        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.findAll();
+        List<RefTransactionType> refTransactionTypes = refTransactionTypeRepository.all();
         return refTransactionTypes;
     }
+    //endregion
 
+    //region WRITE
     @Override public RefTransactionType addRefTransactionType(RefTransactionType refTransactionType) {
         RefTransactionType result = refTransactionTypeRepository.add(refTransactionType);
         return result;
@@ -48,7 +55,9 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
         RefTransactionType result = refTransactionTypeRepository.update(refTransactionType);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteRefTransactionType(RefTransactionType refTransactionType) {
         // Delete any transactions with a FK constraint to this refTransactionType
 //        List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
@@ -59,7 +68,7 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
     }
 
     @Override public void deleteRefTransactionType(Long id) {
-        RefTransactionType refTransactionType = refTransactionTypeRepository.getSingle(id);
+        RefTransactionType refTransactionType = refTransactionTypeRepository.single(id);
 
         // Delete any transactions with a FK constraint to this refTransactionType
 //        List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
@@ -68,4 +77,5 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
         // Delete the actual RefTransactionType
         refTransactionTypeRepository.delete(refTransactionType);
     }
+    //endregion
 }

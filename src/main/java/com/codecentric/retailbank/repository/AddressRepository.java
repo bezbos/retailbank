@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Address, Long> {
 
-    @Override public List<Address> findAll() {
+    //region READ
+    @Override public List<Address> all() {
         ResultSet resultSet = null;
         List<Address> addresses = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allAddresses = conn.prepareCall("{call allAddresses()}")) {
 
-            // Retrieve findAll addresses
+            // Retrieve all addresses
             cs_allAddresses.execute();
 
             // Transform each ResultSet row into Address model and add to "addresses" list
@@ -53,10 +54,10 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             closeConnections(resultSet);
         }
 
-        return addresses.size() < 1 ? null : addresses;
+        return addresses;
     }
 
-    @Override public ListPage findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Address> addressListPage = new ListPage<>();
 
@@ -64,7 +65,7 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
              CallableStatement cs_allAddressesRange = conn.prepareCall("{call allAddressesRange(?,?)}");
              CallableStatement cs_allAddressesCount = conn.prepareCall("{call allAddressesCount()}")) {
 
-            // Retrieve findAll addresses
+            // Retrieve all addresses
             cs_allAddressesRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allAddressesRange.setInt(2, Math.abs(pageSize));
             cs_allAddressesRange.execute();
@@ -102,10 +103,10 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             closeConnections(resultSet);
         }
 
-        return addressListPage.getModels().size() < 1 ? null : addressListPage;
+        return addressListPage;
     }
 
-    @Override public Address getSingle(Long id) {
+    @Override public Address single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -115,7 +116,7 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddress(?)}")) {
 
-            // Retrieve a getSingle address
+            // Retrieve a single address
             cs_singleAddress.setLong(1, id);
             cs_singleAddress.execute();
 
@@ -150,7 +151,7 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         return address;
     }
 
-    public Address getSingleByLine1(String line1) {
+    public Address singleByLine1(String line1) {
         if (line1 == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -160,7 +161,7 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleAddress = conn.prepareCall("{call singleAddressByLine1(?)}")) {
 
-            // Retrieve a getSingle address
+            // Retrieve a single address
             cs_singleAddress.setString(1, line1);
             cs_singleAddress.execute();
 
@@ -194,7 +195,9 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
 
         return address;
     }
+    //endregion
 
+    //region WRITE
     @Override public Address add(Address model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -242,89 +245,6 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         }
 
         return model;
-    }
-
-    @Override public void delete(Address model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
-
-            // Delete an existing address
-            cs_deleteAddress.setLong(1, model.getId());
-            cs_deleteAddress.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
-
-            // Delete an existing address
-            cs_deleteAddress.setLong(1, id);
-            cs_deleteAddress.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<Address> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<Address> addresses = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getAddresses = conn.prepareCall("{call singleAddress(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getAddresses.setLong(1, id);
-                    cs_getAddresses.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getAddresses.executeBatch();
-
-            // Transform ResultSet rows into addresses
-            resultSet = cs_getAddresses.getResultSet();
-            addresses = new ArrayList<>();
-            while (resultSet.next()) {
-                addresses.add(
-                        new Address(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
-                        )
-                );
-            }
-
-            return addresses;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return addresses;
     }
 
     @Override public void insertBatch(Iterable<Address> models) {
@@ -387,6 +307,40 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Address model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
+
+            // Delete an existing address
+            cs_deleteAddress.setLong(1, model.getId());
+            cs_deleteAddress.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteAddress = conn.prepareCall("{call deleteAddress(?)}")) {
+
+            // Delete an existing address
+            cs_deleteAddress.setLong(1, id);
+            cs_deleteAddress.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<Address> models) {
         if (models == null)
@@ -435,4 +389,5 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

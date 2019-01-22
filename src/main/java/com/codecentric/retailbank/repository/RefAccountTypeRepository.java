@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<RefAccountType, Long> {
 
-    @Override public List<RefAccountType> findAll() {
+    //region READ
+    @Override public List<RefAccountType> all() {
         ResultSet resultSet = null;
         List<RefAccountType> branchTypes = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allRefAccountTypes = conn.prepareCall("{call allRefAccountTypes()}")) {
 
-            // Retrieve findAll branchTypes
+            // Retrieve all branchTypes
             cs_allRefAccountTypes.execute();
 
             // Transform each ResultSet row into RefAccountType model and add to "branchTypes" list
@@ -53,10 +54,10 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             closeConnections(resultSet);
         }
 
-        return branchTypes.size() < 1 ? null : branchTypes;
+        return branchTypes;
     }
 
-    @Override public ListPage<RefAccountType> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<RefAccountType> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<RefAccountType> refBranchTypeListPage = new ListPage<>();
 
@@ -64,7 +65,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
              CallableStatement cs_allRefAccountTypesRange = conn.prepareCall("{call allRefAccountTypesRange(?,?)}");
              CallableStatement cs_allRefAccountTypesCount = conn.prepareCall("{call allRefAccountTypesCount()}")) {
 
-            // Retrieve findAll RefAccountTypes
+            // Retrieve all RefAccountTypes
             cs_allRefAccountTypesRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allRefAccountTypesRange.setInt(2, Math.abs(pageSize));
             cs_allRefAccountTypesRange.execute();
@@ -102,10 +103,10 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             closeConnections(resultSet);
         }
 
-        return refBranchTypeListPage.getModels().size() < 1 ? null : refBranchTypeListPage;
+        return refBranchTypeListPage;
     }
 
-    @Override public RefAccountType getSingle(Long id) {
+    @Override public RefAccountType single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -115,7 +116,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleRefAccountType = conn.prepareCall("{call singleRefAccountType(?)}")) {
 
-            // Retrieve a getSingle RefAccountType
+            // Retrieve a single RefAccountType
             cs_singleRefAccountType.setLong(1, id);
             cs_singleRefAccountType.execute();
 
@@ -150,7 +151,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         return refBranchType;
     }
 
-    public RefAccountType getSingleByCode(String code) {
+    public RefAccountType singleByCode(String code) {
         if (code == null)
             throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
@@ -160,7 +161,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleRefAccountType = conn.prepareCall("{call singleRefAccountTypeByCode(?)}")) {
 
-            // Retrieve a getSingle RefAccountType
+            // Retrieve a single RefAccountType
             cs_singleRefAccountType.setString(1, code);
             cs_singleRefAccountType.execute();
 
@@ -194,13 +195,15 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
 
         return refBranchType;
     }
+    //endregion
 
+    //region WRITE
     @Override public RefAccountType add(RefAccountType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addRefAccountType = conn.prepareCall("{call addRefAccountType(?,?,?,?,?)}")) {
+             CallableStatement cs_addRefAccountType = conn.prepareCall("{call addRefAccountType(?,?,?,?,?,?,?)}")) {
 
             // Add a new RefAccountType to DB
             cs_addRefAccountType.setString(1, model.getCode());
@@ -224,7 +227,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateRefAccountType = conn.prepareCall("{call updateRefAccountType(?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateRefAccountType = conn.prepareCall("{call updateRefAccountType(?,?,?,?,?,?,?,?)}")) {
 
             // Add a new RefAccountType to DB
             cs_updateRefAccountType.setLong(1, model.getId());
@@ -242,89 +245,6 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         }
 
         return model;
-    }
-
-    @Override public void delete(RefAccountType model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefAccountType = conn.prepareCall("{call deleteRefAccountType(?)}")) {
-
-            // Delete an existing RefAccountType
-            cs_deleteRefAccountType.setLong(1, model.getId());
-            cs_deleteRefAccountType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteRefAccountType = conn.prepareCall("{call deleteRefAccountType(?)}")) {
-
-            // Delete an existing RefAccountType
-            cs_deleteRefAccountType.setLong(1, id);
-            cs_deleteRefAccountType.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<RefAccountType> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<RefAccountType> refBranchTypes = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getRefAccountTypes = conn.prepareCall("{call singleRefAccountType(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getRefAccountTypes.setLong(1, id);
-                    cs_getRefAccountTypes.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getRefAccountTypes.executeBatch();
-
-            // Transform ResultSet rows into refBranchTypes
-            resultSet = cs_getRefAccountTypes.getResultSet();
-            refBranchTypes = new ArrayList<>();
-            while (resultSet.next()) {
-                refBranchTypes.add(
-                        new RefAccountType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
-                        )
-                );
-            }
-
-            return refBranchTypes;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return refBranchTypes;
     }
 
     @Override public void insertBatch(Iterable<RefAccountType> models) {
@@ -387,6 +307,40 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(RefAccountType model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteRefAccountType = conn.prepareCall("{call deleteRefAccountType(?)}")) {
+
+            // Delete an existing RefAccountType
+            cs_deleteRefAccountType.setLong(1, model.getId());
+            cs_deleteRefAccountType.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteRefAccountType = conn.prepareCall("{call deleteRefAccountType(?)}")) {
+
+            // Delete an existing RefAccountType
+            cs_deleteRefAccountType.setLong(1, id);
+            cs_deleteRefAccountType.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<RefAccountType> models) {
         if (models == null)
@@ -435,4 +389,5 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

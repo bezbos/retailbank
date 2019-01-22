@@ -5,12 +5,14 @@ import org.hibernate.validator.constraints.Length;
 
 public class BankDto {
 
+    //region FIELDS
     private Long id;
 
     @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     private String details;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public BankDto() {
     }
 
@@ -18,8 +20,9 @@ public class BankDto {
         this.id = id;
         this.details = details;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -35,11 +38,14 @@ public class BankDto {
     public void setDetails(String details) {
         this.details = details;
     }
+    //endregion
 
+    //region HELPERS
     public Bank getDBModel() {
         return new Bank(
                 this.id,
                 this.details
         );
     }
+    //endregion
 }

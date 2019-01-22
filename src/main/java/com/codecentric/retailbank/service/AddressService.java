@@ -21,8 +21,11 @@ import java.util.List;
 @Transactional
 public class AddressService implements IAddressService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private BranchRepository branchRepository;
     @Autowired
@@ -33,28 +36,32 @@ public class AddressService implements IAddressService {
     private TransactionRepository transactionRepository;
     @Autowired
     private AddressRepository addressRepository;
+    //endregion
 
 
+    //region READ
     @Override public Address getById(Long id) {
-        Address address = addressRepository.getSingle(id);
+        Address address = addressRepository.single(id);
         return address;
     }
 
     @Override public Address getByLine1(String line1) {
-        Address address = addressRepository.getSingleByLine1(line1);
+        Address address = addressRepository.singleByLine1(line1);
         return address;
     }
 
     @Override public List<Address> getAllAddress() {
-        List<Address> addresses = addressRepository.findAll();
+        List<Address> addresses = addressRepository.all();
         return addresses;
     }
 
     @Override public ListPage<Address> getAllAddressesByPage(int pageIndex, int pageSize) {
-        ListPage<Address> addresses = addressRepository.findAllRange(pageIndex, pageSize);
+        ListPage<Address> addresses = addressRepository.allRange(pageIndex, pageSize);
         return addresses;
     }
+    //endregion
 
+    //region WRITE
     @Override public Address addAddress(Address address) {
         Address result = addressRepository.add(address);
         return result;
@@ -64,10 +71,12 @@ public class AddressService implements IAddressService {
         Address result = addressRepository.update(address);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteAddress(Address address) {
 
-        List<Branch> existingBranches = branchRepository.getAllByAddressId(address.getId());
+        List<Branch> existingBranches = branchRepository.allByAddressId(address.getId());
         for (Branch branch : existingBranches)
             branch.setAddress(null);
 
@@ -86,9 +95,9 @@ public class AddressService implements IAddressService {
     }
 
     @Override public void deleteAddress(Long id) {
-        Address address = addressRepository.getSingle(id);
+        Address address = addressRepository.single(id);
 
-        List<Branch> existingBranches = branchRepository.getAllByAddressId(id);
+        List<Branch> existingBranches = branchRepository.allByAddressId(id);
         for (Branch branch : existingBranches)
             branch.setAddress(null);
 
@@ -105,5 +114,5 @@ public class AddressService implements IAddressService {
         // Delete the actual address
         addressRepository.delete(address);
     }
-
+    //endregion
 }

@@ -1,8 +1,6 @@
-package com.codecentric.retailbank.web.error;
+package com.codecentric.retailbank.exception.runtime;
 
 public class UserNotFoundException extends RuntimeException {
-
-    private static long serialVersionUID = 5861310537366287163L;
 
     public UserNotFoundException() {
         super();
@@ -19,5 +17,4 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Throwable cause) {
         super(cause);
     }
-
 }

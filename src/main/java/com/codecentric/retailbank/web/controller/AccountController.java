@@ -1,14 +1,14 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.events.OnRegistrationCompleteEvent;
+import com.codecentric.retailbank.exception.runtime.InvalidOldPasswordException;
+import com.codecentric.retailbank.exception.runtime.UserNotFoundException;
 import com.codecentric.retailbank.model.dto.PasswordDto;
 import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.service.UserService;
-import com.codecentric.retailbank.web.error.InvalidOldPasswordException;
-import com.codecentric.retailbank.web.error.UserNotFoundException;
 import com.codecentric.retailbank.web.util.GenericResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,9 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +39,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -49,46 +50,49 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/account")
 public class AccountController extends BaseController {
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    /**
-     * Represents the name of the current controller context.
-     */
-    private String CONTROLLER_NAME = "account";
+    //region FIELDS
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final String CONTROLLER_NAME = "account";
+    //endregion
 
-
+    //region CONSTRUCTORS
     public AccountController() {
-        super();
     }
 
     public AccountController(Environment env, MessageSource messages, UserService userService) {
         super(env, messages, userService);
     }
+    //endregion
 
-
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String getHomePage(Model model, HttpSession session) {
+    //region INDEX
+    @GetMapping(value = {"", "/index"})
+    public String getHomePage() {
         return CONTROLLER_NAME + "/index";
     }
+    //endregion
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String getLoginPage(HttpSession session) {
+    //region LOGIN / LOGOUT
+    @GetMapping(value = "/login")
+    public String getLoginPage() {
         return CONTROLLER_NAME + "/login";
     }
 
-    @RequestMapping(value = "/logout-success", method = RequestMethod.GET)
-    public String getLogoutPage(Model model, HttpSession session) {
+    @GetMapping(value = "/logout-success")
+    public String getLogoutPage() {
         return CONTROLLER_NAME + "/logout";
     }
+    //endregion
 
-    @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public String showRegistrationForm(Model model, HttpSession session) {
+    //region REGISTRATION
+    @GetMapping(value = "/registration")
+    public String showRegistrationForm(Model model) {
         UserDto dto = new UserDto();
         model.addAttribute("user", dto);
         return CONTROLLER_NAME + "/registration";
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    @PostMapping(value = "/registration")
     public ModelAndView registerUserAccount(@ModelAttribute("user") @Valid UserDto accountDto,
                                             BindingResult result,
                                             WebRequest request) {
@@ -114,7 +118,7 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
     public String confirmRegistration(WebRequest request,
-                                      Model model, HttpSession session,
+                                      Model model,
                                       @RequestParam("token") String token) {
         Locale locale = request.getLocale();
         VerificationToken verificationToken = userService.getVerificationToken(token);
@@ -146,7 +150,7 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/resendRegistrationToken", method = RequestMethod.GET)
     public String resendRegistrationToken(HttpServletRequest request,
-                                          Model model, HttpSession session,
+                                          Model model,
                                           @RequestParam("token") String existingToken) {
         VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
         Locale locale = request.getLocale();
@@ -168,9 +172,11 @@ public class AccountController extends BaseController {
         model.addAttribute("message", messages.getMessage("message.resendToken", null, locale));
         return "redirect:/" + CONTROLLER_NAME + "/login.html?lang=" + locale.getLanguage();
     }
+    //endregion
 
+    //region PASSWORD
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-    public String showForgotPasswordPage(Model model, HttpSession session) {
+    public String showForgotPasswordPage() {
         return CONTROLLER_NAME + "/forgotPassword";
     }
 
@@ -201,7 +207,7 @@ public class AccountController extends BaseController {
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     public String showChangePasswordPage(Locale locale,
-                                         Model model, HttpSession session,
+                                         Model model,
                                          @RequestParam("id") long id,
                                          @RequestParam("token") String token) {
 
@@ -233,13 +239,12 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = "/updateForgotPassword", method = RequestMethod.GET)
-    public String showUpdatePasswordPage(Model model, HttpSession session) {
+    public String showUpdatePasswordPage() {
         return CONTROLLER_NAME + "/updatePassword";
     }
 
     @RequestMapping(value = "/savePassword", method = RequestMethod.POST)
-    public String savePassword(Locale locale,
-                               @Valid PasswordDto passwordDto) {
+    public String savePassword(@Valid PasswordDto passwordDto) {
         // Retrieve the current session user
         User user = (User) SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -260,7 +265,7 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = "/updatePassword", method = RequestMethod.GET)
-    public String showChangePasswordPageForAuthenticatedUser(Model model, HttpSession session) {
+    public String showChangePasswordPageForAuthenticatedUser() {
         return CONTROLLER_NAME + "/changePassword";
     }
 
@@ -268,7 +273,6 @@ public class AccountController extends BaseController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseBody
     public GenericResponse updatePassword(Locale locale,
-                                          HttpServletRequest request,
                                           @RequestParam("password") String password,
                                           @RequestParam("oldPassword") String oldPassword) {
         User user = userService.findUserByMail(
@@ -294,10 +298,9 @@ public class AccountController extends BaseController {
     public String showPasswordChangeSuccessPage() {
         return CONTROLLER_NAME + "/passwordChangeSuccess";
     }
+    //endregion
 
-
-    // OAuth2
-
+    //region OAUTH2
     private static String authorizationRequestBaseUri = "../oauth2/authorization";
 
     private Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
@@ -306,7 +309,7 @@ public class AccountController extends BaseController {
     private ClientRegistrationRepository clientRegistrationRepository;
 
     @RequestMapping(value = "/oauth_login", method = RequestMethod.GET)
-    public String getOauthLoginPage(Model model, HttpSession session) {
+    public String getOauthLoginPage(Model model) {
 
         Iterable<ClientRegistration> clientRegistrations = null;
 
@@ -327,5 +330,6 @@ public class AccountController extends BaseController {
 
         return CONTROLLER_NAME + "/oauth_login";
     }
+    //endregion
 
 }

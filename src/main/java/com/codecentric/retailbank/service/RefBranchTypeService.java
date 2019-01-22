@@ -19,8 +19,11 @@ import java.util.List;
 @Transactional
 public class RefBranchTypeService implements IRefBranchTypeService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private BranchRepository branchRepository;
     @Autowired
@@ -31,23 +34,27 @@ public class RefBranchTypeService implements IRefBranchTypeService {
     private TransactionRepository transactionRepository;
     @Autowired
     private RefBranchTypeRepository refBranchTypeRepository;
+    //endregion
 
 
+    //region READ
     @Override public RefBranchType getById(Long id) {
-        RefBranchType refBranchType = refBranchTypeRepository.getSingle(id);
+        RefBranchType refBranchType = refBranchTypeRepository.single(id);
         return refBranchType;
     }
 
     @Override public RefBranchType getByCode(String code) {
-        RefBranchType refBranchType = refBranchTypeRepository.getSingleByCode(code);
+        RefBranchType refBranchType = refBranchTypeRepository.singleByCode(code);
         return refBranchType;
     }
 
     @Override public List<RefBranchType> getAllRefBranchTypes() {
-        List<RefBranchType> refBranchTypes = refBranchTypeRepository.findAll();
+        List<RefBranchType> refBranchTypes = refBranchTypeRepository.all();
         return refBranchTypes;
     }
+    //endregion
 
+    //region WRITE
     @Override public RefBranchType addRefBranchType(RefBranchType refBranchType) {
         RefBranchType result = refBranchTypeRepository.add(refBranchType);
         return result;
@@ -57,7 +64,9 @@ public class RefBranchTypeService implements IRefBranchTypeService {
         RefBranchType result = refBranchTypeRepository.update(refBranchType);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteRefBranchType(RefBranchType refBranchType) {
 //        // Recursively find and delete any FK constraints to this refBranchType
 //        branchRepository.findByType(refBranchType).forEach(branch -> {
@@ -78,7 +87,7 @@ public class RefBranchTypeService implements IRefBranchTypeService {
     }
 
     @Override public void deleteRefBranchType(Long id) {
-        RefBranchType refBranchType = refBranchTypeRepository.getSingle(id);
+        RefBranchType refBranchType = refBranchTypeRepository.single(id);
 
 //        // Recursively find and delete any FK constraints to this refBranchType
 //        branchRepository.findByType(refBranchType).forEach(branch -> {
@@ -97,4 +106,5 @@ public class RefBranchTypeService implements IRefBranchTypeService {
         // Delete the actual refBranchType
         refBranchTypeRepository.delete(refBranchType);
     }
+    //endregion
 }

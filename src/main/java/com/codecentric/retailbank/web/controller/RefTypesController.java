@@ -32,13 +32,13 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/refTypes")
 public class RefTypesController {
+
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Represents the name of the current controller context.
-     */
     private String CONTROLLER_NAME = "refTypes";
+    //endregion
 
+    //region SERVICES
     @Autowired
     private RefBranchTypeService refBranchTypeService;
     @Autowired
@@ -47,8 +47,9 @@ public class RefTypesController {
     private RefAccountStatusService refAccountStatusService;
     @Autowired
     private RefTransactionTypeService refTransactionTypeService;
+    //endregion
 
-
+    //region INDEX
     @RequestMapping(value = {"", "/", "/index", "/list"})
     public String getIndexPage(Model model) {
         List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
@@ -63,7 +64,9 @@ public class RefTypesController {
         model.addAttribute("refTransactionTypes", refTransactionTypes);
         return CONTROLLER_NAME + "/index";
     }
+    //endregion
 
+    //region FORM
     @RequestMapping(value = {"/form/{type}", "/form/{type}/{id}"})
     public ModelAndView getFormPage(@PathVariable("type") String type,
                                     @PathVariable("id") Optional<Long> id) {
@@ -337,7 +340,9 @@ public class RefTypesController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+    //endregion
 
+    //region DELETE
     @RequestMapping(value = "/delete/{type}/{id}", method = RequestMethod.GET)
     public String onRefAccountTypeDelete(@PathVariable("type") String type,
                                          @PathVariable("id") Long id,
@@ -411,4 +416,6 @@ public class RefTypesController {
 
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
+    //endregion
+
 }

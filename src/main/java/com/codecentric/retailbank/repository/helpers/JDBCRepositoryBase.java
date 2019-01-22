@@ -3,11 +3,11 @@ package com.codecentric.retailbank.repository.helpers;
 import java.util.List;
 
 public interface JDBCRepositoryBase<T, ID> {
-    List<T> findAll();
+    List<T> all();
 
-    ListPage<T> findAllRange(int pageIndex, int pageSize);
+    ListPage<T> allRange(int pageIndex, int pageSize);
 
-    T getSingle(ID id);
+    T single(ID id);
 
     T add(T model);
 

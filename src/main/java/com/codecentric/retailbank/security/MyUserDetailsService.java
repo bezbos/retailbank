@@ -34,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
         // Handle user login
         try {
             // Check if incoming user exists
-            User user = userRepository.getSingleByUsername(email);
+            User user = userRepository.singleByUsername(email);
             if (user == null)
                 throw new UsernameNotFoundException("No user found with this username/email: " + email);
 

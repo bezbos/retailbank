@@ -6,6 +6,7 @@ import java.util.Collection;
 
 public class User {
 
+    //region FIELDS
     private Long id;
 
     private String firstName;
@@ -23,8 +24,9 @@ public class User {
     private String secret;
 
     private Collection<Role> roles;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public User() {
         this.secret = Base32.random();
         this.enabled = false;
@@ -54,8 +56,9 @@ public class User {
         this.secret = secret;
         this.roles = roles;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -127,8 +130,9 @@ public class User {
     public void setSecret(String secret) {
         this.secret = secret;
     }
+    //endregion
 
-
+    //region OVERRIDES
     @Override public int hashCode() {
         int prime = 31;
         int result = 1;
@@ -159,5 +163,6 @@ public class User {
                 .append(isUsing2FA).append(", secret=").append(secret).append(", roles=").append(roles).append("]");
         return builder.toString();
     }
+    //endregion
 
 }

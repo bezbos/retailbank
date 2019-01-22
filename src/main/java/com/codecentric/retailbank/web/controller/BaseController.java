@@ -1,11 +1,11 @@
 package com.codecentric.retailbank.web.controller;
 
 import com.codecentric.retailbank.constants.Constant;
+import com.codecentric.retailbank.exception.runtime.UserAlreadyExistsException;
 import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
 import com.codecentric.retailbank.service.UserService;
-import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,37 +22,37 @@ import javax.servlet.http.HttpSession;
 import java.util.Locale;
 
 public class BaseController {
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    //region FIELDS
+    private Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
+
+    //region DEPENDENCIES
     @Autowired
     protected UserService userService;
-
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
-
     @Qualifier("messageSource")
     @Autowired
     protected MessageSource messages;
-
     @Autowired
     protected JavaMailSender mailSender;
-
     @Autowired
     protected Environment env;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public BaseController() {
-        super();
     }
 
     public BaseController(Environment env, MessageSource messages, UserService userService) {
-        super();
         this.env = env;
         this.messages = messages;
         this.userService = userService;
     }
+    //endregion
 
-
+    //region USER HELPERS
     /**
      * Creates a new account in the DB.
      *
@@ -70,7 +70,9 @@ public class BaseController {
 
         return registered;
     }
+    //endregion
 
+    //region EMAIL HELPERS
     /**
      * Used to construct a <code>SimpleMailMessage</code> object required to send an email. This one is used specifically for generating a email verification token resend.
      *
@@ -165,7 +167,9 @@ public class BaseController {
             LOGGER.debug("Exception", ex);
         }
     }
+    //endregion
 
+    //region PRINCIPAL HELPERS
     /**
      * Retrieves the class name of a principle object.
      *
@@ -201,4 +205,6 @@ public class BaseController {
     protected Object getPrincipal() {
         return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+    //endregion
+
 }

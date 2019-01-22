@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository;
+package com.codecentric.retailbank.repository.helpers;
 
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;

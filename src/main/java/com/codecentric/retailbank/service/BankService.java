@@ -20,8 +20,11 @@ import java.util.List;
 @Transactional
 public class BankService implements IBankService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private BranchRepository branchRepository;
     @Autowired
@@ -32,28 +35,32 @@ public class BankService implements IBankService {
     private TransactionRepository transactionRepository;
     @Autowired
     private BankRepository bankRepository;
+    //endregion
 
 
+    //region READ
     @Override public Bank getById(Long id) {
-        Bank bank = bankRepository.getSingle(id);
+        Bank bank = bankRepository.single(id);
         return bank;
     }
 
     @Override public Bank getByDetails(String details) {
-        Bank bank = bankRepository.getSingleByDetails(details);
+        Bank bank = bankRepository.singleByDetails(details);
         return bank;
     }
 
     @Override public List<Bank> getAllBanks() {
-        List<Bank> banks = bankRepository.findAll();
+        List<Bank> banks = bankRepository.all();
         return banks;
     }
 
     @Override public ListPage<Bank> getAllBanksByPage(int pageIndex, int pageSize) {
-        ListPage<Bank> banks = bankRepository.findAllRange(pageIndex, pageSize);
+        ListPage<Bank> banks = bankRepository.allRange(pageIndex, pageSize);
         return banks;
     }
+    //endregion
 
+    //region WRITE
     @Override public Bank addBank(Bank bank) {
         Bank result = bankRepository.add(bank);
         return result;
@@ -63,7 +70,9 @@ public class BankService implements IBankService {
         Bank result = bankRepository.update(bank);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteBank(Bank bank) {
 //        // Recursively find and delete any FK constraints that this bank has
 //        branchRepository.findByBank(bank).forEach(branch -> {
@@ -85,7 +94,7 @@ public class BankService implements IBankService {
 
     @Override public void deleteBank(Long id) {
         // Get the bank with this id
-        Bank bank = bankRepository.getSingle(id);
+        Bank bank = bankRepository.single(id);
 
 //        // Recursively find and delete any FK constraints that this bank has
 //        branchRepository.findByBank(bank).forEach(branch -> {
@@ -104,4 +113,5 @@ public class BankService implements IBankService {
         // Delete the actual bank
         bankRepository.delete(bank);
     }
+    //endregion
 }

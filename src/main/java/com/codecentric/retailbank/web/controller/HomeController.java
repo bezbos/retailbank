@@ -11,11 +11,13 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/")
 public class HomeController extends BaseController {
 
-    // GET: index
+    //region INDEX
     @GetMapping(value = {"/", "/home", "/index", "/home/index"})
     public String getHome(Model model, HttpSession session) {
         setSessionUsernameAttribute(session, getPrincipalClassName(), getPrincipal());
 
         return "home/index";
     }
+    //endregion
+
 }

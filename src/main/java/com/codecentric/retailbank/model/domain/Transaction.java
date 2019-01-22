@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Transaction {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -26,8 +27,9 @@ public class Transaction {
 
     @Size(max = 255)
     private String details;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public Transaction() {
     }
 
@@ -46,8 +48,9 @@ public class Transaction {
         this.amount = amount;
         this.details = details;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -103,4 +106,5 @@ public class Transaction {
     public void setDetails(String details) {
         this.details = details;
     }
+    //endregion
 }

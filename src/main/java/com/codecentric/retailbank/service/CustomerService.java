@@ -15,14 +15,19 @@ import java.util.List;
 @Transactional
 public class CustomerService implements ICustomerService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private CustomerRepository customerRepository;
+    //endregion
 
 
+    //region READ
     @Override public Customer getById(Long id) {
-        Customer customer = customerRepository.getSingle(id);
+        Customer customer = customerRepository.single(id);
         return customer;
     }
 
@@ -32,10 +37,12 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override public List<Customer> getAllCustomers() {
-        List<Customer> customers = customerRepository.findAll();
+        List<Customer> customers = customerRepository.all();
         return customers;
     }
+    //endregion
 
+    //region WRITE
     @Override public Customer addCustomer(Customer customer) {
         Customer result = customerRepository.add(customer);
         return result;
@@ -45,7 +52,9 @@ public class CustomerService implements ICustomerService {
         Customer result = customerRepository.update(customer);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteCustomer(Customer customer) {
         customerRepository.delete(customer);
     }
@@ -53,4 +62,5 @@ public class CustomerService implements ICustomerService {
     @Override public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
     }
+    //endregion
 }

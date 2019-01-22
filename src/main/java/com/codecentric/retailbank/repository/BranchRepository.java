@@ -1,14 +1,13 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
-import com.codecentric.retailbank.repository.exceptions.SourceCollectionIsEmptyException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -25,14 +24,15 @@ import java.util.List;
 @Repository
 public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Branch, Long> {
 
-    @Override public List<Branch> findAll() {
+    //region READ
+    @Override public List<Branch> all() {
         ResultSet resultSet = null;
         List<Branch> branches = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_allBranches = conn.prepareCall("{call allBranches()}")) {
 
-            // Retrieve findAll branches
+            // Retrieve all branches
             cs_allBranches.execute();
 
             // Transform each ResultSet row into Branches model and add to "branches" list
@@ -81,10 +81,10 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             closeConnections(resultSet);
         }
 
-        return branches.size() < 1 ? null : branches;
+        return branches;
     }
 
-    @Override public ListPage<Branch> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Branch> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Branch> branchListPage = new ListPage<>();
 
@@ -92,7 +92,7 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
              CallableStatement cs_allBranchesRange = conn.prepareCall("{call allBranchesRange(?,?)}");
              CallableStatement cs_allBranchesCount = conn.prepareCall("{call allBranchesCount()}")) {
 
-            // Retrieve findAll branches
+            // Retrieve all branches
             cs_allBranchesRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allBranchesRange.setInt(2, Math.abs(pageSize));
             cs_allBranchesRange.execute();
@@ -153,10 +153,10 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             closeConnections(resultSet);
         }
 
-        return branchListPage.getModels().size() < 1 ? null : branchListPage;
+        return branchListPage;
     }
 
-    @Override public Branch getSingle(Long id) {
+    @Override public Branch single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -166,7 +166,7 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleBranch = conn.prepareCall("{call singleBranch(?)}")) {
 
-            // Retrieve a getSingle branch
+            // Retrieve a single branch
             cs_singleBranch.setLong(1, id);
             cs_singleBranch.execute();
 
@@ -223,7 +223,7 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
         return branch;
     }
 
-    public Branch getSingleByDetails(String details) {
+    public Branch singleByDetails(String details) {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -233,7 +233,7 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleBranch = conn.prepareCall("{call singleBranchByDetails(?)}")) {
 
-            // Retrieve a getSingle branch
+            // Retrieve a single branch
             cs_singleBranch.setString(1, details);
             cs_singleBranch.execute();
 
@@ -290,6 +290,68 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
         return branch;
     }
 
+    public List<Branch> allByAddressId(Long id) {
+        ResultSet resultSet = null;
+        List<Branch> branches = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_allBranches = conn.prepareCall("{call allBranchesByAddressId(?)}")) {
+
+            // Retrieve all branches
+            cs_allBranches.setLong(1, id);
+            cs_allBranches.execute();
+
+            // Transform each ResultSet row into Branches model and add to "branches" list
+            resultSet = cs_allBranches.getResultSet();
+            while (resultSet.next()) {
+
+                Address address = new Address(
+                        resultSet.getLong("branches.address_id"),
+                        resultSet.getString("addresses.line_1"),
+                        resultSet.getString("addresses.line_2"),
+                        resultSet.getString("addresses.town_city"),
+                        resultSet.getString("addresses.zip_postcode"),
+                        resultSet.getString("addresses.state_province_country"),
+                        resultSet.getString("addresses.country"),
+                        resultSet.getString("addresses.other_details")
+                );
+
+                Bank bank = new Bank(
+                        resultSet.getLong("branches.bank_id"),
+                        resultSet.getString("banks.bank_details")
+                );
+
+                RefBranchType refBranchType = new RefBranchType(
+                        resultSet.getLong("branches.branch_type_id"),
+                        resultSet.getString("ref_branch_types.branch_type_code"),
+                        resultSet.getString("ref_branch_types.branch_type_description"),
+                        resultSet.getString("ref_branch_types.large_urban"),
+                        resultSet.getString("ref_branch_types.small_rural"),
+                        resultSet.getString("ref_branch_types.medium_suburban")
+                );
+
+                Branch branch = new Branch(
+                        resultSet.getLong("branches.branch_id"),
+                        address,
+                        bank,
+                        refBranchType,
+                        resultSet.getString("branches.branch_details")
+                );
+
+                branches.add(branch);
+            }
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return branches;
+    }
+    //endregion
+
+    //region WRITE
     @Override public Branch add(Branch model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -337,38 +399,6 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
         }
 
         return model;
-    }
-
-    @Override public void delete(Branch model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBranch = conn.prepareCall("{call deleteBranch(?)}")) {
-
-            // Delete an existing branch
-            cs_deleteBranch.setLong(1, model.getId());
-            cs_deleteBranch.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteBranch = conn.prepareCall("{call deleteBranch(?)}")) {
-
-            // Delete an existing branch
-            cs_deleteBranch.setLong(1, id);
-            cs_deleteBranch.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
     }
 
     @Override public void insertBatch(Iterable<Branch> models) {
@@ -431,6 +461,40 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Branch model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteBranch = conn.prepareCall("{call deleteBranch(?)}")) {
+
+            // Delete an existing branch
+            cs_deleteBranch.setLong(1, model.getId());
+            cs_deleteBranch.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteBranch = conn.prepareCall("{call deleteBranch(?)}")) {
+
+            // Delete an existing branch
+            cs_deleteBranch.setLong(1, id);
+            cs_deleteBranch.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<Branch> models) {
         if (models == null)
@@ -479,73 +543,5 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             DBUtil.showErrorMessage(ex);
         }
     }
-
-    public List<Branch> getAllByAddressId(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        List<Branch> branches = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_allBranchesByAddressId = conn.prepareCall("{call allBranchesByAddressId(?)}")) {
-
-            // Retrieve a branches
-            cs_allBranchesByAddressId.setLong(1, id);
-            cs_allBranchesByAddressId.execute();
-
-            // Transform ResultSet row into a Branch model
-            resultSet = cs_allBranchesByAddressId.getResultSet();
-            branches = new ArrayList<>();
-            byte rowCounter = 0;
-            while (resultSet.next()) {
-                ++rowCounter;
-
-                // Transform ResultSet row into a Branch object
-                Address address = new Address(
-                        resultSet.getLong("branches.address_id"),
-                        resultSet.getString("addresses.line_1"),
-                        resultSet.getString("addresses.line_2"),
-                        resultSet.getString("addresses.town_city"),
-                        resultSet.getString("addresses.zip_postcode"),
-                        resultSet.getString("addresses.state_province_country"),
-                        resultSet.getString("addresses.country"),
-                        resultSet.getString("addresses.other_details")
-                );
-
-                Bank bank = new Bank(
-                        resultSet.getLong("branches.bank_id"),
-                        resultSet.getString("banks.bank_details")
-                );
-
-                RefBranchType refBranchType = new RefBranchType(
-                        resultSet.getLong("branches.branch_type_id"),
-                        resultSet.getString("ref_branch_types.branch_type_code"),
-                        resultSet.getString("ref_branch_types.branch_type_description"),
-                        resultSet.getString("ref_branch_types.large_urban"),
-                        resultSet.getString("ref_branch_types.small_rural"),
-                        resultSet.getString("ref_branch_types.medium_suburban")
-                );
-
-                Branch branch = new Branch(
-                        resultSet.getLong("branches.branch_id"),
-                        address,
-                        bank,
-                        refBranchType,
-                        resultSet.getString("branches.branch_details")
-                );
-
-                branches.add(branch);
-            }
-            if (rowCounter < 1)
-                throw new SourceCollectionIsEmptyException("The ResultSet does not contain any rows.");
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return branches;
-    }
+    //endregion
 }

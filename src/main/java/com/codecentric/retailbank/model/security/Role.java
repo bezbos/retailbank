@@ -2,17 +2,20 @@ package com.codecentric.retailbank.model.security;
 
 public class Role {
 
+    //region FIELDS
     private Long id;
 
     private String name;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public Role(Long id, String name) {
         this.id = id;
         this.name = name;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -28,8 +31,9 @@ public class Role {
     public void setName(String name) {
         this.name = name;
     }
+    //endregion
 
-
+    //region OVERRIDES
     @Override public int hashCode() {
         int prime = 31;
         int result = 1;
@@ -59,4 +63,5 @@ public class Role {
         builder.append("Role [name=").append(name).append("]").append("[id=").append(id).append("]");
         return builder.toString();
     }
+    //endregion
 }

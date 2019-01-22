@@ -1,13 +1,13 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.BankAccount;
 import com.codecentric.retailbank.model.domain.Merchant;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.model.domain.Transaction;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -24,7 +24,8 @@ import java.util.List;
 @Repository
 public class TransactionRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Transaction, Long> {
 
-    @Override public List<Transaction> findAll() {
+    //region READ
+    @Override public List<Transaction> all() {
         ResultSet resultSet = null;
         List<Transaction> transactions = new ArrayList<>();
 
@@ -73,10 +74,10 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return transactions.size() < 1 ? null : transactions;
+        return transactions;
     }
 
-    @Override public ListPage<Transaction> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Transaction> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Transaction> transactionListPage = new ListPage<>();
 
@@ -84,7 +85,7 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
              CallableStatement cs_allTransactionsRange = conn.prepareCall("{call allTransactionsRange(?,?)}");
              CallableStatement cs_allTransactionsCount = conn.prepareCall("{call allTransactionsCount()}")) {
 
-            // Retrieve findAll Transactions
+            // Retrieve all Transactions
             cs_allTransactionsRange.setInt(1, Math.abs(pageIndex * pageSize));
             cs_allTransactionsRange.setInt(2, Math.abs(pageSize));
             cs_allTransactionsRange.execute();
@@ -137,10 +138,10 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             closeConnections(resultSet);
         }
 
-        return transactionListPage.getModels().size() < 1 ? null : transactionListPage;
+        return transactionListPage;
     }
 
-    @Override public Transaction getSingle(Long id) {
+    @Override public Transaction single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -150,7 +151,7 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleTransaction = conn.prepareCall("{call singleTransaction(?)}")) {
 
-            // Retrieve a getSingle Transaction
+            // Retrieve a single Transaction
             cs_singleTransaction.setLong(1, id);
             cs_singleTransaction.execute();
 
@@ -200,6 +201,68 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         return transaction;
     }
 
+    public Transaction singleByDetails(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        Transaction transaction = null;
+        ResultSet resultSet = null;
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_singleTransaction = conn.prepareCall("{call singleTransactionByDetails(?)}")) {
+
+            // Retrieve a single Transaction
+            cs_singleTransaction.setString(1, details);
+            cs_singleTransaction.execute();
+
+            // Transform ResultSet row into a Transaction model
+            byte rowCounter = 0;
+            resultSet = cs_singleTransaction.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches details parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Transaction object
+                BankAccount account = new BankAccount(
+                        resultSet.getLong("transactions.account_number"),
+                        resultSet.getBigDecimal("accounts.current_balance"),
+                        resultSet.getString("accounts.other_details")
+                );
+
+                Merchant merchant = new Merchant(
+                        resultSet.getLong("transactions.merchant_id"),
+                        resultSet.getString("merchants.merchant_details")
+                );
+
+                RefTransactionType refTransactionType = new RefTransactionType(
+                        resultSet.getLong("ref_transaction_types.transaction_type_id"),
+                        resultSet.getString("ref_transaction_types.transaction_type_code")
+                );
+
+                transaction = new Transaction(
+                        resultSet.getLong("transactions.transaction_id"),
+                        account,
+                        merchant,
+                        refTransactionType,
+                        resultSet.getDate("transactions.transaction_date_time"),
+                        resultSet.getBigDecimal("transactions.transaction_amount"),
+                        resultSet.getString("transactions.other_details")
+                );
+            }
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return transaction;
+    }
+    //endregion
+
+    //region WRITE
     @Override public Transaction add(Transaction model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -245,38 +308,6 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         }
 
         return model;
-    }
-
-    @Override public void delete(Transaction model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteTransaction = conn.prepareCall("{call deleteTransaction(?)}")) {
-
-            // Delete an existing Transaction
-            cs_deleteTransaction.setLong(1, model.getId());
-            cs_deleteTransaction.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_deleteTransaction = conn.prepareCall("{call deleteTransaction(?)}")) {
-
-            // Delete an existing Transaction
-            cs_deleteTransaction.setLong(1, id);
-            cs_deleteTransaction.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
     }
 
     @Override public void insertBatch(Iterable<Transaction> models) {
@@ -337,6 +368,40 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Transaction model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteTransaction = conn.prepareCall("{call deleteTransaction(?)}")) {
+
+            // Delete an existing Transaction
+            cs_deleteTransaction.setLong(1, model.getId());
+            cs_deleteTransaction.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_deleteTransaction = conn.prepareCall("{call deleteTransaction(?)}")) {
+
+            // Delete an existing Transaction
+            cs_deleteTransaction.setLong(1, id);
+            cs_deleteTransaction.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<Transaction> models) {
         if (models == null)
@@ -385,64 +450,5 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             DBUtil.showErrorMessage(ex);
         }
     }
-
-    public Transaction getSingleByDetails(String details) {
-        if (details == null)
-            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
-
-        Transaction transaction = null;
-        ResultSet resultSet = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_singleTransaction = conn.prepareCall("{call singleTransactionByDetails(?)}")) {
-
-            // Retrieve a getSingle Transaction
-            cs_singleTransaction.setString(1, details);
-            cs_singleTransaction.execute();
-
-            // Transform ResultSet row into a Transaction model
-            byte rowCounter = 0;
-            resultSet = cs_singleTransaction.getResultSet();
-            while (resultSet.next()) {
-
-                // Check if more than one element matches details parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a Transaction object
-                BankAccount account = new BankAccount(
-                        resultSet.getLong("transactions.account_number"),
-                        resultSet.getBigDecimal("accounts.current_balance"),
-                        resultSet.getString("accounts.other_details")
-                );
-
-                Merchant merchant = new Merchant(
-                        resultSet.getLong("transactions.merchant_id"),
-                        resultSet.getString("merchants.merchant_details")
-                );
-
-                RefTransactionType refTransactionType = new RefTransactionType(
-                        resultSet.getLong("ref_transaction_types.transaction_type_id"),
-                        resultSet.getString("ref_transaction_types.transaction_type_code")
-                );
-
-                transaction = new Transaction(
-                        resultSet.getLong("transactions.transaction_id"),
-                        account,
-                        merchant,
-                        refTransactionType,
-                        resultSet.getDate("transactions.transaction_date_time"),
-                        resultSet.getBigDecimal("transactions.transaction_amount"),
-                        resultSet.getString("transactions.other_details")
-                );
-            }
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return transaction;
-    }
+    //endregion
 }

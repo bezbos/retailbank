@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class RefAccountStatusDto {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -18,8 +19,9 @@ public class RefAccountStatusDto {
     private Boolean isActiveStatus;
 
     private Boolean isClosedStatus;
+    //endregion
 
-
+    //region CONSTRUCTOR
     public RefAccountStatusDto() {
     }
 
@@ -34,8 +36,9 @@ public class RefAccountStatusDto {
         this.isActiveStatus = isActiveStatus != null ? isActiveStatus.equalsIgnoreCase("Y") : false;
         this.isClosedStatus = isClosedStatus != null ? isClosedStatus.equalsIgnoreCase("Y") : false;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -75,4 +78,5 @@ public class RefAccountStatusDto {
     public void setIsClosedStatus(Boolean closedStatus) {
         isClosedStatus = closedStatus;
     }
+    //endregion
 }

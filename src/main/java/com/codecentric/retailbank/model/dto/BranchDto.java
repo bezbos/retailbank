@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 public class BranchDto {
 
+    //region FIELDS
     private Long id;
 
     private AddressDto address;
@@ -18,8 +19,9 @@ public class BranchDto {
 
     @Length(min = 7, max = 255, message = "Details field must contain between 7 and 255 characters.")
     private String details;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public BranchDto() {
     }
 
@@ -38,8 +40,9 @@ public class BranchDto {
         this.type = type;
         this.details = details;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -79,4 +82,5 @@ public class BranchDto {
     public void setDetails(String details) {
         this.details = details;
     }
+    //endregion
 }

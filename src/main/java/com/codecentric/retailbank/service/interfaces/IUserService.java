@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.service.interfaces;
 
+import com.codecentric.retailbank.exception.runtime.UserAlreadyExistsException;
 import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.model.security.VerificationToken;
-import com.codecentric.retailbank.web.error.UserAlreadyExistsException;
 
 public interface IUserService {
     User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistsException;

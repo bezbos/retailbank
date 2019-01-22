@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 public class BankAccount {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -22,8 +23,9 @@ public class BankAccount {
 
     @Size(max = 255)
     private String details;
+    //endregion
 
-
+    //region CONSTRUCTORS
     public BankAccount() {
     }
 
@@ -50,8 +52,9 @@ public class BankAccount {
         this.balance = balance;
         this.details = details;
     }
+    //endregion
 
-
+    //region SETTERS / GETTERS
     public Long getId() {
         return id;
     }
@@ -99,4 +102,5 @@ public class BankAccount {
     public void setDetails(String details) {
         this.details = details;
     }
+    //endregion
 }

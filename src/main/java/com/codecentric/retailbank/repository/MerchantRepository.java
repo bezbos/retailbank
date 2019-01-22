@@ -1,10 +1,10 @@
 package com.codecentric.retailbank.repository;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Merchant;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -20,14 +20,15 @@ import java.util.List;
 @Repository
 public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<Merchant, Long> {
 
-    @Override public List<Merchant> findAll() {
+    //region READ
+    @Override public List<Merchant> all() {
         ResultSet resultSet = null;
         List<Merchant> merchants = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAllMerchants = conn.prepareCall("{call allMerchants()}")) {
 
-            // Retrieve findAll merchants
+            // Retrieve all merchants
             csAllMerchants.execute();
 
             // Transform each ResultSet row into Merchant model and add to "merchants" list
@@ -44,10 +45,10 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
             closeConnections(resultSet);
         }
 
-        return merchants.size() < 1 ? null : merchants;
+        return merchants;
     }
 
-    @Override public ListPage<Merchant> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Merchant> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Merchant> merchantListPage = new ListPage<>();
 
@@ -84,10 +85,10 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
             closeConnections(resultSet);
         }
 
-        return merchantListPage.getModels().size() < 1 ? null : merchantListPage;
+        return merchantListPage;
     }
 
-    public List<Merchant> findAllByDetails(String details) {
+    public List<Merchant> allByDetails(String details) {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -97,7 +98,7 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement callableStatement = conn.prepareCall("{call allMerchantsByDetails(?)}")) {
 
-            // Retrieve findAll merchants
+            // Retrieve all merchants
             callableStatement.setString(1, details);
             callableStatement.execute();
 
@@ -115,10 +116,10 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
             closeConnections(resultSet);
         }
 
-        return merchants.size() < 1 ? null : merchants;
+        return merchants;
     }
 
-    @Override public Merchant getSingle(Long id) {
+    @Override public Merchant single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -128,7 +129,7 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleMerchant = conn.prepareCall("{call singleMerchant(?)}")) {
 
-            // Retrieve a getSingle merchant
+            // Retrieve a single merchant
             csSingleMerchant.setLong(1, id);
             csSingleMerchant.execute();
 
@@ -154,7 +155,7 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         return merchant;
     }
 
-    public Merchant getSingleByDetails(String details) {
+    public Merchant singleByDetails(String details) {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -164,7 +165,7 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSingleMerchant = conn.prepareCall("{call singleMerchantByDetails(?)}")) {
 
-            // Retrieve a getSingle merchant
+            // Retrieve a single merchant
             csSingleMerchant.setString(1, details);
             csSingleMerchant.execute();
 
@@ -189,7 +190,9 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
 
         return merchant;
     }
+    //endregion
 
+    //region WRITE
     @Override public Merchant add(Merchant model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -225,84 +228,6 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         }
 
         return model;
-    }
-
-
-    @Override public void delete(Merchant model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteMerchant = conn.prepareCall("{call deleteMerchant(?)}")) {
-
-            // Delete merchant
-            csDeleteMerchant.setLong(1, model.getId());
-            csDeleteMerchant.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeleteMerchant = conn.prepareCall("{call deleteMerchant(?)}")) {
-
-            // Delete merchant
-            csDeleteMerchant.setLong(1, id);
-            csDeleteMerchant.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    public List<Merchant> getBatchByIds(Iterable<Long> ids) {
-        if (ids == null)
-            throw new ArgumentNullException("The ids argument must have a value/cannot be null.");
-
-        ResultSet resultSet = null;
-        List<Merchant> merchants = null;
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_getMerchants = conn.prepareCall("{call singleMerchant(?)}")) {
-
-            // Add calls to batch
-            for (Long id : ids) {
-                try {
-                    cs_getMerchants.setLong(1, id);
-                    cs_getMerchants.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_getMerchants.executeBatch();
-
-            // Transform ResultSet rows into merchants
-            resultSet = cs_getMerchants.getResultSet();
-            merchants = new ArrayList<>();
-            while (resultSet.next()) {
-                merchants.add(
-                        new Merchant(
-                                resultSet.getLong(1),
-                                resultSet.getString(2)
-                        )
-                );
-            }
-
-            return merchants;
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        } finally {
-            closeConnections(resultSet);
-        }
-
-        return merchants;
     }
 
     @Override public void insertBatch(Iterable<Merchant> models) {
@@ -343,6 +268,40 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
 
             // Execute batch!
             cs_UpdateMerchant.executeBatch();
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(Merchant model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteMerchant = conn.prepareCall("{call deleteMerchant(?)}")) {
+
+            // Delete merchant
+            csDeleteMerchant.setLong(1, model.getId());
+            csDeleteMerchant.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeleteMerchant = conn.prepareCall("{call deleteMerchant(?)}")) {
+
+            // Delete merchant
+            csDeleteMerchant.setLong(1, id);
+            csDeleteMerchant.execute();
+
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
@@ -389,4 +348,5 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

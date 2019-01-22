@@ -15,14 +15,19 @@ import java.util.List;
 @Transactional
 public class BankAccountService implements IBankAccountService {
 
+    //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    //endregion
 
+    //region REPOSITORIES
     @Autowired
     private BankAccountRepository bankAccountRepository;
+    //endregion
 
 
+    //region READ
     @Override public BankAccount getById(Long id) {
-        BankAccount bankAccount = bankAccountRepository.getSingle(id);
+        BankAccount bankAccount = bankAccountRepository.single(id);
         return bankAccount;
     }
 
@@ -32,10 +37,12 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override public List<BankAccount> getAllAccounts() {
-        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+        List<BankAccount> bankAccounts = bankAccountRepository.all();
         return bankAccounts;
     }
+    //endregion
 
+    //region WRITE
     @Override public BankAccount addAccount(BankAccount account) {
         BankAccount result = bankAccountRepository.add(account);
         return result;
@@ -45,7 +52,9 @@ public class BankAccountService implements IBankAccountService {
         BankAccount result = bankAccountRepository.update(account);
         return result;
     }
+    //endregion
 
+    //region DELETE
     @Override public void deleteAccount(BankAccount account) {
         bankAccountRepository.delete(account);
     }
@@ -53,4 +62,5 @@ public class BankAccountService implements IBankAccountService {
     @Override public void deleteAccount(Long id) {
         bankAccountRepository.deleteById(id);
     }
+    //endregion
 }

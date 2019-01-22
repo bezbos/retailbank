@@ -1,11 +1,11 @@
 package com.codecentric.retailbank.repository.security;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.security.PasswordResetToken;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.repository.configuration.DBType;
 import com.codecentric.retailbank.repository.configuration.DBUtil;
-import com.codecentric.retailbank.repository.exceptions.ArgumentNullException;
-import com.codecentric.retailbank.repository.exceptions.InvalidOperationException;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryBase;
 import com.codecentric.retailbank.repository.helpers.JDBCRepositoryUtilities;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -22,14 +22,15 @@ import java.util.List;
 @Repository
 public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implements JDBCRepositoryBase<PasswordResetToken, Long> {
 
-    @Override public List<PasswordResetToken> findAll() {
+    //region READ
+    @Override public List<PasswordResetToken> all() {
         ResultSet resultSet = null;
         List<PasswordResetToken> passwordResetTokens = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csAllPasswordResetTokens = conn.prepareCall("{call allPasswordResetTokens()}")) {
 
-            // Retrieve findAll passwordResetTokens
+            // Retrieve all passwordResetTokens
             csAllPasswordResetTokens.execute();
 
             // Transform each ResultSet row into PasswordResetToken model and add to "passwordResetTokens" list
@@ -59,7 +60,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         return passwordResetTokens.size() < 1 ? null : passwordResetTokens;
     }
 
-    @Override public ListPage<PasswordResetToken> findAllRange(int pageIndex, int pageSize) {
+    @Override public ListPage<PasswordResetToken> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<PasswordResetToken> passwordResetTokenListPage = new ListPage<>();
 
@@ -108,7 +109,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         return passwordResetTokenListPage.getModels().size() < 1 ? null : passwordResetTokenListPage;
     }
 
-    @Override public PasswordResetToken getSingle(Long id) {
+    @Override public PasswordResetToken single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
@@ -118,7 +119,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSinglePasswordResetToken = conn.prepareCall("{call singlePasswordResetToken(?)}")) {
 
-            // Retrieve a getSingle passwordResetToken
+            // Retrieve a single passwordResetToken
             csSinglePasswordResetToken.setLong(1, id);
             csSinglePasswordResetToken.execute();
 
@@ -155,7 +156,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         return passwordResetToken;
     }
 
-    public PasswordResetToken getSingleByEmail(String email) {
+    public PasswordResetToken singleByEmail(String email) {
         if (email == null)
             throw new ArgumentNullException("The email argument must have a value/cannot be null.");
 
@@ -165,7 +166,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSinglePasswordResetToken = conn.prepareCall("{call singlePasswordResetTokenByEmail(?)}")) {
 
-            // Retrieve a getSingle passwordResetToken
+            // Retrieve a single passwordResetToken
             csSinglePasswordResetToken.setString(1, email);
             csSinglePasswordResetToken.execute();
 
@@ -201,7 +202,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         return passwordResetToken;
     }
 
-    public PasswordResetToken getSingleByToken(String token) {
+    public PasswordResetToken singleByToken(String token) {
         if (token == null)
             throw new ArgumentNullException("The token argument must have a value/cannot be null.");
 
@@ -211,7 +212,7 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement csSinglePasswordResetToken = conn.prepareCall("{call singlePasswordResetTokenByToken(?)}")) {
 
-            // Retrieve a getSingle passwordResetToken
+            // Retrieve a single passwordResetToken
             csSinglePasswordResetToken.setString(1, token);
             csSinglePasswordResetToken.execute();
 
@@ -246,8 +247,9 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
 
         return passwordResetToken;
     }
+    //endregion
 
-
+    //region WRITE
     @Override public PasswordResetToken add(PasswordResetToken model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
@@ -287,39 +289,6 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
         }
 
         return model;
-    }
-
-
-    @Override public void delete(PasswordResetToken model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeletePasswordResetToken = conn.prepareCall("{call deletePasswordResetToken(?)}")) {
-
-            // Delete passwordResetToken
-            csDeletePasswordResetToken.setLong(1, model.getId());
-            csDeletePasswordResetToken.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void deleteById(Long id) {
-        if (id == null)
-            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csDeletePasswordResetToken = conn.prepareCall("{call deletePasswordResetToken(?)}")) {
-
-            // Delete passwordResetToken
-            csDeletePasswordResetToken.setLong(1, id);
-            csDeletePasswordResetToken.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
     }
 
     @Override public void insertBatch(Iterable<PasswordResetToken> models) {
@@ -368,6 +337,40 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
+
+    //region DELETE
+    @Override public void delete(PasswordResetToken model) {
+        if (model == null)
+            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeletePasswordResetToken = conn.prepareCall("{call deletePasswordResetToken(?)}")) {
+
+            // Delete passwordResetToken
+            csDeletePasswordResetToken.setLong(1, model.getId());
+            csDeletePasswordResetToken.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
+
+    @Override public void deleteById(Long id) {
+        if (id == null)
+            throw new ArgumentNullException("The id argument must have a value/cannot be null.");
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement csDeletePasswordResetToken = conn.prepareCall("{call deletePasswordResetToken(?)}")) {
+
+            // Delete passwordResetToken
+            csDeletePasswordResetToken.setLong(1, id);
+            csDeletePasswordResetToken.execute();
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        }
+    }
 
     @Override public void deleteBatch(Iterable<PasswordResetToken> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -410,4 +413,5 @@ public class PasswordResetTokenRepository extends JDBCRepositoryUtilities implem
             DBUtil.showErrorMessage(ex);
         }
     }
+    //endregion
 }

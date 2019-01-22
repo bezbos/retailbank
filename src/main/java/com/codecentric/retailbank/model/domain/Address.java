@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 
 public class Address {
 
+    //region FIELDS
     private Long id;
 
     @NotNull
@@ -30,8 +31,9 @@ public class Address {
 
     @Size(max = 255)
     private String otherDetails;
-
-
+    //endregion
+    
+    //region CONSTRUCTORS
     public Address() {
 
     }
@@ -62,7 +64,9 @@ public class Address {
         this.country = country;
         this.otherDetails = otherDetails;
     }
+    //endregion
 
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -126,8 +130,9 @@ public class Address {
     public void setOtherDetails(String otherDetails) {
         this.otherDetails = otherDetails;
     }
+    //endregion
 
-
+    //region HELPERS
     public void setFields(@NotNull String line1,
                           String line2,
                           String townCity,
@@ -144,7 +149,7 @@ public class Address {
         this.otherDetails = otherDetails;
     }
 
-    public AddressDto getDto(){
+    public AddressDto getDto() {
         return new AddressDto(
                 this.id,
                 this.getLine1(),
@@ -156,4 +161,5 @@ public class Address {
                 this.getOtherDetails()
         );
     }
+    //endregion
 }

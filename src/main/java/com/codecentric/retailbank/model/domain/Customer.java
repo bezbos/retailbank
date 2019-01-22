@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 public class Customer {
 
+    //region FIELDS
     private Long id;
 
     private Address address;
@@ -19,7 +20,11 @@ public class Customer {
     @NotNull
     @Size(max = 255)
     private String contactDetails;
+    //endregion
 
+    //region CONSTRUCTORS
+    public Customer() {
+    }
 
     public Customer(Long id) {
         this.id = id;
@@ -51,8 +56,9 @@ public class Customer {
         this.personalDetails = personalDetails;
         this.contactDetails = contactDetails;
     }
+    //endregion
 
-
+    //region GETTERS / SETTERS
     public Long getId() {
         return id;
     }
@@ -92,4 +98,5 @@ public class Customer {
     public void setContactDetails(String contactDetails) {
         this.contactDetails = contactDetails;
     }
+    //endregion
 }
