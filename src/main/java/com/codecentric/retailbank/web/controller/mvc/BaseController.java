@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.web.controller;
+package com.codecentric.retailbank.web.controller.mvc;
 
 import com.codecentric.retailbank.constants.Constant;
 import com.codecentric.retailbank.exception.runtime.UserAlreadyExistsException;

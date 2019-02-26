@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
 import com.codecentric.retailbank.model.domain.Bank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 public class BankDto {
@@ -41,6 +42,7 @@ public class BankDto {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public Bank getDBModel() {
         return new Bank(
                 this.id,

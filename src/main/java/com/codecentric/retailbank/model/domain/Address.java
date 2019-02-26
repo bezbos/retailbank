@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
 import com.codecentric.retailbank.model.dto.AddressDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -133,6 +134,7 @@ public class Address {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public void setFields(@NotNull String line1,
                           String line2,
                           String townCity,
@@ -149,6 +151,7 @@ public class Address {
         this.otherDetails = otherDetails;
     }
 
+    @JsonIgnore
     public AddressDto getDto() {
         return new AddressDto(
                 this.id,

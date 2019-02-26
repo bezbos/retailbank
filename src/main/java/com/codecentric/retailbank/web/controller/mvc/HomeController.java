@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.web.controller;
+package com.codecentric.retailbank.web.controller.mvc;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
 import com.codecentric.retailbank.model.dto.RefBranchTypeDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -101,6 +102,7 @@ public class RefBranchType {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public void setFields(String code,
                           @Size(max = 255) String description,
                           Boolean isLargeUrban,
@@ -119,6 +121,7 @@ public class RefBranchType {
             this.isMediumSuburban = isMediumSuburban.booleanValue() == true ? "Y" : "N";
     }
 
+    @JsonIgnore
     public RefBranchTypeDto getDto(){
         return new RefBranchTypeDto(
                 this.getId(),

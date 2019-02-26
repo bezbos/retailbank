@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
 import com.codecentric.retailbank.model.domain.RefBranchType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -103,6 +104,7 @@ public class RefBranchTypeDto {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public RefBranchType getDBModel() {
         return new RefBranchType(
                 this.id,

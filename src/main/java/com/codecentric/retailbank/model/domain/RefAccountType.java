@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -130,6 +132,7 @@ public class RefAccountType {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public void setFields(@NotNull @Size(max = 15) String code,
                           @Size(max = 255) String description,
                           Boolean isCheckingType,

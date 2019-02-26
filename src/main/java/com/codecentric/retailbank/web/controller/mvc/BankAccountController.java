@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.web.controller;
+package com.codecentric.retailbank.web.controller.mvc;
 
 import com.codecentric.retailbank.model.domain.BankAccount;
 import com.codecentric.retailbank.service.BankAccountService;

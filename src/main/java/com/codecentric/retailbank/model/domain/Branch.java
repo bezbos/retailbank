@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -89,6 +91,7 @@ public class Branch {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public void setFields(Address address,
                           @NotNull Bank bank,
                           @NotNull RefBranchType refBranchType,

@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
 import com.codecentric.retailbank.model.dto.BankDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Size;
 
@@ -50,6 +51,7 @@ public class Bank {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public BankDto getDto(){
         return new BankDto(
           this.id,

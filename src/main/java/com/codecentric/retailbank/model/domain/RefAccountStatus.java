@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.Size;
 
 public class RefAccountStatus {
@@ -89,6 +91,7 @@ public class RefAccountStatus {
     //endregion
 
     //region HELPERS
+    @JsonIgnore
     public void setFields(@Size(max = 15) String code,
                           @Size(max = 255) String description,
                           Boolean isActive,

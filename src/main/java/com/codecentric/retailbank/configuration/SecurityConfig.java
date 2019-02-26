@@ -58,6 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/merchant/*",
                         "/transaction*",
                         "/transaction/*",
+                        "/api/*/*",
+                        "/api/*/*/*",
                         //
 
                         "/error",
