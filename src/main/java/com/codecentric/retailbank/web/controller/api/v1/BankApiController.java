@@ -30,16 +30,10 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankApiController {
 
-    //region FIELDS
-    private final String CONTROLLER_NAME = "bank";
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    //endregion
 
-    //region SERVICES
     @Autowired
     private BankService bankService;
-    //endregion
-
 
     //region HTTP GET
     @GetMapping(value = {"/banks", "/banks/{page}"})
