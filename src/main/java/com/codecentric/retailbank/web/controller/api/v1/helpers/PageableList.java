@@ -17,8 +17,19 @@ public class PageableList<T> {
             this.nextPage = null;
             this.previousPage = null;
         } else {
+            //region EDGE CASE HANDLER
+            // Handles the edge case when currentPage is 0.
+            // It prevents assigning nextPage to (currentPage + 1)
+            // even though there are no items on the next page
+            int increment = 1;
+            if (currentPage == 0)
+                increment = 2;
+            //endregion
+
             this.currentPage = currentPage;
-            this.nextPage = (currentPage + 1) < pageCount ? currentPage + 1 : null;
+            this.nextPage = (currentPage + increment) < pageCount
+                    ? currentPage + 1
+                    : null;
             this.previousPage = currentPage < 1 ? null : currentPage - 1;
         }
 
