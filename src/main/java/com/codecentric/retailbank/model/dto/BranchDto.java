@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.Branch;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -81,6 +83,19 @@ public class BranchDto {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+    //endregion
+
+    //region HELPERS
+    @JsonIgnore
+    public Branch getDBModel(){
+        return new Branch(
+                this.id,
+                this.address != null ? this.address.getDBModel() : null,
+                this.bank != null ? this.bank.getDBModel() : null,
+                this.type != null ? this.type.getDBModel() : null,
+                this.details
+        );
     }
     //endregion
 }

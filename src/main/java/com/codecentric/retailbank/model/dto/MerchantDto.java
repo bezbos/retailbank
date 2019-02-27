@@ -1,12 +1,11 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.dto;
 
-import com.codecentric.retailbank.model.dto.MerchantDto;
+import com.codecentric.retailbank.model.domain.Merchant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Size;
 
-public class Merchant {
-
+public class MerchantDto {
     //region FIELDS
     private Long id;
 
@@ -15,11 +14,11 @@ public class Merchant {
     //endregion
 
     //region CONSTRUCTORS
-    public Merchant(Long id) {
+    public MerchantDto(Long id) {
         this.id = id;
     }
 
-    public Merchant(Long id, @Size(max = 255) String details) {
+    public MerchantDto(Long id, @Size(max = 255) String details) {
         this.id = id;
         this.details = details;
     }
@@ -45,8 +44,8 @@ public class Merchant {
 
     //region HELPERS
     @JsonIgnore
-    public MerchantDto getDto() {
-        return new MerchantDto(
+    public Merchant getDBModel() {
+        return new Merchant(
                 this.id,
                 this.details
         );

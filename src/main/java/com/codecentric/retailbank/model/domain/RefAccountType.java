@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.RefAccountTypeDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
@@ -157,6 +158,20 @@ public class RefAccountType {
 
         if (isIndividualRetirementType != null)
             this.isIndividualRetirementType = isIndividualRetirementType.booleanValue() == true ? "Y" : "N";
+    }
+
+    @JsonIgnore
+    public RefAccountTypeDto getDto() {
+        return new RefAccountTypeDto(
+                this.id,
+                this.code,
+                this.description,
+                this.isCheckingType,
+                this.isSavingsType,
+                this.isCertificateOfDepositType,
+                this.isMoneyMarketType,
+                this.isIndividualRetirementType
+        );
     }
     //endregion
 }

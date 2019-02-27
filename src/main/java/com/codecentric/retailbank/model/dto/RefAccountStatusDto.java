@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.RefAccountStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -77,6 +79,23 @@ public class RefAccountStatusDto {
 
     public void setIsClosedStatus(Boolean closedStatus) {
         isClosedStatus = closedStatus;
+    }
+    //endregion
+
+    //region HELPERS
+    @JsonIgnore
+    public RefAccountStatus getDBModel(){
+        return new RefAccountStatus(
+                this.id,
+                this.code,
+                this.description,
+                this.isActiveStatus != null
+                        ? (this.isActiveStatus.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isClosedStatus != null
+                        ? (this.isClosedStatus.booleanValue() ? "Y" : "N")
+                        : "N"
+        );
     }
     //endregion
 }

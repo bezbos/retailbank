@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.RefTransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 public class RefTransactionTypeDto {
@@ -74,6 +76,23 @@ public class RefTransactionTypeDto {
 
     public void setIsWithdrawalType(Boolean withdrawalType) {
         isWithdrawalType = withdrawalType;
+    }
+    //endregion
+
+    //region HELPERS
+    @JsonIgnore
+    public RefTransactionType getDBModel() {
+        return new RefTransactionType(
+                this.id,
+                this.code,
+                this.description,
+                this.isDepositType != null
+                        ? (this.isDepositType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isWithdrawalType != null
+                        ? (this.isWithdrawalType.booleanValue() ? "Y" : "N")
+                        : "N"
+        );
     }
     //endregion
 }

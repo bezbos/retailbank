@@ -110,9 +110,15 @@ public class RefBranchTypeDto {
                 this.id,
                 this.code,
                 this.description,
-                this.getIsLargeUrbanType() ? "Y" : "N",
-                this.getIsSmallRuralType() ? "Y" : "N",
-                this.getIsMediumSuburbanType() ? "Y" : "N"
+                this.isLargeUrbanType != null
+                        ? (this.isLargeUrbanType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isSmallRuralType != null
+                        ? (this.isSmallRuralType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isMediumSuburbanType != null
+                        ? (this.isMediumSuburbanType.booleanValue() ? "Y" : "N")
+                        : "N"
         );
     }
     //endregion

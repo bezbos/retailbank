@@ -155,13 +155,13 @@ public class Address {
     public AddressDto getDto() {
         return new AddressDto(
                 this.id,
-                this.getLine1(),
-                this.getLine2(),
-                this.getTownCity(),
-                this.getZipPostcode(),
-                this.getStateProvinceCountry(),
-                this.getCountry(),
-                this.getOtherDetails()
+                this.line1,
+                this.line2,
+                this.townCity,
+                this.zipPostcode,
+                this.stateProvinceCountry,
+                this.country,
+                this.otherDetails
         );
     }
     //endregion

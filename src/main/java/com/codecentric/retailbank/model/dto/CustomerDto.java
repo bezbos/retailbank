@@ -1,19 +1,19 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.dto;
 
-import com.codecentric.retailbank.model.dto.CustomerDto;
+import com.codecentric.retailbank.model.domain.Customer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class Customer {
-
+public class CustomerDto {
     //region FIELDS
     private Long id;
 
-    private Address address;
+    private AddressDto address;
 
     @NotNull
-    private Branch branch;
+    private BranchDto branch;
 
     @NotNull
     @Size(max = 255)
@@ -25,33 +25,33 @@ public class Customer {
     //endregion
 
     //region CONSTRUCTORS
-    public Customer() {
+    public CustomerDto() {
     }
 
-    public Customer(Long id) {
+    public CustomerDto(Long id) {
         this.id = id;
     }
 
-    public Customer(Address address,
-                    @NotNull Branch branch,
-                    @NotNull @Size(max = 255) String personalDetails,
-                    @NotNull @Size(max = 255) String contactDetails) {
+    public CustomerDto(AddressDto address,
+                       @NotNull BranchDto branch,
+                       @NotNull @Size(max = 255) String personalDetails,
+                       @NotNull @Size(max = 255) String contactDetails) {
         this.address = address;
         this.branch = branch;
         this.personalDetails = personalDetails;
         this.contactDetails = contactDetails;
     }
 
-    public Customer(Long id, @NotNull @Size(max = 255) String personalDetails) {
+    public CustomerDto(Long id, @NotNull @Size(max = 255) String personalDetails) {
         this.id = id;
         this.personalDetails = personalDetails;
     }
 
-    public Customer(Long id,
-                    Address address,
-                    @NotNull Branch branch,
-                    @NotNull @Size(max = 255) String personalDetails,
-                    @NotNull @Size(max = 255) String contactDetails) {
+    public CustomerDto(Long id,
+                       AddressDto address,
+                       @NotNull BranchDto branch,
+                       @NotNull @Size(max = 255) String personalDetails,
+                       @NotNull @Size(max = 255) String contactDetails) {
         this.id = id;
         this.address = address;
         this.branch = branch;
@@ -69,19 +69,19 @@ public class Customer {
         this.id = id;
     }
 
-    public Address getAddress() {
+    public AddressDto getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressDto address) {
         this.address = address;
     }
 
-    public Branch getBranch() {
+    public BranchDto getBranch() {
         return branch;
     }
 
-    public void setBranch(Branch branch) {
+    public void setBranch(BranchDto branch) {
         this.branch = branch;
     }
 
@@ -103,11 +103,12 @@ public class Customer {
     //endregion
 
     //region HELPERS
-    public CustomerDto getDto(){
-        return new CustomerDto(
+    @JsonIgnore
+    public Customer getDBModel(){
+        return new Customer(
                 this.id,
-                this.address != null ? this.address.getDto() : null,
-                this.branch != null ? this.branch.getDto() : null,
+                this.address != null ? this.address.getDBModel() : null,
+                this.branch != null ? this.branch.getDBModel() : null,
                 this.personalDetails,
                 this.contactDetails
         );

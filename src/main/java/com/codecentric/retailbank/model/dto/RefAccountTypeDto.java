@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.model.dto;
 
+import com.codecentric.retailbank.model.domain.RefAccountType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -113,6 +115,32 @@ public class RefAccountTypeDto {
 
     public void setIsIndividualRetirementType(Boolean individualRetirementType) {
         isIndividualRetirementType = individualRetirementType;
+    }
+    //endregion
+
+    //region HELPERS
+    @JsonIgnore
+    public RefAccountType getDBModel() {
+        return new RefAccountType(
+                this.id,
+                this.code,
+                this.description,
+                this.isCheckingType != null
+                        ? (this.isCheckingType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isSavingsType != null
+                        ? (this.isSavingsType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isCertificateOfDepositType != null
+                        ? (this.isCertificateOfDepositType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isMoneyMarketType != null
+                        ? (this.isMoneyMarketType.booleanValue() ? "Y" : "N")
+                        : "N",
+                this.isIndividualRetirementType != null
+                        ? (this.isIndividualRetirementType.booleanValue() ? "Y" : "N")
+                        : "N"
+        );
     }
     //endregion
 }

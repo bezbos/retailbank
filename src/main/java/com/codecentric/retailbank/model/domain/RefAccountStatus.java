@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.RefAccountStatusDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Size;
@@ -104,6 +105,17 @@ public class RefAccountStatus {
 
         if(isClosed != null)
             this.isClosed = isClosed.booleanValue() == true ? "Y" : "N";;
+    }
+
+    @JsonIgnore
+    public RefAccountStatusDto getDto(){
+        return new RefAccountStatusDto(
+                this.id,
+                this.code,
+                this.description,
+                this.isActive,
+                this.isClosed
+        );
     }
     //endregion
 }

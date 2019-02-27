@@ -1,5 +1,6 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.BranchDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
@@ -100,6 +101,17 @@ public class Branch {
         this.bank = bank;
         this.refBranchType = refBranchType;
         this.details = details;
+    }
+
+    @JsonIgnore
+    public BranchDto getDto() {
+        return new BranchDto(
+                this.id,
+                this.address != null ? this.address.getDto() : null,
+                this.bank != null ? this.bank.getDto() : null,
+                this.refBranchType != null ? this.refBranchType.getDto() : null,
+                this.details
+        );
     }
     //endregion
 }
