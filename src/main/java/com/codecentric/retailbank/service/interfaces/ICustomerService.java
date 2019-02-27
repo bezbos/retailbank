@@ -1,8 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.Customer;
-
-import java.util.List;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 
 public interface ICustomerService {
 
@@ -10,7 +9,7 @@ public interface ICustomerService {
 
     Customer getByPersonalDetails(String details);
 
-    List<Customer> getAllCustomers();
+    ListPage<Customer> getAllCustomers(int pageIndex, int pageSize);
 
     Customer addCustomer(Customer customer);
 

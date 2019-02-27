@@ -2,6 +2,7 @@ package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.BankAccount;
 import com.codecentric.retailbank.repository.BankAccountRepository;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.interfaces.IBankAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,12 @@ public class BankAccountService implements IBankAccountService {
         return bankAccount;
     }
 
-    @Override public List<BankAccount> getAllAccounts() {
+    @Override public ListPage<BankAccount> getAllAccounts(int pageIndex, int pageSize) {
+        ListPage<BankAccount> bankAccounts = bankAccountRepository.allRange(pageIndex, pageSize);
+        return bankAccounts;
+    }
+
+    public List<BankAccount> getAllAccounts() {
         List<BankAccount> bankAccounts = bankAccountRepository.all();
         return bankAccounts;
     }

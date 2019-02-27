@@ -1,8 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.Merchant;
-
-import java.util.List;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 
 public interface IMerchantService {
 
@@ -10,7 +9,7 @@ public interface IMerchantService {
 
     Merchant getByDetails(String details);
 
-    List<Merchant> getAllMerchants();
+    ListPage<Merchant> getAllMerchants(int pageIndex, int pageSize);
 
     Merchant addMerchant(Merchant merchant);
 

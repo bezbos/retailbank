@@ -2,6 +2,7 @@ package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Customer;
 import com.codecentric.retailbank.repository.CustomerRepository;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.interfaces.ICustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,12 @@ public class CustomerService implements ICustomerService {
         return customer;
     }
 
-    @Override public List<Customer> getAllCustomers() {
+    @Override public ListPage<Customer> getAllCustomers(int pageIndex, int pageSize) {
+        ListPage<Customer> customers = customerRepository.allRange(pageIndex, pageSize);
+        return customers;
+    }
+
+    public List<Customer> getAllCustomers() {
         List<Customer> customers = customerRepository.all();
         return customers;
     }

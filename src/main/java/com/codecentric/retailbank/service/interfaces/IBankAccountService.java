@@ -1,8 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.BankAccount;
-
-import java.util.List;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 
 public interface IBankAccountService {
 
@@ -10,7 +9,7 @@ public interface IBankAccountService {
 
     BankAccount getByDetails(String details);
 
-    List<BankAccount> getAllAccounts();
+    ListPage<BankAccount> getAllAccounts(int pageIndex, int pageSize);
 
     BankAccount addAccount(BankAccount account);
 
