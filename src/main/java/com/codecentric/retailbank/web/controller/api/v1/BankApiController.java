@@ -30,6 +30,7 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankApiController {
 
+    // TODO(bosko): Implement logging
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -48,14 +49,14 @@ public class BankApiController {
         List<BankDto> bankDtos = new ArrayList<>();
         banks.getModels()
                 .forEach(
-                        b -> bankDtos.add(new BankDto(b.getId(), b.getDetails()))
+                        x -> bankDtos.add(new BankDto(x.getId(), x.getDetails()))
                 );
 
         PageableList<BankDto> pageableBankDtos = new PageableList<>(pageIndex, bankDtos, banks.getPageCount());
 
         return pageableBankDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE)
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 //  200 OK
                 : new ResponseEntity<>(pageableBankDtos, HttpStatus.OK);
     }
