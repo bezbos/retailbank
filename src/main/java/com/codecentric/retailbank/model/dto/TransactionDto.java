@@ -1,6 +1,6 @@
-package com.codecentric.retailbank.model.domain;
+package com.codecentric.retailbank.model.dto;
 
-import com.codecentric.retailbank.model.dto.TransactionDto;
+import com.codecentric.retailbank.model.domain.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
@@ -8,19 +8,19 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Transaction {
+public class TransactionDto {
 
     //region FIELDS
     private Long id;
 
     @NotNull
-    private BankAccount account;
+    private BankAccountDto account;
 
     @NotNull
-    private Merchant merchant;
+    private MerchantDto merchant;
 
     @NotNull
-    private RefTransactionType type;
+    private RefTransactionTypeDto type;
 
     @NotNull
     private Date date;
@@ -33,16 +33,16 @@ public class Transaction {
     //endregion
 
     //region CONSTRUCTOR
-    public Transaction() {
+    public TransactionDto() {
     }
 
-    public Transaction(Long id,
-                       @NotNull BankAccount account,
-                       @NotNull Merchant merchant,
-                       @NotNull RefTransactionType type,
-                       @NotNull Date date,
-                       @NotNull BigDecimal amount,
-                       @Size(max = 255) String details) {
+    public TransactionDto(Long id,
+                          @NotNull BankAccountDto account,
+                          @NotNull MerchantDto merchant,
+                          @NotNull RefTransactionTypeDto type,
+                          @NotNull Date date,
+                          @NotNull BigDecimal amount,
+                          @Size(max = 255) String details) {
         this.id = id;
         this.account = account;
         this.merchant = merchant;
@@ -62,27 +62,27 @@ public class Transaction {
         this.id = id;
     }
 
-    public BankAccount getAccount() {
+    public BankAccountDto getAccount() {
         return account;
     }
 
-    public void setAccount(BankAccount account) {
+    public void setAccount(BankAccountDto account) {
         this.account = account;
     }
 
-    public Merchant getMerchant() {
+    public MerchantDto getMerchant() {
         return merchant;
     }
 
-    public void setMerchant(Merchant merchant) {
+    public void setMerchant(MerchantDto merchant) {
         this.merchant = merchant;
     }
 
-    public RefTransactionType getType() {
+    public RefTransactionTypeDto getType() {
         return type;
     }
 
-    public void setType(RefTransactionType type) {
+    public void setType(RefTransactionTypeDto type) {
         this.type = type;
     }
 
@@ -113,12 +113,12 @@ public class Transaction {
 
     //region HELPERS
     @JsonIgnore
-    public TransactionDto getDto(){
-        return new TransactionDto(
+    public Transaction getDBModel() {
+        return new Transaction(
                 this.id,
-                this.account.getDto(),
-                this.merchant.getDto(),
-                this.type.getDto(),
+                this.account != null ? this.account.getDBModel() : null,
+                this.merchant != null ? merchant.getDBModel() : null,
+                this.type != null ? this.type.getDBModel() : null,
                 this.date,
                 this.amount,
                 this.details

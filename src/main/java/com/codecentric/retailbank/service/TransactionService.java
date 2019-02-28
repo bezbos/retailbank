@@ -2,6 +2,7 @@ package com.codecentric.retailbank.service;
 
 import com.codecentric.retailbank.model.domain.Transaction;
 import com.codecentric.retailbank.repository.TransactionRepository;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.interfaces.ITransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,12 @@ public class TransactionService implements ITransactionService {
         return transaction;
     }
 
-    @Override public List<Transaction> getAllTransactions() {
+    @Override public ListPage<Transaction> getAllTransactions(int pageIndex, int pageSize) {
+        ListPage<Transaction> transactions = transactionRepository.allRange(pageIndex, pageSize);
+        return transactions;
+    }
+
+    public List<Transaction> getAllTransactions() {
         List<Transaction> transactions = transactionRepository.all();
         return transactions;
     }

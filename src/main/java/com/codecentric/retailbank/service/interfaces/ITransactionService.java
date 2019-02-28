@@ -1,8 +1,7 @@
 package com.codecentric.retailbank.service.interfaces;
 
 import com.codecentric.retailbank.model.domain.Transaction;
-
-import java.util.List;
+import com.codecentric.retailbank.repository.helpers.ListPage;
 
 public interface ITransactionService {
 
@@ -10,7 +9,7 @@ public interface ITransactionService {
 
     Transaction getByDetails(String details);
 
-    List<Transaction> getAllTransactions();
+    ListPage<Transaction> getAllTransactions(int pageIndex, int pageSize);
 
     Transaction addTransaction(Transaction transaction);
 

@@ -1,6 +1,7 @@
 package com.codecentric.retailbank.model.domain;
 
 
+import com.codecentric.retailbank.model.dto.RefTransactionTypeDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Size;
@@ -105,6 +106,17 @@ public class RefTransactionType {
 
         if (isWithdrawal != null)
             this.isWithdrawal = isWithdrawal.booleanValue() == true ? "Y" : "N";
+    }
+
+    @JsonIgnore
+    public RefTransactionTypeDto getDto(){
+        return new RefTransactionTypeDto(
+                this.id,
+                this.code,
+                this.description,
+                this.isDeposit,
+                this.isWithdrawal
+        );
     }
     //endregion
 }

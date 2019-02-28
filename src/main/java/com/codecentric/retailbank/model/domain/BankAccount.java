@@ -1,5 +1,8 @@
 package com.codecentric.retailbank.model.domain;
 
+import com.codecentric.retailbank.model.dto.BankAccountDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -101,6 +104,20 @@ public class BankAccount {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+    //endregion
+
+    //region HELPERS
+    @JsonIgnore
+    public BankAccountDto getDto() {
+        return new BankAccountDto(
+                this.id,
+                this.status != null ? this.status.getDto() : null,
+                this.type != null ? this.type.getDto(): null,
+                this.customer != null ? this.customer.getDto() : null,
+                this.balance,
+                this.details
+        );
     }
     //endregion
 }
