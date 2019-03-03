@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.service;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Merchant;
 import com.codecentric.retailbank.repository.MerchantRepository;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -33,7 +35,16 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override public Merchant getByDetails(String details) {
-        Merchant merchant = merchantRepository.singleByDetails(details);
+        Merchant merchant = null;
+        try {
+            merchant = merchantRepository.singleByDetails(details);
+        } catch (InvalidOperationException e) {
+           LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
+
+           return (Merchant) e.getPreservedData();
+        } catch (ArgumentNullException e) {
+            e.printStackTrace();
+        }
         return merchant;
     }
 

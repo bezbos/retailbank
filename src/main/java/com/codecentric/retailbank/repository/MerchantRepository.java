@@ -155,7 +155,7 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         return merchant;
     }
 
-    public Merchant singleByDetails(String details) {
+    public Merchant singleByDetails(String details) throws InvalidOperationException, ArgumentNullException {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -174,13 +174,14 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
             byte rowCounter = 0;
             while (resultSet.next()) {
 
+                // Transform ResultSet row into a Merchant object
+                merchant = new Merchant(resultSet.getLong(1), resultSet.getString(2));
+
                 // Check if more than one element matches id parameter
                 ++rowCounter;
                 if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", merchant);
 
-                // Transform ResultSet row into a Merchant object
-                merchant = new Merchant(resultSet.getLong(1), resultSet.getString(2));
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

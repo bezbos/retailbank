@@ -193,14 +193,9 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             cs_singleCustomer.execute();
 
             // Transform ResultSet row into a Branch model
-            byte rowCounter = 0;
             resultSet = cs_singleCustomer.getResultSet();
+            byte rowCounter = 0;
             while (resultSet.next()) {
-
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a Branch object
                 Address address = new Address(
@@ -220,6 +215,11 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
                         resultSet.getString("customers.personal_details"),
                         resultSet.getString("customers.contact_details")
                 );
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", customer);
 
             }
         } catch (SQLException ex) {

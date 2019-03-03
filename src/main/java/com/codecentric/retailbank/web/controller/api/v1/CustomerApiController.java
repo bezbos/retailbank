@@ -112,6 +112,7 @@ public class CustomerApiController {
         try {
             customerService.addCustomer(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -127,6 +128,7 @@ public class CustomerApiController {
         try {
             customerService.updateCustomer(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -142,6 +144,7 @@ public class CustomerApiController {
         try {
             customerService.deleteCustomer(id);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

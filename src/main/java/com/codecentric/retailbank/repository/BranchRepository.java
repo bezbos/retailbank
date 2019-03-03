@@ -238,14 +238,9 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             cs_singleBranch.execute();
 
             // Transform ResultSet row into a Branch model
-            byte rowCounter = 0;
             resultSet = cs_singleBranch.getResultSet();
+            byte rowCounter = 0;
             while (resultSet.next()) {
-
-                // Check if more than one element matches details parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a Branch object
                 Address address = new Address(
@@ -280,6 +275,12 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
                         refBranchType,
                         resultSet.getString("branches.branch_details")
                 );
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", branch);
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

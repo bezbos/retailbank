@@ -220,11 +220,6 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             resultSet = cs_singleTransaction.getResultSet();
             while (resultSet.next()) {
 
-                // Check if more than one element matches details parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
                 // Transform ResultSet row into a Transaction object
                 BankAccount account = new BankAccount(
                         resultSet.getLong("transactions.account_number"),
@@ -251,6 +246,12 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
                         resultSet.getBigDecimal("transactions.transaction_amount"),
                         resultSet.getString("transactions.other_details")
                 );
+
+                // Check if more than one element matches details parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", transaction);
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

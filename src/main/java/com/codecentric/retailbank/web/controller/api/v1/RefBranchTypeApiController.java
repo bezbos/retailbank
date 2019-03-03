@@ -25,7 +25,6 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class RefBranchTypeApiController {
 
-    // TODO(bosko): Implement logging
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -102,6 +101,7 @@ public class RefBranchTypeApiController {
         try {
             refBranchTypeService.addRefBranchType(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -117,6 +117,7 @@ public class RefBranchTypeApiController {
         try {
             refBranchTypeService.updateRefBranchType(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -132,6 +133,7 @@ public class RefBranchTypeApiController {
         try {
             refBranchTypeService.deleteRefBranchType(id);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

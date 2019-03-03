@@ -113,6 +113,7 @@ public class BankAccountApiController {
         try {
             bankAccountService.addAccount(clientDto.getDBModel());
         } catch (Exception e) {
+            e.printStackTrace();
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -128,6 +129,7 @@ public class BankAccountApiController {
         try {
             bankAccountService.updateAccount(clientDto.getDBModel());
         } catch (Exception e) {
+            e.printStackTrace();
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -143,6 +145,7 @@ public class BankAccountApiController {
         try {
             bankAccountService.deleteAccount(id);
         } catch (Exception e) {
+            e.printStackTrace();
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

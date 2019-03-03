@@ -174,13 +174,14 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
             byte rowCounter = 0;
             while (resultSet.next()) {
 
+                // Transform ResultSet row into a Bank object
+                bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
+
                 // Check if more than one element matches id parameter
                 ++rowCounter;
                 if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
-                // Transform ResultSet row into a Bank object
-                bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", bank);
+                
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

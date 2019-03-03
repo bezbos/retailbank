@@ -25,7 +25,6 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class RefTransactionTypeApiController {
 
-    // TODO(bosko): Implement logging
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -97,6 +96,7 @@ public class RefTransactionTypeApiController {
         try {
             refTransactionTypeService.addRefTransactionType(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -112,6 +112,7 @@ public class RefTransactionTypeApiController {
         try {
             refTransactionTypeService.updateRefTransactionType(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -127,6 +128,7 @@ public class RefTransactionTypeApiController {
         try {
             refTransactionTypeService.deleteRefTransactionType(id);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

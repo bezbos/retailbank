@@ -6,5 +6,5 @@ public class Constant {
 
     public static final int BCRYPT_HASH_CYCLES = 11;
 
-    public static final int PAGE_SIZE = 7;
+    public static final int PAGE_SIZE = 25;
 }

@@ -170,11 +170,6 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             resultSet = cs_singleAddress.getResultSet();
             while (resultSet.next()) {
 
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
                 // Transform ResultSet row into a Address object
                 address = new Address(
                         resultSet.getLong(1),
@@ -186,6 +181,12 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
                         resultSet.getString(7),
                         resultSet.getString(8)
                 );
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", address);
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

@@ -96,6 +96,7 @@ public class RefAccountStatusApiController {
         try {
             refAccountStatusService.addRefAccountStatus(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -111,6 +112,7 @@ public class RefAccountStatusApiController {
         try {
             refAccountStatusService.updateRefAccountStatus(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -126,6 +128,7 @@ public class RefAccountStatusApiController {
         try {
             refAccountStatusService.deleteRefAccountStatus(id);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

@@ -30,7 +30,6 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankApiController {
 
-    // TODO(bosko): Implement logging
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -96,6 +95,7 @@ public class BankApiController {
         try {
             bankService.addBank(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -111,6 +111,7 @@ public class BankApiController {
         try {
             bankService.updateBank(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -126,6 +127,7 @@ public class BankApiController {
         try {
             bankService.deleteBank(id);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

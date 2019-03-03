@@ -95,6 +95,7 @@ public class MerchantApiController {
         try {
             merchantService.addMerchant(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -110,6 +111,7 @@ public class MerchantApiController {
         try {
             merchantService.updateMerchant(clientDto.getDBModel());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -125,6 +127,7 @@ public class MerchantApiController {
         try {
             merchantService.deleteMerchant(id);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

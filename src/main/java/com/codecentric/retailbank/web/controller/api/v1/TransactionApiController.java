@@ -28,7 +28,6 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class TransactionApiController {
 
-    // TODO(bosko): Implement logging
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -115,7 +114,7 @@ public class TransactionApiController {
     ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto clientDto) {
         try {
             transactionService.addTransaction(clientDto.getDBModel());
-        } catch (Exception e) {
+        } catch (Exception e) {LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }

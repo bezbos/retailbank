@@ -209,28 +209,23 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             cs_singleBankAccount.execute();
 
             // Transform ResultSet row into a BankAccount model
-            byte rowCounter = 0;
             resultSet = cs_singleBankAccount.getResultSet();
+            byte rowCounter = 0;
             while (resultSet.next()) {
-
-                // Check if more than one element matches details parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a BankAccount object
                 RefAccountStatus refAccountStatus = new RefAccountStatus(
-                        resultSet.getLong("ref_account_status.account_status_id"),
+                        resultSet.getLong("accounts.account_status_id"),
                         resultSet.getString("ref_account_status.account_status_code")
                 );
 
                 RefAccountType refAccountType = new RefAccountType(
-                        resultSet.getLong("ref_account_types.account_type_id"),
+                        resultSet.getLong("accounts.account_type_id"),
                         resultSet.getString("ref_account_types.account_type_code")
                 );
 
                 Customer customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
+                        resultSet.getLong("accounts.customer_id"),
                         resultSet.getString("customers.personal_details")
                 );
 
@@ -242,6 +237,12 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
                         resultSet.getBigDecimal("accounts.current_balance"),
                         resultSet.getString("accounts.other_details")
                 );
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", bankAccount);
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

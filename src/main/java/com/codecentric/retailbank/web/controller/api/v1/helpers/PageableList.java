@@ -24,6 +24,9 @@ public class PageableList<T> {
             int increment = 1;
             if (currentPage == 0)
                 increment = 2;
+            // Yet another problem if currentPage is 0 and pageCount is 2
+            if(currentPage == 0 && pageCount == 2)
+                increment = 0;
             //endregion
 
             this.currentPage = currentPage;
