@@ -18,15 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Controller
@@ -34,40 +35,46 @@ import java.util.Optional;
 public class RefTypesController {
 
     //region FIELDS
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private String CONTROLLER_NAME = "refTypes";
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final String CONTROLLER_NAME = "refTypes";
+
+    private final RefBranchTypeService refBranchTypeService;
+    private final RefAccountTypeService refAccountTypeService;
+    private final RefAccountStatusService refAccountStatusService;
+    private final RefTransactionTypeService refTransactionTypeService;
     //endregion
 
-    //region SERVICES
+    //region CONTROLLER
     @Autowired
-    private RefBranchTypeService refBranchTypeService;
-    @Autowired
-    private RefAccountTypeService refAccountTypeService;
-    @Autowired
-    private RefAccountStatusService refAccountStatusService;
-    @Autowired
-    private RefTransactionTypeService refTransactionTypeService;
+    public RefTypesController(RefBranchTypeService refBranchTypeService,
+                              RefAccountTypeService refAccountTypeService,
+                              RefAccountStatusService refAccountStatusService,
+                              RefTransactionTypeService refTransactionTypeService) {
+        this.refBranchTypeService = refBranchTypeService;
+        this.refAccountTypeService = refAccountTypeService;
+        this.refAccountStatusService = refAccountStatusService;
+        this.refTransactionTypeService = refTransactionTypeService;
+    }
     //endregion
+
 
     //region INDEX
-    @RequestMapping(value = {"", "/", "/index", "/list"})
-    public String getIndexPage(Model model) {
-        List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
-        List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
-        List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
-        List<RefTransactionType> refTransactionTypes = refTransactionTypeService.getAllRefTransactionTypes();
-
-
-        model.addAttribute("refBranchTypes", refBranchTypes);
-        model.addAttribute("refAccountTypes", refAccountTypes);
-        model.addAttribute("refAccountStatuses", refAccountStatuses);
-        model.addAttribute("refTransactionTypes", refTransactionTypes);
-        return CONTROLLER_NAME + "/index";
+    @GetMapping({"", "/", "/index", "/list"})
+    public ModelAndView getIndexPage() {
+        return new ModelAndView(CONTROLLER_NAME + "/index", new HashMap<String, Object>() {
+            {
+                put("refBranchTypes", refBranchTypeService.getAllRefBranchTypes());
+                put("refAccountTypes", refAccountTypeService.getAllRefAccountTypes());
+                put("refAccountStatuses", refAccountStatusService.getAllRefAccountStatus());
+                put("refTransactionTypes", refTransactionTypeService.getAllRefTransactionTypes());
+            }
+        });
     }
     //endregion
 
     //region FORM
-    @RequestMapping(value = {"/form/{type}", "/form/{type}/{id}"})
+    @GetMapping({"/form/{type}", "/form/{type}/{id}"})
     public ModelAndView getFormPage(@PathVariable("type") String type,
                                     @PathVariable("id") Optional<Long> id) {
         switch (type) {
@@ -136,7 +143,7 @@ public class RefTypesController {
         return new ModelAndView(CONTROLLER_NAME + "/form");
     }
 
-    @RequestMapping(value = "/formSubmit/branchType", method = RequestMethod.POST)
+    @PostMapping("/formSubmit/branchType")
     public String onRefBranchTypeFormSubmit(@ModelAttribute("refBranchTypeDto") @Valid RefBranchTypeDto dto,
                                             BindingResult result,
                                             Model model,
@@ -187,7 +194,7 @@ public class RefTypesController {
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
 
-    @RequestMapping(value = "/formSubmit/accountType", method = RequestMethod.POST)
+    @PostMapping("/formSubmit/accountType")
     public String onRefAccountTypeFormSubmit(@ModelAttribute("refAccountTypeDto") @Valid RefAccountTypeDto dto,
                                              BindingResult result,
                                              Model model,
@@ -242,7 +249,7 @@ public class RefTypesController {
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
 
-    @RequestMapping(value = "/formSubmit/accountStatus", method = RequestMethod.POST)
+    @PostMapping("/formSubmit/accountStatus")
     public String onRefAccountStatusFormSubmit(@ModelAttribute("refAccountStatusDto") @Valid RefAccountStatusDto dto,
                                                BindingResult result,
                                                Model model,
@@ -292,7 +299,7 @@ public class RefTypesController {
         return "redirect:/" + CONTROLLER_NAME + "/list";
     }
 
-    @RequestMapping(value = "/formSubmit/transactionType", method = RequestMethod.POST)
+    @PostMapping("/formSubmit/transactionType")
     public String onRefTransactionTypeFormSubmit(@ModelAttribute("refTransactionTypeDto") @Valid RefTransactionTypeDto dto,
                                                  BindingResult result,
                                                  Model model,
@@ -343,7 +350,7 @@ public class RefTypesController {
     //endregion
 
     //region DELETE
-    @RequestMapping(value = "/delete/{type}/{id}", method = RequestMethod.GET)
+    @GetMapping("/delete/{type}/{id}")
     public String onRefAccountTypeDelete(@PathVariable("type") String type,
                                          @PathVariable("id") Long id,
                                          RedirectAttributes redirectAttributes) {

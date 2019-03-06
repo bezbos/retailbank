@@ -30,13 +30,21 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private BankService bankService;
+    private final BankService bankService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public BankApiController(BankService bankService) {
+        this.bankService = bankService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = {"/banks", "/banks/{page}"})
+    @GetMapping({"/banks", "/banks/{page}"})
     ResponseEntity<PageableList<BankDto>> banks(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -60,7 +68,7 @@ public class BankApiController {
                 : new ResponseEntity<>(pageableBankDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/bank/{id}")
+    @GetMapping("/bank/{id}")
     ResponseEntity<BankDto> bankById(@PathVariable("id") Long id) {
         Bank bank = bankService.getById(id);
         BankDto bankDto = bank == null
@@ -74,7 +82,7 @@ public class BankApiController {
                 : new ResponseEntity<>(bankDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/bank")
+    @GetMapping("/bank")
     ResponseEntity<BankDto> bankByDetails(@RequestParam("details") String details) {
         Bank bank = bankService.getByDetails(details);
         BankDto bankDto = bank == null
@@ -90,7 +98,7 @@ public class BankApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/bank")
+    @PostMapping("/bank")
     ResponseEntity<BankDto> createBank(@RequestBody BankDto clientDto) {
         try {
             bankService.addBank(clientDto.getDBModel());
@@ -106,7 +114,7 @@ public class BankApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/bank")
+    @PutMapping("/bank")
     ResponseEntity<BankDto> updateBank(@RequestBody BankDto clientDto) {
         try {
             bankService.updateBank(clientDto.getDBModel());
@@ -122,7 +130,7 @@ public class BankApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/bank/{id}")
+    @DeleteMapping("/bank/{id}")
     ResponseEntity<BankDto> deleteBank(@PathVariable("id") Long id) {
         try {
             bankService.deleteBank(id);

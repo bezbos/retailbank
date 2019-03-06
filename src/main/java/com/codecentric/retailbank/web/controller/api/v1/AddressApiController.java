@@ -30,13 +30,20 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class AddressApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private AddressService addressService;
+    private final AddressService addressService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public AddressApiController(AddressService addressService) {
+        this.addressService = addressService;
+    }
+    //endregion
 
     //region HTTP GET
-    @GetMapping(value = {"/addresses", "/addresses/{page}"})
+    @GetMapping({"/addresses", "/addresses/{page}"})
     ResponseEntity<PageableList<AddressDto>> addresses(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -68,7 +75,7 @@ public class AddressApiController {
                 : new ResponseEntity<>(pageableAddressDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/address/{id}")
+    @GetMapping("/address/{id}")
     ResponseEntity<AddressDto> addressById(@PathVariable("id") Long id) {
         Address address = addressService.getById(id);
         AddressDto addressDto = address == null
@@ -90,7 +97,7 @@ public class AddressApiController {
                 : new ResponseEntity<>(addressDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/address")
+    @GetMapping("/address")
     ResponseEntity<AddressDto> addressByDetails(@RequestParam("line1") String line1) {
         Address address = addressService.getByLine1(line1);
         AddressDto addressDto = address == null
@@ -113,7 +120,7 @@ public class AddressApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/address")
+    @PostMapping("/address")
     ResponseEntity<AddressDto> createBank(@RequestBody AddressDto clientDto) {
         try {
             addressService.addAddress(clientDto.getDBModel());
@@ -129,7 +136,7 @@ public class AddressApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/address")
+    @PutMapping("/address")
     ResponseEntity<AddressDto> updateBank(@RequestBody AddressDto clientDto) {
         try {
             addressService.updateAddress(clientDto.getDBModel());
@@ -145,7 +152,7 @@ public class AddressApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/address/{id}")
+    @DeleteMapping("/address/{id}")
     ResponseEntity<AddressDto> deleteBank(@PathVariable("id") Long id) {
         try {
             addressService.deleteAddress(id);

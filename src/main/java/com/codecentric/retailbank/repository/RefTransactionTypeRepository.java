@@ -142,11 +142,11 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         return refBranchType;
     }
 
-    public RefTransactionType singleByCode(String code) {
+    public RefTransactionType singleByCode(String code) throws ArgumentNullException, InvalidOperationException {
         if (code == null)
             throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
-        RefTransactionType refBranchType = null;
+        RefTransactionType refTransactionType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -161,19 +161,20 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             resultSet = cs_singleRefTransactionType.getResultSet();
             while (resultSet.next()) {
 
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
                 // Transform ResultSet row into a RefTransactionType object
-                refBranchType = new RefTransactionType(
+                refTransactionType = new RefTransactionType(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
                         resultSet.getString(4),
                         resultSet.getString(4)
                 );
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", refTransactionType);
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -181,7 +182,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             closeConnections(resultSet);
         }
 
-        return refBranchType;
+        return refTransactionType;
     }
     //endregion
 

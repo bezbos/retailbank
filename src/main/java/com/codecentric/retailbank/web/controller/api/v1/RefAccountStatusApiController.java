@@ -25,13 +25,21 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class RefAccountStatusApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private RefAccountStatusService refAccountStatusService;
+    private final RefAccountStatusService refAccountStatusService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public RefAccountStatusApiController(RefAccountStatusService refAccountStatusService) {
+        this.refAccountStatusService = refAccountStatusService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = {"/refAccountStatuses"})
+    @GetMapping({"/refAccountStatuses"})
     ResponseEntity<List<RefAccountStatusDto>> refAccountStatuses() {
 
         List<RefAccountStatus> refAccountStatuses = refAccountStatusService.getAllRefAccountStatus();
@@ -51,7 +59,7 @@ public class RefAccountStatusApiController {
         return new ResponseEntity<>(refAccountStatusDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refAccountStatus/{id}")
+    @GetMapping("/refAccountStatus/{id}")
     ResponseEntity<RefAccountStatusDto> refAccountStatusById(@PathVariable("id") Long id) {
         RefAccountStatus refAccountStatus = refAccountStatusService.getById(id);
         RefAccountStatusDto refAccountStatusDto = refAccountStatus == null
@@ -70,7 +78,7 @@ public class RefAccountStatusApiController {
                 : new ResponseEntity<>(refAccountStatusDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refAccountStatus")
+    @GetMapping("/refAccountStatus")
     ResponseEntity<RefAccountStatusDto> refAccountStatusByDetails(@RequestParam("code") String code) {
         RefAccountStatus refAccountStatus = refAccountStatusService.getByCode(code);
         RefAccountStatusDto refAccountStatusDto = refAccountStatus == null
@@ -91,7 +99,7 @@ public class RefAccountStatusApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/refAccountStatus")
+    @PostMapping("/refAccountStatus")
     ResponseEntity<RefAccountStatusDto> createRefAccountStatus(@RequestBody RefAccountStatusDto clientDto) {
         try {
             refAccountStatusService.addRefAccountStatus(clientDto.getDBModel());
@@ -107,7 +115,7 @@ public class RefAccountStatusApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/refAccountStatus")
+    @PutMapping("/refAccountStatus")
     ResponseEntity<RefAccountStatusDto> updateRefAccountStatus(@RequestBody RefAccountStatusDto clientDto) {
         try {
             refAccountStatusService.updateRefAccountStatus(clientDto.getDBModel());
@@ -123,7 +131,7 @@ public class RefAccountStatusApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/refAccountStatus/{id}")
+    @DeleteMapping("/refAccountStatus/{id}")
     ResponseEntity<RefAccountStatusDto> deleteRefAccountStatus(@PathVariable("id") Long id) {
         try {
             refAccountStatusService.deleteRefAccountStatus(id);

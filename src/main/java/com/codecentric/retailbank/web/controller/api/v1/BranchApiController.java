@@ -30,13 +30,21 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BranchApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private BranchService branchService;
+    private final BranchService branchService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public BranchApiController(BranchService branchService) {
+        this.branchService = branchService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = {"/branches", "/branches/{page}"})
+    @GetMapping({"/branches", "/branches/{page}"})
     ResponseEntity<PageableList<BranchDto>> branches(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -66,7 +74,7 @@ public class BranchApiController {
                 : new ResponseEntity<>(pageableBranchDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/branch/{id}")
+    @GetMapping("/branch/{id}")
     ResponseEntity<BranchDto> branchById(@PathVariable("id") Long id) {
         Branch branch = branchService.getById(id);
         BranchDto branchDto = branch == null
@@ -85,7 +93,7 @@ public class BranchApiController {
                 : new ResponseEntity<>(branchDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/branch")
+    @GetMapping("/branch")
     ResponseEntity<BranchDto> branchByDetails(@RequestParam("details") String details) {
         Branch branch = branchService.getByDetails(details);
         BranchDto branchDto = branch == null
@@ -106,7 +114,7 @@ public class BranchApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/branch")
+    @PostMapping("/branch")
     ResponseEntity<BranchDto> createBranch(@RequestBody BranchDto clientDto) {
         try {
             branchService.addBranch(clientDto.getDBModel());
@@ -122,7 +130,7 @@ public class BranchApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/branch")
+    @PutMapping("/branch")
     ResponseEntity<BranchDto> updateBranch(@RequestBody BranchDto clientDto) {
         try {
             branchService.updateBranch(clientDto.getDBModel());
@@ -138,7 +146,7 @@ public class BranchApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/branch/{id}")
+    @DeleteMapping("/branch/{id}")
     ResponseEntity<BranchDto> deleteBranch(@PathVariable("id") Long id) {
         try {
             branchService.deleteBranch(id);

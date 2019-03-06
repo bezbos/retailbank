@@ -28,22 +28,28 @@ public class UserService implements IUserService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+
+    private final PasswordEncoder passwordEncoder;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-    //endregion
 
-    //region DEPENDENCIES
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    //region CONSTRUCTOR
+    @Autowired public UserService(UserRepository userRepository,
+                                  RoleRepository roleRepository,
+                                  VerificationTokenRepository verificationTokenRepository,
+                                  PasswordResetTokenRepository passwordResetTokenRepository,
+                                  PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.verificationTokenRepository = verificationTokenRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     //endregion
 
 

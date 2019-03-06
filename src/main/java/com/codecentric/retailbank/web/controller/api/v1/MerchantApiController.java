@@ -30,13 +30,20 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class MerchantApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private MerchantService merchantService;
+    private final MerchantService merchantService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public MerchantApiController(MerchantService merchantService) {
+        this.merchantService = merchantService;
+    }
+    //endregion
 
     //region HTTP GET
-    @GetMapping(value = {"/merchants", "/merchants/{page}"})
+    @GetMapping({"/merchants", "/merchants/{page}"})
     ResponseEntity<PageableList<MerchantDto>> merchants(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -60,7 +67,7 @@ public class MerchantApiController {
                 : new ResponseEntity<>(pageableMerchantDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/merchant/{id}")
+    @GetMapping("/merchant/{id}")
     ResponseEntity<MerchantDto> merchantById(@PathVariable("id") Long id) {
         Merchant merchant = merchantService.getById(id);
         MerchantDto merchantDto = merchant == null
@@ -74,7 +81,7 @@ public class MerchantApiController {
                 : new ResponseEntity<>(merchantDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/merchant")
+    @GetMapping("/merchant")
     ResponseEntity<MerchantDto> merchantByDetails(@RequestParam("details") String details) {
         Merchant merchant = merchantService.getByDetails(details);
         MerchantDto merchantDto = merchant == null
@@ -90,7 +97,7 @@ public class MerchantApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/merchant")
+    @PostMapping("/merchant")
     ResponseEntity<MerchantDto> createMerchant(@RequestBody MerchantDto clientDto) {
         try {
             merchantService.addMerchant(clientDto.getDBModel());
@@ -106,7 +113,7 @@ public class MerchantApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/merchant")
+    @PutMapping("/merchant")
     ResponseEntity<MerchantDto> updateMerchant(@RequestBody MerchantDto clientDto) {
         try {
             merchantService.updateMerchant(clientDto.getDBModel());
@@ -122,7 +129,7 @@ public class MerchantApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/merchant/{id}")
+    @DeleteMapping("/merchant/{id}")
     ResponseEntity<MerchantDto> deleteMerchant(@PathVariable("id") Long id) {
         try {
             merchantService.deleteMerchant(id);

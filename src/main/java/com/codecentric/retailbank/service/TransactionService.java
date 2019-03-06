@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.service;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Transaction;
 import com.codecentric.retailbank.repository.TransactionRepository;
 import com.codecentric.retailbank.repository.helpers.ListPage;
@@ -18,11 +20,14 @@ public class TransactionService implements ITransactionService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final TransactionRepository transactionRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private TransactionRepository transactionRepository;
+    //region CONSTRUCTOR
+    @Autowired public TransactionService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
     //endregion
 
 
@@ -33,7 +38,15 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override public Transaction getByDetails(String details) {
-        Transaction transaction = transactionRepository.singleByDetails(details);
+        Transaction transaction = null;
+        try {
+            transaction = transactionRepository.singleByDetails(details);
+        } catch (ArgumentNullException e) {
+            e.printStackTrace();
+        } catch (InvalidOperationException e) {
+            LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
+            return (Transaction) e.getPreservedData();
+        }
         return transaction;
     }
 

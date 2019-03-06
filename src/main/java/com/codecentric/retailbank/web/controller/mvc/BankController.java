@@ -10,53 +10,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/bank")
-public class BankController {
+public class BankController extends BaseController {
 
     //region FIELDS
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private String CONTROLLER_NAME = "bank";
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final String CONTROLLER_NAME = "bank";
+
+    private final BankService bankService;
     //endregion
 
-    //region SERVICES
-    @Autowired
-    private BankService bankService;
+    //region CONSTRUCTOR
+    @Autowired public BankController(BankService bankService) {
+        this.bankService = bankService;
+    }
     //endregion
+
 
     //region INDEX
-    @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
-    public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
-                               Model model) {
-
-        // If pageIndex is less than 1 set it to 1.
-        Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
-        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
-                0 : pageIndex;
+    @GetMapping({"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"})
+    public ModelAndView getIndexPage(@PathVariable Optional<Integer> pageIdx) {
+        Integer pageIndex = getValidPageIndex(pageIdx);
 
         ListPage<Bank> banks = bankService.getAllBanksByPage(pageIndex, PAGE_SIZE);
 
-        model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", banks == null ? null : banks.getPageCount());
-        model.addAttribute("banks", banks == null ? null : banks.getModels());
-        return CONTROLLER_NAME + "/list";
+        return new ModelAndView(CONTROLLER_NAME + "/list", new HashMap<String, Object>() {
+            {
+                put("currentPageIndex", pageIndex);
+                put("totalPages", banks == null ? null : banks.getPageCount());
+                put("banks", banks == null ? null : banks.getModels());
+            }
+        });
     }
     //endregion
 
     //region FORM
-    @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
+    @GetMapping({"/form", "/form/{id}"})
     public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
         Bank bank = id.isPresent() ?
                 bankService.getById(id.get()) : new Bank(0L);
@@ -66,7 +71,7 @@ public class BankController {
         return new ModelAndView(CONTROLLER_NAME + "/form", "bankDto", bankDto);
     }
 
-    @RequestMapping(value = "/formSubmit", method = RequestMethod.POST)
+    @PostMapping("/formSubmit")
     public String onFormSubmit(@ModelAttribute("bankDto") @Valid BankDto bankDto,
                                BindingResult result,
                                Model model,
@@ -107,7 +112,7 @@ public class BankController {
     //endregion
 
     //region DELETE
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @GetMapping("/delete/{id}")
     public String onDeleteSubmit(@PathVariable("id") Long id,
                                  RedirectAttributes redirectAttributes) {
         try {

@@ -30,13 +30,21 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class CustomerApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public CustomerApiController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = {"/customers", "/customers/{page}"})
+    @GetMapping({"/customers", "/customers/{page}"})
     ResponseEntity<PageableList<CustomerDto>> customers(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -67,7 +75,7 @@ public class CustomerApiController {
                 : new ResponseEntity<>(pageableCustomerDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/customer/{id}")
+    @GetMapping("/customer/{id}")
     ResponseEntity<CustomerDto> customerById(@PathVariable("id") Long id) {
         Customer customer = customerService.getById(id);
         CustomerDto customerDto = customer == null
@@ -86,7 +94,7 @@ public class CustomerApiController {
                 : new ResponseEntity<>(customerDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/customer")
+    @GetMapping("/customer")
     ResponseEntity<CustomerDto> customerByDetails(@RequestParam("personalDetails") String personalDetails) {
         Customer customer = customerService.getByPersonalDetails(personalDetails);
         CustomerDto customerDto = customer == null
@@ -107,7 +115,7 @@ public class CustomerApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/customer")
+    @PostMapping("/customer")
     ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto clientDto) {
         try {
             customerService.addCustomer(clientDto.getDBModel());
@@ -123,7 +131,7 @@ public class CustomerApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/customer")
+    @PutMapping("/customer")
     ResponseEntity<CustomerDto> updateCustomer(@RequestBody CustomerDto clientDto) {
         try {
             customerService.updateCustomer(clientDto.getDBModel());
@@ -139,7 +147,7 @@ public class CustomerApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/customer/{id}")
+    @DeleteMapping("/customer/{id}")
     ResponseEntity<CustomerDto> deleteCustomer(@PathVariable("id") Long id) {
         try {
             customerService.deleteCustomer(id);

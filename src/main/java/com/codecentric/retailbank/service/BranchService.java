@@ -18,11 +18,14 @@ public class BranchService implements IBranchService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final BranchRepository branchRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private BranchRepository branchRepository;
+    //region CONSTRUCTOR
+    @Autowired public BranchService(BranchRepository branchRepository) {
+        this.branchRepository = branchRepository;
+    }
     //endregion
 
 

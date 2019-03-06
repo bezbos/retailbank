@@ -25,13 +25,21 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class RefBranchTypeApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private RefBranchTypeService refBranchTypeService;
+    private final RefBranchTypeService refBranchTypeService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public RefBranchTypeApiController(RefBranchTypeService refBranchTypeService) {
+        this.refBranchTypeService = refBranchTypeService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = "/refBranchTypes")
+    @GetMapping("/refBranchTypes")
     ResponseEntity<List<RefBranchTypeDto>> refBranchTypes() {
 
         List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
@@ -54,7 +62,7 @@ public class RefBranchTypeApiController {
                 : new ResponseEntity<>(refBranchTypeDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refBranchType/{id}")
+    @GetMapping("/refBranchType/{id}")
     ResponseEntity<RefBranchTypeDto> refBranchTypeById(@PathVariable("id") Long id) {
         RefBranchType refBranchType = refBranchTypeService.getById(id);
         RefBranchTypeDto refBranchTypeDto = refBranchType == null
@@ -74,7 +82,7 @@ public class RefBranchTypeApiController {
                 : new ResponseEntity<>(refBranchTypeDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refBranchType")
+    @GetMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> refBranchTypeByDetails(@RequestParam("code") String code) {
         RefBranchType refBranchType = refBranchTypeService.getByCode(code);
         RefBranchTypeDto refBranchTypeDto = refBranchType == null
@@ -96,7 +104,7 @@ public class RefBranchTypeApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/refBranchType")
+    @PostMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> createRefBranchType(@RequestBody RefBranchTypeDto clientDto) {
         try {
             refBranchTypeService.addRefBranchType(clientDto.getDBModel());
@@ -112,7 +120,7 @@ public class RefBranchTypeApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/refBranchType")
+    @PutMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> updateRefBranchType(@RequestBody RefBranchTypeDto clientDto) {
         try {
             refBranchTypeService.updateRefBranchType(clientDto.getDBModel());
@@ -128,7 +136,7 @@ public class RefBranchTypeApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/refBranchType/{id}")
+    @DeleteMapping("/refBranchType/{id}")
     ResponseEntity<RefBranchTypeDto> deleteRefBranchType(@PathVariable("id") Long id) {
         try {
             refBranchTypeService.deleteRefBranchType(id);

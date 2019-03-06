@@ -25,13 +25,21 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class RefTransactionTypeApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private RefTransactionTypeService refTransactionTypeService;
+    private final RefTransactionTypeService refTransactionTypeService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public RefTransactionTypeApiController(RefTransactionTypeService refTransactionTypeService) {
+        this.refTransactionTypeService = refTransactionTypeService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = "/refTransactionTypes")
+    @GetMapping("/refTransactionTypes")
     ResponseEntity<List<RefTransactionTypeDto>> refTransactionTypes() {
         List<RefTransactionType> refTransactionTypes = refTransactionTypeService.getAllRefTransactionTypes();
         List<RefTransactionTypeDto> refTransactionTypeDtos = new ArrayList<>();
@@ -52,7 +60,7 @@ public class RefTransactionTypeApiController {
                 : new ResponseEntity<>(refTransactionTypeDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refTransactionType/{id}")
+    @GetMapping("/refTransactionType/{id}")
     ResponseEntity<RefTransactionTypeDto> refTransactionTypeById(@PathVariable("id") Long id) {
         RefTransactionType refTransactionType = refTransactionTypeService.getById(id);
         RefTransactionTypeDto refTransactionTypeDto = refTransactionType == null
@@ -71,7 +79,7 @@ public class RefTransactionTypeApiController {
                 : new ResponseEntity<>(refTransactionTypeDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refTransactionType")
+    @GetMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> refTransactionTypeByDetails(@RequestParam("code") String code) {
         RefTransactionType refTransactionType = refTransactionTypeService.getByCode(code);
         RefTransactionTypeDto refTransactionTypeDto = refTransactionType == null
@@ -91,7 +99,7 @@ public class RefTransactionTypeApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/refTransactionType")
+    @PostMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> createRefTransactionType(@RequestBody RefTransactionTypeDto clientDto) {
         try {
             refTransactionTypeService.addRefTransactionType(clientDto.getDBModel());
@@ -107,7 +115,7 @@ public class RefTransactionTypeApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/refTransactionType")
+    @PutMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> updateRefTransactionType(@RequestBody RefTransactionTypeDto clientDto) {
         try {
             refTransactionTypeService.updateRefTransactionType(clientDto.getDBModel());
@@ -123,7 +131,7 @@ public class RefTransactionTypeApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/refTransactionType/{id}")
+    @DeleteMapping("/refTransactionType/{id}")
     ResponseEntity<RefTransactionTypeDto> deleteRefTransactionType(@PathVariable("id") Long id) {
         try {
             refTransactionTypeService.deleteRefTransactionType(id);

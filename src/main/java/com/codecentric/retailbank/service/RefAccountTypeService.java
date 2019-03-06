@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.service;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.repository.BankAccountRepository;
 import com.codecentric.retailbank.repository.RefAccountTypeRepository;
@@ -19,15 +21,20 @@ public class RefAccountTypeService implements IRefAccountTypeService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final RefAccountTypeRepository refAccountTypeRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private RefAccountTypeRepository refAccountTypeRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
+    //region CONSTRUCTOR
+    @Autowired public RefAccountTypeService(RefAccountTypeRepository refAccountTypeRepository,
+                                            BankAccountRepository bankAccountRepository,
+                                            TransactionRepository transactionRepository) {
+        this.refAccountTypeRepository = refAccountTypeRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
+    }
     //endregion
 
 
@@ -38,7 +45,17 @@ public class RefAccountTypeService implements IRefAccountTypeService {
     }
 
     @Override public RefAccountType getByCode(String code) {
-        RefAccountType refAccountType = refAccountTypeRepository.singleByCode(code);
+        RefAccountType refAccountType = null;
+        try {
+            refAccountType = refAccountTypeRepository.singleByCode(code);
+        } catch (ArgumentNullException e) {
+            e.printStackTrace();
+        } catch (InvalidOperationException e) {
+            LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
+
+            return (RefAccountType) e.getPreservedData();
+        }
+
         return refAccountType;
     }
 

@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -18,26 +20,31 @@ import java.util.List;
 public class CustomerController {
 
     //region FIELDS
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private String CONTROLLER_NAME = "customer";
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final String CONTROLLER_NAME = "customer";
+
+    private final CustomerService customerService;
+    private final AddressService addressService;
+    private final BranchService branchService;
     //endregion
 
-    //region SERVICES
-    @Autowired
-    private CustomerService customerService;
-    @Autowired
-    private AddressService addressService;
-    @Autowired
-    private BranchService branchService;
+    //region CONTROLLER
+    @Autowired public CustomerController(CustomerService customerService,
+                                         AddressService addressService,
+                                         BranchService branchService) {
+        this.customerService = customerService;
+        this.addressService = addressService;
+        this.branchService = branchService;
+    }
     //endregion
 
     //region INDEX
-    @RequestMapping(value = {"", "/", "/index", "/list"})
-    public String getIndexPage(Model model) {
+    @GetMapping({"", "/", "/index", "/list"})
+    public ModelAndView getIndexPage(Model model) {
         List<Customer> customers = customerService.getAllCustomers();
 
-        model.addAttribute("customers", customers);
-        return CONTROLLER_NAME + "/index";
+        return new ModelAndView(CONTROLLER_NAME + "/index", "customers", customers);
     }
     //endregion
 }

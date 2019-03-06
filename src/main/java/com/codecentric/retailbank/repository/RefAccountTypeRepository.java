@@ -151,7 +151,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         return refBranchType;
     }
 
-    public RefAccountType singleByCode(String code) {
+    public RefAccountType singleByCode(String code) throws ArgumentNullException, InvalidOperationException {
         if (code == null)
             throw new ArgumentNullException("The code argument must have a value/cannot be null.");
 
@@ -170,11 +170,6 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             resultSet = cs_singleRefAccountType.getResultSet();
             while (resultSet.next()) {
 
-                // Check if more than one element matches id parameter
-                ++rowCounter;
-                if (rowCounter > 1)
-                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
-
                 // Transform ResultSet row into a RefAccountType object
                 refBranchType = new RefAccountType(
                                 resultSet.getLong(1),
@@ -186,6 +181,12 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
                                 resultSet.getString(7),
                                 resultSet.getString(8)
                         );
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.", refBranchType);
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

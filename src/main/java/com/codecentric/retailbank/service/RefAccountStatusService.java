@@ -19,15 +19,20 @@ public class RefAccountStatusService implements IRefAccountStatusService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final RefAccountStatusRepository refAccountStatusRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private RefAccountStatusRepository refAccountStatusRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
+    //region CONSTRUCTOR
+    @Autowired public RefAccountStatusService(RefAccountStatusRepository refAccountStatusRepository,
+                                              BankAccountRepository bankAccountRepository,
+                                              TransactionRepository transactionRepository) {
+        this.refAccountStatusRepository = refAccountStatusRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
+    }
     //endregion
 
 

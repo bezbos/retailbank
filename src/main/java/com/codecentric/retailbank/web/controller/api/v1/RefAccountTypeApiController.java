@@ -25,13 +25,21 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class RefAccountTypeApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private RefAccountTypeService refAccountTypeService;
+    private final RefAccountTypeService refAccountTypeService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public RefAccountTypeApiController(RefAccountTypeService refAccountTypeService) {
+        this.refAccountTypeService = refAccountTypeService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = "/refAccountTypes")
+    @GetMapping("/refAccountTypes")
     ResponseEntity<List<RefAccountTypeDto>> refAccountTypes() {
 
         List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
@@ -56,7 +64,7 @@ public class RefAccountTypeApiController {
                 : new ResponseEntity<>(refAccountTypeDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refAccountType/{id}")
+    @GetMapping("/refAccountType/{id}")
     ResponseEntity<RefAccountTypeDto> refAccountTypeById(@PathVariable("id") Long id) {
         RefAccountType refAccountType = refAccountTypeService.getById(id);
         RefAccountTypeDto refAccountTypeDto = refAccountType == null
@@ -78,8 +86,8 @@ public class RefAccountTypeApiController {
                 : new ResponseEntity<>(refAccountTypeDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/refAccountType")
-    ResponseEntity<RefAccountTypeDto> brefAccountTypeByDetails(@RequestParam("code") String code) {
+    @GetMapping("/refAccountType")
+    ResponseEntity<RefAccountTypeDto> refAccountTypeByDetails(@RequestParam("code") String code) {
         RefAccountType refAccountType = refAccountTypeService.getByCode(code);
         RefAccountTypeDto refAccountTypeDto = refAccountType == null
                 ? null
@@ -102,7 +110,7 @@ public class RefAccountTypeApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/refAccountType")
+    @PostMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> createRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
         try {
             refAccountTypeService.addRefAccountType(clientDto.getDBModel());
@@ -118,7 +126,7 @@ public class RefAccountTypeApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/refAccountType")
+    @PutMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> updateRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
         try {
             refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
@@ -134,7 +142,7 @@ public class RefAccountTypeApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/refAccountType/{id}")
+    @DeleteMapping("/refAccountType/{id}")
     ResponseEntity<RefAccountTypeDto> deleteRefAccountType(@PathVariable("id") Long id) {
         try {
             refAccountTypeService.deleteRefAccountType(id);

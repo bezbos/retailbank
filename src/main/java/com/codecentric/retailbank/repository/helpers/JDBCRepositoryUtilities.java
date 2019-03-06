@@ -43,8 +43,8 @@ public class JDBCRepositoryUtilities {
         }
     }
 
-    protected void closeConnections(ResultSet... resultSet) {
-        for (ResultSet rs : resultSet){
+    protected void closeConnections(ResultSet... resultSets) {
+        for (ResultSet rs : resultSets) {
             if (rs != null) {
                 try {
                     rs.close();

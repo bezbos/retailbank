@@ -1,6 +1,5 @@
 package com.codecentric.retailbank.web.controller.mvc;
 
-import com.codecentric.retailbank.constants.Constant;
 import com.codecentric.retailbank.exception.runtime.UserAlreadyExistsException;
 import com.codecentric.retailbank.model.dto.UserDto;
 import com.codecentric.retailbank.model.security.User;
@@ -20,7 +19,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpSession;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
+import static com.codecentric.retailbank.constants.Constant.CLASS_NAME_OAUTH2_DEFAULT_OIDC_USER;
+import static com.codecentric.retailbank.constants.Constant.CLASS_NAME_USER_DETAILS_USER;
+
+/**
+ * Contains re-usable methods.
+ */
 public class BaseController {
 
     //region FIELDS
@@ -53,6 +60,7 @@ public class BaseController {
     //endregion
 
     //region USER HELPERS
+
     /**
      * Creates a new account in the DB.
      *
@@ -73,6 +81,7 @@ public class BaseController {
     //endregion
 
     //region EMAIL HELPERS
+
     /**
      * Used to construct a <code>SimpleMailMessage</code> object required to send an email. This one is used specifically for generating a email verification token resend.
      *
@@ -170,6 +179,7 @@ public class BaseController {
     //endregion
 
     //region PRINCIPAL HELPERS
+
     /**
      * Retrieves the class name of a principle object.
      *
@@ -185,14 +195,14 @@ public class BaseController {
     /**
      * Adds a <code>username</code> attribute and value to the model.
      *
-     * @param session              Session to which we add the <code>username</code> attribute and value.
+     * @param session            Session to which we add the <code>username</code> attribute and value.
      * @param principalClassName Type of principal to expect. Required to properly retrieve the <code>username</code> value.
      * @param principal          Principal from which we get the <code>username</code> value.
      */
     protected void setSessionUsernameAttribute(HttpSession session, String principalClassName, Object principal) {
-        if (principalClassName == Constant.CLASS_NAME_USER_DETAILS_USER) {
+        if (Objects.equals(principalClassName, CLASS_NAME_USER_DETAILS_USER)) {
             session.setAttribute("username", ((org.springframework.security.core.userdetails.User) principal).getUsername());
-        } else if (principalClassName == Constant.CLASS_NAME_OAUTH2_DEFAULT_OIDC_USER) {
+        } else if (Objects.equals(principalClassName, CLASS_NAME_OAUTH2_DEFAULT_OIDC_USER)) {
             session.setAttribute("username", ((org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser) principal).getFullName());
         }
     }
@@ -204,6 +214,22 @@ public class BaseController {
      */
     protected Object getPrincipal() {
         return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    //endregion
+
+    //region OTHER HELPERS
+
+    /**
+     * Returns a valid page index even if the passed argument is a negative number or <code>null</code>.
+     * @param pageIdx Represents the page index. It's used to determine the range of elements to be returned.
+     * @return Returns zero or a positive number.
+     */
+    protected Integer getValidPageIndex(Optional<Integer> pageIdx){
+
+        // If pageIdx is 0 or less, return 0.
+        return pageIdx.isPresent()
+                ? ((pageIdx.get() <= 0) ? 0 : pageIdx.get())
+                : 0;
     }
     //endregion
 

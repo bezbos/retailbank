@@ -16,60 +16,65 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/branch")
-public class BranchController {
+public class BranchController extends BaseController {
 
     //region FIELDS
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private String CONTROLLER_NAME = "branch";
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final String CONTROLLER_NAME = "branch";
+
+    private final BranchService branchService;
+    private final AddressService addressService;
+    private final BankService bankService;
+    private final RefBranchTypeService refBranchTypeService;
     //endregion
 
-    //region SERVICES
+    //region CONSTRUCTOR
     @Autowired
-    private BranchService branchService;
-    @Autowired
-    private AddressService addressService;
-    @Autowired
-    private BankService bankService;
-    @Autowired
-    private RefBranchTypeService refBranchTypeService;
+    public BranchController(BranchService branchService, AddressService addressService, BankService bankService, RefBranchTypeService refBranchTypeService) {
+        this.branchService = branchService;
+        this.addressService = addressService;
+        this.bankService = bankService;
+        this.refBranchTypeService = refBranchTypeService;
+    }
     //endregion
+
 
     //region INDEX
-    @RequestMapping(value = {"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"}, method = RequestMethod.GET)
-    public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
-                               Model model) {
-
-        // If pageIndex is less than 1 set it to 1.
-        Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
-        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
-                0 : pageIndex;
-
+    @GetMapping({"", "/", "/index", "/list", "/index/{pageIdx}", "/list/{pageIdx}"})
+    public ModelAndView getIndexPage(@PathVariable Optional<Integer> pageIdx) {
+        Integer pageIndex = getValidPageIndex(pageIdx);
         ListPage<Branch> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
 
-        model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", branches.getPageCount());
-        model.addAttribute("branches", branches.getModels());
-        return CONTROLLER_NAME + "/index";
+        return new ModelAndView(CONTROLLER_NAME + "/index", new HashMap<String, Object>() {
+            {
+                put("currentPageIndex", pageIndex);
+                put("totalPages", branches.getPageCount());
+                put("branches", branches.getModels());
+            }
+        });
     }
     //endregion
 
     //region FORM
-    @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
-    public String getFormPage(@PathVariable("id") Optional<Long> id,
-                              Model model) {
+    @GetMapping({"/form", "/form/{id}"})
+    public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
 
         Branch branch;
         BranchDto branchDto;
@@ -93,13 +98,16 @@ public class BranchController {
             branchDto = new BranchDto(branch.getId());
         }
 
-        model.addAttribute("branchDto", branchDto);
-        model.addAttribute("allBanks", bankService.getAllBanks());
-        model.addAttribute("allTypes", refBranchTypeService.getAllRefBranchTypes());
-        return CONTROLLER_NAME + "/form";
+        return new ModelAndView(CONTROLLER_NAME + "/form", new HashMap<String, Object>() {
+            {
+                put("branchDto", branchDto);
+                put("allBanks", bankService.getAllBanks());
+                put("allTypes", refBranchTypeService.getAllRefBranchTypes());
+            }
+        });
     }
 
-    @RequestMapping(value = "/formSubmit", method = RequestMethod.POST)
+    @PostMapping("/formSubmit")
     public String onFormSubmit(@ModelAttribute("branchDto") @Valid BranchDto dto,
                                BindingResult result,
                                Model model,
@@ -172,7 +180,7 @@ public class BranchController {
     //endregion
 
     //region DELETE
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @GetMapping("/delete/{id}")
     public String onDeleteSubmit(@PathVariable("id") Long id,
                                  RedirectAttributes redirectAttributes) {
         try {

@@ -18,11 +18,14 @@ public class CustomerService implements ICustomerService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final CustomerRepository customerRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private CustomerRepository customerRepository;
+    //region CONSTRUCTOR
+    @Autowired public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
     //endregion
 
 

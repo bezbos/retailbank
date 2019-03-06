@@ -21,19 +21,26 @@ public class RefBranchTypeService implements IRefBranchTypeService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final BranchRepository branchRepository;
+    private final CustomerRepository customerRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
+    private final RefBranchTypeRepository refBranchTypeRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private BranchRepository branchRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
-    @Autowired
-    private RefBranchTypeRepository refBranchTypeRepository;
+    //region CONSTRUCTOR
+    @Autowired public RefBranchTypeService(BranchRepository branchRepository,
+                                           CustomerRepository customerRepository,
+                                           BankAccountRepository bankAccountRepository,
+                                           TransactionRepository transactionRepository,
+                                           RefBranchTypeRepository refBranchTypeRepository) {
+        this.branchRepository = branchRepository;
+        this.customerRepository = customerRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
+        this.refBranchTypeRepository = refBranchTypeRepository;
+    }
     //endregion
 
 

@@ -30,13 +30,21 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankAccountApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private BankAccountService bankAccountService;
+    private final BankAccountService bankAccountService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public BankAccountApiController(BankAccountService bankAccountService) {
+        this.bankAccountService = bankAccountService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = {"/bankAccounts", "/bankAccounts/{page}"})
+    @GetMapping({"/bankAccounts", "/bankAccounts/{page}"})
     ResponseEntity<PageableList<BankAccountDto>> bankAccounts(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -66,7 +74,7 @@ public class BankAccountApiController {
                 : new ResponseEntity<>(pageableBankAccountDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/bankAccount/{id}")
+    @GetMapping("/bankAccount/{id}")
     ResponseEntity<BankAccountDto> bankAccountById(@PathVariable("id") Long id) {
         BankAccount bankAccount = bankAccountService.getById(id);
         BankAccountDto bankAccountDto = bankAccount == null
@@ -86,7 +94,7 @@ public class BankAccountApiController {
                 : new ResponseEntity<>(bankAccountDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/bankAccount")
+    @GetMapping("/bankAccount")
     ResponseEntity<BankAccountDto> bankAccountByDetails(@RequestParam("details") String details) {
         BankAccount bankAccount = bankAccountService.getByDetails(details);
         BankAccountDto bankAccountDto = bankAccount == null
@@ -108,7 +116,7 @@ public class BankAccountApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/bankAccount")
+    @PostMapping("/bankAccount")
     ResponseEntity<BankAccountDto> createBank(@RequestBody BankAccountDto clientDto) {
         try {
             bankAccountService.addAccount(clientDto.getDBModel());
@@ -124,7 +132,7 @@ public class BankAccountApiController {
     //endregion
 
     //region HTTP PUT
-    @PutMapping(value = "/bankAccount")
+    @PutMapping("/bankAccount")
     ResponseEntity<BankAccountDto> updateBank(@RequestBody BankAccountDto clientDto) {
         try {
             bankAccountService.updateAccount(clientDto.getDBModel());
@@ -140,7 +148,7 @@ public class BankAccountApiController {
     //endregion
 
     //region HTTP DELETE
-    @DeleteMapping(value = "/bankAccount/{id}")
+    @DeleteMapping("/bankAccount/{id}")
     ResponseEntity<BankAccountDto> deleteBank(@PathVariable("id") Long id) {
         try {
             bankAccountService.deleteAccount(id);

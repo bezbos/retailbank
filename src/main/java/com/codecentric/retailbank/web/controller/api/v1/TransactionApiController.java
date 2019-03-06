@@ -28,13 +28,21 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class TransactionApiController {
 
+    //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
+    //endregion
+
+    //region CONSTRUCTOR
+    @Autowired public TransactionApiController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
+    //endregion
+
 
     //region HTTP GET
-    @GetMapping(value = {"/transactions", "/transactions/{page}"})
+    @GetMapping({"/transactions", "/transactions/{page}"})
     ResponseEntity<PageableList<TransactionDto>> transactions(@PathVariable("page") Optional<Integer> page) {
 
         // If pageIndex is less than 1 set it to 1.
@@ -66,7 +74,7 @@ public class TransactionApiController {
                 : new ResponseEntity<>(pageableTransactionDtos, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/transaction/{id}")
+    @GetMapping("/transaction/{id}")
     ResponseEntity<TransactionDto> transactionById(@PathVariable("id") Long id) {
         Transaction transaction = transactionService.getById(id);
         TransactionDto transactionDto = transaction == null
@@ -87,7 +95,7 @@ public class TransactionApiController {
                 : new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/transaction")
+    @GetMapping("/transaction")
     ResponseEntity<TransactionDto> transactionByDetails(@RequestParam("details") String details) {
         Transaction transaction = transactionService.getByDetails(details);
         TransactionDto transactionDto = transaction == null
@@ -110,7 +118,7 @@ public class TransactionApiController {
     //endregion
 
     //region HTTP POST
-    @PostMapping(value = "/transaction")
+    @PostMapping("/transaction")
     ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto clientDto) {
         try {
             transactionService.addTransaction(clientDto.getDBModel());

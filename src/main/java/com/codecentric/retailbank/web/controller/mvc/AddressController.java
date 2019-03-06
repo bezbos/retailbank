@@ -10,53 +10,57 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/address")
-public class AddressController {
+public class AddressController extends BaseController{
 
     //region FIELDS
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private String CONTROLLER_NAME = "address";
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final String CONTROLLER_NAME = "address";
+
+    private final AddressService addressService;
     //endregion
 
-    //region SERVICES
-    @Autowired
-    private AddressService addressService;
+    //region CONSTRUCTOR
+    @Autowired public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
     //endregion
+
 
     //region INDEX
-    @RequestMapping(value = {"", "/", "/index", "/list", "/list/{pageIdx}"}, method = RequestMethod.GET)
-    public String getIndexPage(@PathVariable Optional<Integer> pageIdx,
-                               Model model) {
-
-        // If pageIndex is less than 1 set it to 1.
-        Integer pageIndex = pageIdx.isPresent() ? pageIdx.get() : 0;
-        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
-                0 : pageIndex;
-
+    @GetMapping({"", "/", "/index", "/list", "/list/{pageIdx}"})
+    public ModelAndView getIndexPage(@PathVariable Optional<Integer> pageIdx) {
+        Integer pageIndex = getValidPageIndex(pageIdx);
         ListPage<Address> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
 
-        model.addAttribute("currentPageIndex", pageIndex);
-        model.addAttribute("totalPages", addresses == null ? null : addresses.getPageCount());
-        model.addAttribute("addresses", addresses == null ? null : addresses.getModels());
-        return CONTROLLER_NAME + "/index";
+        return new ModelAndView(CONTROLLER_NAME + "/index", new HashMap<String, Object>() {
+            {
+                put("currentPageIndex", pageIndex);
+                put("totalPages", addresses == null ? null : addresses.getPageCount());
+                put("addresses", addresses == null ? null : addresses.getModels());
+            }
+        });
     }
     //endregion
 
     //region FORM
-    @RequestMapping(value = {"/form", "/form/{id}"}, method = RequestMethod.GET)
+    @GetMapping({"/form", "/form/{id}"})
     public ModelAndView getFormPage(@PathVariable("id") Optional<Long> id) {
         Address address = id.isPresent() ?
                 addressService.getById(id.get()) : new Address(0L);
@@ -75,7 +79,7 @@ public class AddressController {
         return new ModelAndView(CONTROLLER_NAME + "/form", "addressDto", addressDto);
     }
 
-    @RequestMapping(value = "/formSubmit", method = RequestMethod.POST)
+    @PostMapping("/formSubmit")
     public String onFormSubmit(@ModelAttribute("addressDto") @Valid AddressDto addressDto,
                                BindingResult result,
                                Model model,
@@ -86,7 +90,7 @@ public class AddressController {
             return CONTROLLER_NAME + "/form";
         }
 
-        // Try adding/updating bank
+        // Try adding/updating address
         try {
             if (addressDto.getId() != null && addressDto.getId() != 0) {
                 Address updatedAddress = addressService.getById(addressDto.getId());
@@ -132,7 +136,7 @@ public class AddressController {
     //endregion
 
     //region DELETE
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @GetMapping("/delete/{id}")
     public String onDeleteSubmit(@PathVariable("id") Long id,
                                  RedirectAttributes redirectAttributes) {
         try {

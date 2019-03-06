@@ -23,19 +23,26 @@ public class AddressService implements IAddressService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final BranchRepository branchRepository;
+    private final CustomerRepository customerRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
+    private final AddressRepository addressRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private BranchRepository branchRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
-    @Autowired
-    private AddressRepository addressRepository;
+    //region CONSTRUCTOR
+    @Autowired public AddressService(BranchRepository branchRepository,
+                                     CustomerRepository customerRepository,
+                                     BankAccountRepository bankAccountRepository,
+                                     TransactionRepository transactionRepository,
+                                     AddressRepository addressRepository) {
+        this.branchRepository = branchRepository;
+        this.customerRepository = customerRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
+        this.addressRepository = addressRepository;
+    }
     //endregion
 
 

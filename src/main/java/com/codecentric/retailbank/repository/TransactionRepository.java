@@ -201,7 +201,7 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         return transaction;
     }
 
-    public Transaction singleByDetails(String details) {
+    public Transaction singleByDetails(String details) throws ArgumentNullException, InvalidOperationException{
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 

@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
@@ -53,6 +52,7 @@ public class AccountController extends BaseController {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
     private final String CONTROLLER_NAME = "account";
     //endregion
 
@@ -65,41 +65,41 @@ public class AccountController extends BaseController {
     }
     //endregion
 
+
     //region INDEX
-    @GetMapping(value = {"", "/index"})
-    public String getHomePage() {
-        return CONTROLLER_NAME + "/index";
+    @GetMapping({"", "/index"})
+    public ModelAndView getHomePage() {
+        return new ModelAndView(CONTROLLER_NAME + "/index");
     }
     //endregion
 
     //region LOGIN / LOGOUT
-    @GetMapping(value = "/login")
-    public String getLoginPage() {
-        return CONTROLLER_NAME + "/login";
+    @GetMapping("/login")
+    public ModelAndView getLoginPage() {
+        return new ModelAndView(CONTROLLER_NAME + "/login");
     }
 
-    @GetMapping(value = "/logout-success")
-    public String getLogoutPage() {
-        return CONTROLLER_NAME + "/logout";
+    @GetMapping("/logout-success")
+    public ModelAndView getLogoutPage() {
+        return new ModelAndView(CONTROLLER_NAME + "/logout");
     }
     //endregion
 
     //region REGISTRATION
-    @GetMapping(value = "/registration")
-    public String showRegistrationForm(Model model) {
+    @GetMapping("/registration")
+    public ModelAndView showRegistrationForm() {
         UserDto dto = new UserDto();
-        model.addAttribute("user", dto);
-        return CONTROLLER_NAME + "/registration";
+
+        return new ModelAndView(CONTROLLER_NAME + "/registration", "user", dto);
     }
 
-    @PostMapping(value = "/registration")
+    @PostMapping("/registration")
     public ModelAndView registerUserAccount(@ModelAttribute("user") @Valid UserDto accountDto,
                                             BindingResult result,
                                             WebRequest request) {
         User registered = null;
 
         if (!result.hasErrors()) {
-            registered = new User();
             registered = createUserAccount(accountDto);
         }
 
@@ -116,17 +116,15 @@ public class AccountController extends BaseController {
         return new ModelAndView(CONTROLLER_NAME + "/registrationConfirm", "user", accountDto);
     }
 
-    @RequestMapping(value = "/registrationConfirm", method = RequestMethod.GET)
-    public String confirmRegistration(WebRequest request,
-                                      Model model,
-                                      @RequestParam("token") String token) {
+    @GetMapping("/registrationConfirm")
+    public ModelAndView confirmRegistration(WebRequest request,
+                                            @RequestParam("token") String token) {
         Locale locale = request.getLocale();
         VerificationToken verificationToken = userService.getVerificationToken(token);
 
         if (verificationToken == null) {
             String message = messages.getMessage("auth.message.invalidToken", null, locale);
-            model.addAttribute("message", message);
-            return "redirect:/" + CONTROLLER_NAME + "/badUser?lang=" + locale.getLanguage();
+            return new ModelAndView(CONTROLLER_NAME + "/badUser?lang=" + locale.getLanguage(), "message", message);
         }
 
         User user = verificationToken.getUser();
@@ -134,24 +132,27 @@ public class AccountController extends BaseController {
 
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
             String messageValue = messages.getMessage("auth.message.expired", null, locale);
-            model.addAttribute("message", messageValue);
-            model.addAttribute("expired", true);
-            model.addAttribute("token", token);
 
-            return "redirect:/" + CONTROLLER_NAME + "/badUser?lang=" + locale.getLanguage();
+            return new ModelAndView(CONTROLLER_NAME + "/badUser?lang=" + locale.getLanguage(), new HashMap<String, Object>() {
+                {
+                    put("message", messageValue);
+                    put("expired", true);
+                    put("token", token);
+                }
+            });
         }
 
         user.setEnabled(true);
         userService.saveRegisteredUser(user);
 
-        model.addAttribute("message", messages.getMessage("message.accountVerified", null, locale));
-        return "redirect:/" + CONTROLLER_NAME + "/login?lang=" + locale.getLanguage();
+        String messageValue = messages.getMessage("message.accountVerified", null, locale);
+        return new ModelAndView(CONTROLLER_NAME + "/login?lang=" + locale.getLanguage(), "message", messageValue);
     }
 
-    @RequestMapping(value = "/resendRegistrationToken", method = RequestMethod.GET)
-    public String resendRegistrationToken(HttpServletRequest request,
-                                          Model model,
-                                          @RequestParam("token") String existingToken) {
+    @GetMapping("/resendRegistrationToken")
+    public ModelAndView resendRegistrationToken(HttpServletRequest request,
+                                                Model model,
+                                                @RequestParam("token") String existingToken) {
         VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
         Locale locale = request.getLocale();
         User user = userService.getUser(newToken.getToken());
@@ -162,25 +163,24 @@ public class AccountController extends BaseController {
             mailSender.send(email);
         } catch (MailAuthenticationException e) {
             LOGGER.debug("MailAuthenticationException", e);
-            return "redirect:/" + CONTROLLER_NAME + "emailError.html?lang=" + locale.getLanguage();
+            return new ModelAndView(CONTROLLER_NAME + "emailError.html?lang=" + locale.getLanguage());
         } catch (Exception e) {
             LOGGER.debug(e.getLocalizedMessage(), e);
-            model.addAttribute("message", e.getLocalizedMessage());
-            return "redirect:/login.html?lang=" + locale.getLanguage();
+            return new ModelAndView(CONTROLLER_NAME + "login.html?lang=" + locale.getLanguage(), "message", e.getLocalizedMessage());
         }
 
-        model.addAttribute("message", messages.getMessage("message.resendToken", null, locale));
-        return "redirect:/" + CONTROLLER_NAME + "/login.html?lang=" + locale.getLanguage();
+        String messageValue = messages.getMessage("message.resendToken", null, locale);
+        return new ModelAndView(CONTROLLER_NAME + "/login.html?lang=" + locale.getLanguage(), "message", messageValue);
     }
     //endregion
 
     //region PASSWORD
-    @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-    public String showForgotPasswordPage() {
-        return CONTROLLER_NAME + "/forgotPassword";
+    @GetMapping("/forgotPassword")
+    public ModelAndView showForgotPasswordPage() {
+        return new ModelAndView(CONTROLLER_NAME + "/forgotPassword");
     }
 
-    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    @PostMapping("/resetPassword")
     @ResponseBody
     public GenericResponse resetPassword(HttpServletRequest request,
                                          @RequestParam("email") String userEmail) {
@@ -205,11 +205,11 @@ public class AccountController extends BaseController {
         return new GenericResponse(messages.getMessage("message.resetPasswordEmail", null, request.getLocale()));
     }
 
-    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
-    public String showChangePasswordPage(Locale locale,
-                                         Model model,
-                                         @RequestParam("id") long id,
-                                         @RequestParam("token") String token) {
+    @GetMapping("/changePassword")
+    public ModelAndView showChangePasswordPage(Locale locale,
+                                               Model model,
+                                               @RequestParam("id") long id,
+                                               @RequestParam("token") String token) {
 
         // Retrieve password reset token from DB, then retrieve token owner.
         PasswordResetToken passwordToken = userService.getPasswordResetToken(token);
@@ -218,15 +218,14 @@ public class AccountController extends BaseController {
         // Check if password reset token is null or owner user doesn't exist.
         if ((passwordToken == null) || (user.getId() != id)) {
             String message = messages.getMessage("auth.message.invalidToken", null, locale);
-            model.addAttribute("message", message);
-            return "redirect:/" + CONTROLLER_NAME + "/login";
+            return new ModelAndView(CONTROLLER_NAME + "/login", "message", message);
         }
 
         // Check if password reset token has expired.
         Calendar cal = Calendar.getInstance();
         if ((passwordToken.getExpiryDate().getTime() - cal.getTime().getTime() <= 0)) {
-            model.addAttribute("message", messages.getMessage("auth.message.expired", null, locale));
-            return "redirect:/" + CONTROLLER_NAME + "/login";
+            String messageValue = messages.getMessage("auth.message.expired", null, locale);
+            return new ModelAndView(CONTROLLER_NAME + "/login", "message", messageValue);
         }
 
         // During reset phase, limit current session user to only being able to reset the password.
@@ -235,16 +234,16 @@ public class AccountController extends BaseController {
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        return "redirect:/" + CONTROLLER_NAME + "/updateForgotPassword";
+        return new ModelAndView(CONTROLLER_NAME + "/updateForgotPassword");
     }
 
-    @RequestMapping(value = "/updateForgotPassword", method = RequestMethod.GET)
-    public String showUpdatePasswordPage() {
-        return CONTROLLER_NAME + "/updatePassword";
+    @GetMapping("/updateForgotPassword")
+    public ModelAndView showUpdatePasswordPage() {
+        return new ModelAndView(CONTROLLER_NAME + "/updatePassword");
     }
 
-    @RequestMapping(value = "/savePassword", method = RequestMethod.POST)
-    public String savePassword(@Valid PasswordDto passwordDto) {
+    @PostMapping("/savePassword")
+    public ModelAndView savePassword(@Valid PasswordDto passwordDto) {
         // Retrieve the current session user
         User user = (User) SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -261,15 +260,15 @@ public class AccountController extends BaseController {
         // Logout the current session user.
         SecurityContextHolder.clearContext();
 
-        return CONTROLLER_NAME + "/passwordResetSuccess";
+        return new ModelAndView(CONTROLLER_NAME + "/passwordResetSuccess");
     }
 
-    @RequestMapping(value = "/updatePassword", method = RequestMethod.GET)
-    public String showChangePasswordPageForAuthenticatedUser() {
-        return CONTROLLER_NAME + "/changePassword";
+    @GetMapping("/updatePassword")
+    public ModelAndView showChangePasswordPageForAuthenticatedUser() {
+        return new ModelAndView(CONTROLLER_NAME + "/changePassword");
     }
 
-    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    @PostMapping("/updatePassword")
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseBody
     public GenericResponse updatePassword(Locale locale,
@@ -294,11 +293,12 @@ public class AccountController extends BaseController {
         return new GenericResponse(messages.getMessage("message.updatePasswordSuc", null, locale));
     }
 
-    @RequestMapping(value = "/passwordChangeSuccess", method = RequestMethod.GET)
-    public String showPasswordChangeSuccessPage() {
-        return CONTROLLER_NAME + "/passwordChangeSuccess";
+    @GetMapping("/passwordChangeSuccess")
+    public ModelAndView showPasswordChangeSuccessPage() {
+        return new ModelAndView(CONTROLLER_NAME + "/passwordChangeSuccess");
     }
     //endregion
+
 
     //region OAUTH2
     private static String authorizationRequestBaseUri = "../oauth2/authorization";
@@ -308,8 +308,8 @@ public class AccountController extends BaseController {
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;
 
-    @RequestMapping(value = "/oauth_login", method = RequestMethod.GET)
-    public String getOauthLoginPage(Model model) {
+    @GetMapping("/oauth_login")
+    public ModelAndView getOauthLoginPage() {
 
         Iterable<ClientRegistration> clientRegistrations = null;
 
@@ -326,9 +326,7 @@ public class AccountController extends BaseController {
             );
         }
 
-        model.addAttribute("urls", oauth2AuthenticationUrls);
-
-        return CONTROLLER_NAME + "/oauth_login";
+        return new ModelAndView(CONTROLLER_NAME + "/oauth_login", "urls", oauth2AuthenticationUrls);
     }
     //endregion
 

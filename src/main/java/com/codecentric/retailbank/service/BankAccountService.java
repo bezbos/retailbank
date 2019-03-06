@@ -18,11 +18,14 @@ public class BankAccountService implements IBankAccountService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final BankAccountRepository bankAccountRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
+    //region CONSTRUCTOR
+    @Autowired public BankAccountService(BankAccountRepository bankAccountRepository) {
+        this.bankAccountRepository = bankAccountRepository;
+    }
     //endregion
 
 

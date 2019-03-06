@@ -20,11 +20,14 @@ public class MerchantService implements IMerchantService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final MerchantRepository merchantRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private MerchantRepository merchantRepository;
+    //region CONSTRUCTOR
+    @Autowired public MerchantService(MerchantRepository merchantRepository) {
+        this.merchantRepository = merchantRepository;
+    }
     //endregion
 
 
@@ -39,9 +42,9 @@ public class MerchantService implements IMerchantService {
         try {
             merchant = merchantRepository.singleByDetails(details);
         } catch (InvalidOperationException e) {
-           LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
+            LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
 
-           return (Merchant) e.getPreservedData();
+            return (Merchant) e.getPreservedData();
         } catch (ArgumentNullException e) {
             e.printStackTrace();
         }

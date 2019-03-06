@@ -155,7 +155,7 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         return bank;
     }
 
-    public Bank singleByDetails(String details) {
+    public Bank singleByDetails(String details) throws ArgumentNullException, InvalidOperationException {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -181,7 +181,7 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
                 ++rowCounter;
                 if (rowCounter > 1)
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.", bank);
-                
+
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);

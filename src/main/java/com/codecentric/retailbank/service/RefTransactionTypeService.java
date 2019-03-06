@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.service;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.repository.RefTransactionTypeRepository;
 import com.codecentric.retailbank.repository.TransactionRepository;
@@ -18,13 +20,17 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final RefTransactionTypeRepository refTransactionTypeRepository;
+    private final TransactionRepository transactionRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private RefTransactionTypeRepository refTransactionTypeRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
+    //region CONSTRUCTOR
+    @Autowired public RefTransactionTypeService(RefTransactionTypeRepository refTransactionTypeRepository,
+                                                TransactionRepository transactionRepository) {
+        this.refTransactionTypeRepository = refTransactionTypeRepository;
+        this.transactionRepository = transactionRepository;
+    }
     //endregion
 
 
@@ -35,7 +41,16 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
     }
 
     @Override public RefTransactionType getByCode(String code) {
-        RefTransactionType refTransactionType = refTransactionTypeRepository.singleByCode(code);
+        RefTransactionType refTransactionType = null;
+        try {
+            refTransactionType = refTransactionTypeRepository.singleByCode(code);
+        } catch (ArgumentNullException e) {
+            e.printStackTrace();
+        } catch (InvalidOperationException e) {
+            LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
+            return (RefTransactionType) e.getPreservedData();
+        }
+
         return refTransactionType;
     }
 

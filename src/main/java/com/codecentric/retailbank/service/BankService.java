@@ -1,5 +1,7 @@
 package com.codecentric.retailbank.service;
 
+import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
+import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.repository.BankAccountRepository;
 import com.codecentric.retailbank.repository.BankRepository;
@@ -22,19 +24,26 @@ public class BankService implements IBankService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private final BranchRepository branchRepository;
+    private final CustomerRepository customerRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final TransactionRepository transactionRepository;
+    private final BankRepository bankRepository;
     //endregion
 
-    //region REPOSITORIES
-    @Autowired
-    private BranchRepository branchRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
-    @Autowired
-    private BankRepository bankRepository;
+    //region CONSTRUCTOR
+    @Autowired public BankService(BranchRepository branchRepository,
+                                  CustomerRepository customerRepository,
+                                  BankAccountRepository bankAccountRepository,
+                                  TransactionRepository transactionRepository,
+                                  BankRepository bankRepository) {
+        this.branchRepository = branchRepository;
+        this.customerRepository = customerRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.transactionRepository = transactionRepository;
+        this.bankRepository = bankRepository;
+    }
     //endregion
 
 
@@ -45,7 +54,15 @@ public class BankService implements IBankService {
     }
 
     @Override public Bank getByDetails(String details) {
-        Bank bank = bankRepository.singleByDetails(details);
+        Bank bank = null;
+        try {
+            bank = bankRepository.singleByDetails(details);
+        } catch (ArgumentNullException e) {
+            e.printStackTrace();
+        } catch (InvalidOperationException e) {
+            LOGGER.warn("Handled an \"InvalidOperationException\". Returning the first element from multiple elements.", e);
+            return (Bank) e.getPreservedData();
+        }
         return bank;
     }
 

@@ -3,6 +3,7 @@ package com.codecentric.retailbank.repository.helpers;
 import java.util.List;
 
 public class ListPage<T> {
+
     private List<T> models;
     private long pageCount;
 
