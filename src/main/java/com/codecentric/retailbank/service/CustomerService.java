@@ -35,9 +35,14 @@ public class CustomerService implements ICustomerService {
         return customer;
     }
 
-    @Override public Customer getByPersonalDetails(String details) {
-        Customer customer = customerRepository.getSingleByPersonalDetails(details);
+    @Override public Customer getByPersonalDetails(String personalDetails) {
+        Customer customer = customerRepository.getSingleByPersonalDetails(personalDetails);
         return customer;
+    }
+
+    public List<Customer> getAllByPersonalDetails(String personalDetails) {
+        List<Customer> customers = customerRepository.allByPersonalDetails(personalDetails);
+        return customers;
     }
 
     @Override public ListPage<Customer> getAllCustomers(int pageIndex, int pageSize) {

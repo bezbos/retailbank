@@ -65,7 +65,7 @@ public class BankAccountApiController {
                                 x.getDetails()
                         )));
 
-        PageableList<BankAccountDto> pageableBankAccountDtos = new PageableList<>(pageIndex, bankAccountDtos, bankAccounts.getPageCount());
+        PageableList<BankAccountDto> pageableBankAccountDtos = new PageableList<>(pageIndex, bankAccountDtos, bankAccounts.getPageCount(), bankAccounts.getModelsCount());
 
         return pageableBankAccountDtos.currentPage == null
                 //  404 NOT FOUND

@@ -57,7 +57,7 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         return addresses;
     }
 
-    @Override public ListPage allRange(int pageIndex, int pageSize) {
+    @Override public ListPage<Address> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<Address> addressListPage = new ListPage<>();
 
@@ -104,6 +104,43 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         }
 
         return addressListPage;
+    }
+
+    public List<Address> allByLine1(String line1) {
+        ResultSet resultSet = null;
+        List<Address> addresses = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_allAddressesByLine1 = conn.prepareCall("{call allAddressesByLine1(?)}")) {
+
+            // Retrieve all addresses
+            cs_allAddressesByLine1.setString(1, line1);
+            cs_allAddressesByLine1.execute();
+
+            // Transform each ResultSet row into Address model and add to "addresses" list
+            resultSet = cs_allAddressesByLine1.getResultSet();
+            while (resultSet.next()) {
+                addresses.add(
+                        new Address(
+                                resultSet.getLong(1),
+                                resultSet.getString(2),
+                                resultSet.getString(3),
+                                resultSet.getString(4),
+                                resultSet.getString(5),
+                                resultSet.getString(6),
+                                resultSet.getString(7),
+                                resultSet.getString(8)
+                        )
+                );
+            }
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return addresses;
     }
 
     @Override public Address single(Long id) {

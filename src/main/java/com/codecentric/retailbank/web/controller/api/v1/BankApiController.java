@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
@@ -30,10 +31,9 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankApiController {
 
+    private final BankService bankService;
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    private final BankService bankService;
     //endregion
 
     //region CONSTRUCTOR
@@ -45,7 +45,25 @@ public class BankApiController {
 
     //region HTTP GET
     @GetMapping({"/banks", "/banks/{page}"})
-    ResponseEntity<PageableList<BankDto>> banks(@PathVariable("page") Optional<Integer> page) {
+    ResponseEntity<PageableList<BankDto>> banks(@PathVariable("page") Optional<Integer> page,
+                                                @RequestParam("details") Optional<String> details) {
+
+        if (details.isPresent()) {
+            List<Bank> banks = bankService.getAllBanksByDetails(details.get());
+            List<BankDto> bankDtos = banks.stream()
+                    .map(bank -> bank == null
+                            ? null
+                            : new BankDto(bank.getId(), bank.getDetails()))
+                    .collect(Collectors.toList());
+
+            PageableList<BankDto> pageableBankDtos = new PageableList<>(0L, bankDtos, 0L, 0L);
+
+            return bankDtos.size() == 0
+                    //  404 NOT FOUND
+                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    //  200 OK
+                    : new ResponseEntity<>(pageableBankDtos, HttpStatus.OK);
+        }
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;
@@ -59,7 +77,7 @@ public class BankApiController {
                         x -> bankDtos.add(new BankDto(x.getId(), x.getDetails()))
                 );
 
-        PageableList<BankDto> pageableBankDtos = new PageableList<>(pageIndex, bankDtos, banks.getPageCount());
+        PageableList<BankDto> pageableBankDtos = new PageableList<>(pageIndex, bankDtos, banks.getPageCount(), banks.getModelsCount());
 
         return pageableBankDtos.currentPage == null
                 //  404 NOT FOUND

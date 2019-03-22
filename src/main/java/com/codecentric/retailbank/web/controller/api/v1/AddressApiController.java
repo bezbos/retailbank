@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
@@ -30,10 +31,9 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class AddressApiController {
 
+    private final AddressService addressService;
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    private final AddressService addressService;
     //endregion
 
     //region CONSTRUCTOR
@@ -44,7 +44,30 @@ public class AddressApiController {
 
     //region HTTP GET
     @GetMapping({"/addresses", "/addresses/{page}"})
-    ResponseEntity<PageableList<AddressDto>> addresses(@PathVariable("page") Optional<Integer> page) {
+    ResponseEntity<PageableList<AddressDto>> addresses(@PathVariable("page") Optional<Integer> page,
+                                                       @RequestParam("line1") Optional<String> line1) {
+
+        if (line1.isPresent()) {
+            List<Address> addresses = addressService.getManyByLine1(line1.get());
+            List<AddressDto> addressDtos = addresses.stream().map(address -> address == null
+                    ? null
+                    : new AddressDto(address.getId(),
+                    address.getLine1(),
+                    address.getLine2(),
+                    address.getTownCity(),
+                    address.getZipPostcode(),
+                    address.getStateProvinceCountry(),
+                    address.getCountry(),
+                    address.getOtherDetails()
+            )).collect(Collectors.toList());
+
+            PageableList<AddressDto> pageableAddressDtos = new PageableList<>(0L, addressDtos, 0L, 0L);
+            return addressDtos.size() == 0
+                    //  404 NOT FOUND
+                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    //  200 OK
+                    : new ResponseEntity<>(pageableAddressDtos, HttpStatus.OK);
+        }
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;
@@ -66,11 +89,11 @@ public class AddressApiController {
                                 x.getOtherDetails())
                 ));
 
-        PageableList<AddressDto> pageableAddressDtos = new PageableList<>(pageIndex, addressDtos, addresses.getPageCount());
+        PageableList<AddressDto> pageableAddressDtos = new PageableList<>(pageIndex, addressDtos, addresses.getPageCount(), addresses.getModelsCount());
 
         return pageableAddressDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE)
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 //  200 OK
                 : new ResponseEntity<>(pageableAddressDtos, HttpStatus.OK);
     }
@@ -98,7 +121,7 @@ public class AddressApiController {
     }
 
     @GetMapping("/address")
-    ResponseEntity<AddressDto> addressByDetails(@RequestParam("line1") String line1) {
+    ResponseEntity<AddressDto> addressByLine1(@RequestParam("line1") String line1) {
         Address address = addressService.getByLine1(line1);
         AddressDto addressDto = address == null
                 ? null

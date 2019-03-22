@@ -45,6 +45,11 @@ public class BranchService implements IBranchService {
         return branches;
     }
 
+    public List<Branch> getAllBranchesByDetails(String details) {
+        List<Branch> branches = branchRepository.allByDetails(details);
+        return branches;
+    }
+
     @Override public ListPage<Branch> getAllBranchesByPage(Integer pageIndex, int pageSize) {
         ListPage<Branch> branches = branchRepository.allRange(pageIndex, pageSize);
         return branches;

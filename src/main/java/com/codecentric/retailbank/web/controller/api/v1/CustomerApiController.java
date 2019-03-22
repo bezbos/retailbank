@@ -33,7 +33,7 @@ public class CustomerApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final CustomerService customerService;
+    private CustomerService customerService;
     //endregion
 
     //region CONSTRUCTOR
@@ -45,11 +45,32 @@ public class CustomerApiController {
 
     //region HTTP GET
     @GetMapping({"/customers", "/customers/{page}"})
-    ResponseEntity<PageableList<CustomerDto>> customers(@PathVariable("page") Optional<Integer> page) {
+    ResponseEntity<PageableList<CustomerDto>> customers(@PathVariable("page") Optional<Integer> page,
+                                                        @RequestParam("personalDetails") Optional<String> personalDetails) {
+
+        if (personalDetails.isPresent()) {
+            List<Customer> customers = customerService.getAllByPersonalDetails(personalDetails.get());
+            List<CustomerDto> customerDtos = new ArrayList<>();
+            customers.forEach(
+                    b -> customerDtos.add(
+                            new CustomerDto(
+                                    b.getId(),
+                                    b.getAddress().getDto(),
+                                    b.getBranch().getDto(),
+                                    b.getPersonalDetails(),
+                                    b.getContactDetails()
+                            )));
+
+            return customerDtos.size() == 0
+                    //  404 NOT FOUND
+                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    //  200 OK
+                    : new ResponseEntity<>(new PageableList<>(0L, customerDtos, 0L, 0L), HttpStatus.OK);
+        }
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;
-        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
+        pageIndex = pageIndex == 0 || pageIndex < 0 ?
                 0 : pageIndex;
 
         ListPage<Customer> customers = customerService.getAllCustomers(pageIndex, PAGE_SIZE);
@@ -66,11 +87,11 @@ public class CustomerApiController {
                                 )));
 
 
-        PageableList<CustomerDto> pageableCustomerDtos = new PageableList<>(pageIndex, customerDtos, customers.getPageCount());
+        PageableList<CustomerDto> pageableCustomerDtos = new PageableList<>(pageIndex, customerDtos, customers.getPageCount(), customers.getModelsCount());
 
         return pageableCustomerDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE)
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 //  200 OK
                 : new ResponseEntity<>(pageableCustomerDtos, HttpStatus.OK);
     }

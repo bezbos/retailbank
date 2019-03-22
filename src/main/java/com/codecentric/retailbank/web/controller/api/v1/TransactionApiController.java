@@ -65,7 +65,7 @@ public class TransactionApiController {
                                         x.getDetails()
                                 )));
 
-        PageableList<TransactionDto> pageableTransactionDtos = new PageableList<>(pageIndex, transactionDtos, transactions.getPageCount());
+        PageableList<TransactionDto> pageableTransactionDtos = new PageableList<>(pageIndex, transactionDtos, transactions.getPageCount(), transactions.getModelsCount());
 
         return pageableTransactionDtos.currentPage == null
                 //  404 NOT FOUND

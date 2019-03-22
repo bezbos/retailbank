@@ -2,6 +2,7 @@ package com.codecentric.retailbank.model.dto;
 
 import com.codecentric.retailbank.model.domain.BankAccount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.ReadOnlyProperty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,6 +22,7 @@ public class BankAccountDto {
     private CustomerDto customer;
 
     @NotNull
+    @ReadOnlyProperty
     private BigDecimal balance;
 
     @Size(max = 255)
@@ -93,10 +95,6 @@ public class BankAccountDto {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
     public String getDetails() {
         return details;
     }
@@ -114,7 +112,7 @@ public class BankAccountDto {
                 this.status != null ? this.status.getDBModel() : null,
                 this.type != null ? this.type.getDBModel() : null,
                 this.customer != null ? this.customer.getDBModel() : null,
-                this.balance,
+                this.balance == null ? BigDecimal.ZERO : balance,
                 this.details
         );
     }

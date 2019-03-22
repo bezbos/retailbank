@@ -13,7 +13,7 @@ import java.io.IOException;
 @WebFilter
 public class AddResponseHeaderFilter implements Filter {
 
-    @Override public void init(FilterConfig filterConfig) throws ServletException {
+    @Override public void init(FilterConfig filterConfig) {
 
     }
 
@@ -25,6 +25,8 @@ public class AddResponseHeaderFilter implements Filter {
 
         // NOTE: DEVELOPMENT ONLY!!!
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "content-type");
 
         chain.doFilter(request, response);
     }

@@ -31,9 +31,9 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 public class MerchantApiController {
 
     //region FIELDS
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private Logger Logger = LoggerFactory.getLogger(getClass());
 
-    private final MerchantService merchantService;
+    private MerchantService merchantService;
     //endregion
 
     //region CONSTRUCTOR
@@ -42,9 +42,27 @@ public class MerchantApiController {
     }
     //endregion
 
+
     //region HTTP GET
     @GetMapping({"/merchants", "/merchants/{page}"})
-    ResponseEntity<PageableList<MerchantDto>> merchants(@PathVariable("page") Optional<Integer> page) {
+    ResponseEntity<PageableList<MerchantDto>> merchants(@PathVariable("page") Optional<Integer> page,
+                                                        @RequestParam("details") Optional<String> details) {
+
+        if (details.isPresent()) {
+            List<Merchant> merchants = merchantService.getAllMerchantsByDetails(details.get());
+            List<MerchantDto> merchantDtos = new ArrayList<>();
+            merchants.forEach(
+                    b -> merchantDtos.add(new MerchantDto(b.getId(), b.getDetails()))
+            );
+
+            PageableList<MerchantDto> pageableMerchantDtos = new PageableList<>(merchantDtos);
+
+            return merchantDtos.size() == 0
+                    //  404 NOT FOUND
+                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    //  200 OK
+                    : new ResponseEntity<>(pageableMerchantDtos, HttpStatus.OK);
+        }
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;
@@ -58,11 +76,11 @@ public class MerchantApiController {
                         b -> merchantDtos.add(new MerchantDto(b.getId(), b.getDetails()))
                 );
 
-        PageableList<MerchantDto> pageableMerchantDtos = new PageableList<>(pageIndex, merchantDtos, merchants.getPageCount());
+        PageableList<MerchantDto> pageableMerchantDtos = new PageableList<>(pageIndex, merchantDtos, merchants.getPageCount(), merchants.getModelsCount());
 
         return pageableMerchantDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE)
+                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                 //  200 OK
                 : new ResponseEntity<>(pageableMerchantDtos, HttpStatus.OK);
     }
@@ -102,7 +120,7 @@ public class MerchantApiController {
         try {
             merchantService.addMerchant(clientDto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            Logger.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -118,7 +136,7 @@ public class MerchantApiController {
         try {
             merchantService.updateMerchant(clientDto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            Logger.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
         }
@@ -134,7 +152,7 @@ public class MerchantApiController {
         try {
             merchantService.deleteMerchant(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            Logger.error(e.getMessage());
             //  400 BAD REQUEST
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

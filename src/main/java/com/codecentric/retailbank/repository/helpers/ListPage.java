@@ -6,6 +6,7 @@ public class ListPage<T> {
 
     private List<T> models;
     private long pageCount;
+    private long modelsCount;
 
 
     public ListPage() {
@@ -13,8 +14,9 @@ public class ListPage<T> {
 
     public ListPage(List<T> modelList, long modelsCount, long pageSize) {
         this.models = modelList;
+        this.modelsCount = modelsCount;
         this.pageCount = (modelsCount / pageSize) < 1.0f ?
-                1L : (long)Math.ceil((modelsCount / pageSize) + 0.5f);
+                1L : (long) Math.ceil((modelsCount / pageSize) + 0.5f);
     }
 
 
@@ -31,7 +33,16 @@ public class ListPage<T> {
     }
 
     public void setPageCount(long modelsCount, long pageSize) {
+        this.modelsCount = modelsCount;
         this.pageCount = (modelsCount / pageSize) < 1.0f ?
-                1L : (long)Math.ceil((modelsCount / pageSize) + 0.5f);
+                1L : (long) Math.ceil((modelsCount / pageSize) + 0.5f);
+    }
+
+    public long getModelsCount() {
+        return modelsCount;
+    }
+
+    public void setModelsCount(long modelsCount) {
+        this.modelsCount = modelsCount;
     }
 }

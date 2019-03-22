@@ -57,6 +57,11 @@ public class AddressService implements IAddressService {
         return address;
     }
 
+    public List<Address> getManyByLine1(String line1) {
+        List<Address> addresses = addressRepository.allByLine1(line1);
+        return addresses;
+    }
+
     @Override public List<Address> getAllAddress() {
         List<Address> addresses = addressRepository.all();
         return addresses;

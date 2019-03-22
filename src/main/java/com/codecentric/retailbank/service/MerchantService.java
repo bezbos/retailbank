@@ -56,6 +56,11 @@ public class MerchantService implements IMerchantService {
         return merchants;
     }
 
+    public List<Merchant> getAllMerchantsByDetails(String details) {
+        List<Merchant> merchants = merchantRepository.allByDetails(details);
+        return merchants;
+    }
+
     public List<Merchant> getAllMerchants() {
         List<Merchant> merchants = merchantRepository.all();
         return merchants;

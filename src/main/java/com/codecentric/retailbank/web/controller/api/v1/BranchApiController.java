@@ -33,7 +33,7 @@ public class BranchApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final BranchService branchService;
+    private BranchService branchService;
     //endregion
 
     //region CONSTRUCTOR
@@ -45,27 +45,48 @@ public class BranchApiController {
 
     //region HTTP GET
     @GetMapping({"/branches", "/branches/{page}"})
-    ResponseEntity<PageableList<BranchDto>> branches(@PathVariable("page") Optional<Integer> page) {
+    ResponseEntity<PageableList<BranchDto>> branches(@PathVariable("page") Optional<Integer> page,
+                                                     @RequestParam("details") Optional<String> details) {
+
+        if(details.isPresent()){
+            List<Branch> branches = branchService.getAllBranchesByDetails(details.get());
+            List<BranchDto> branchDtos = new ArrayList<>();
+            branches.forEach(b -> branchDtos.add(
+                            new BranchDto(
+                                    b.getId(),
+                                    b.getAddress().getDto(),
+                                    b.getBank().getDto(),
+                                    b.getRefBranchType().getDto(),
+                                    b.getDetails()
+                            )));
+
+            PageableList<BranchDto> pageableBranchDtos = new PageableList<>(0L, branchDtos, 0L, 0L);
+
+            return branchDtos.size() == 0
+                    //  404 NOT FOUND
+                    ? new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE)
+                    //  200 OK
+                    : new ResponseEntity<>(pageableBranchDtos, HttpStatus.OK);
+        }
 
         // If pageIndex is less than 1 set it to 1.
-        Integer pageIndex = page.isPresent() ? page.get() : 0;
-        pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
+        int pageIndex = page.isPresent() ? page.get() : 0;
+        pageIndex = pageIndex == 0 || pageIndex < 0 ?
                 0 : pageIndex;
 
         ListPage<Branch> branches = branchService.getAllBranchesByPage(pageIndex, PAGE_SIZE);
         List<BranchDto> branchDtos = new ArrayList<>();
         branches.getModels()
-                .forEach(
-                        b -> branchDtos.add(
-                                new BranchDto(
-                                        b.getId(),
-                                        b.getAddress().getDto(),
-                                        b.getBank().getDto(),
-                                        b.getRefBranchType().getDto(),
-                                        b.getDetails()
-                                )));
+                .forEach(b -> branchDtos.add(
+                        new BranchDto(
+                                b.getId(),
+                                b.getAddress().getDto(),
+                                b.getBank().getDto(),
+                                b.getRefBranchType().getDto(),
+                                b.getDetails()
+                        )));
 
-        PageableList<BranchDto> pageableBranchDtos = new PageableList<>(pageIndex, branchDtos, branches.getPageCount());
+        PageableList<BranchDto> pageableBranchDtos = new PageableList<>(pageIndex, branchDtos, branches.getPageCount(), branches.getModelsCount());
 
         return pageableBranchDtos.currentPage == null
                 //  404 NOT FOUND

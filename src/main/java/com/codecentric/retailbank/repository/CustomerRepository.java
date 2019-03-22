@@ -125,6 +125,51 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
         return customerListPage;
     }
 
+    public List<Customer> allByPersonalDetails(String personalDetails) {
+        ResultSet resultSet = null;
+        List<Customer> customers = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement cs_allCustomersRange = conn.prepareCall("{call allCustomersByPersonalDetails(?)}")) {
+
+            // Retrieve all customers
+            cs_allCustomersRange.setString(1, personalDetails);
+            cs_allCustomersRange.execute();
+
+            // Transform each ResultSet row into a Customer model and add to "customers" list
+            resultSet = cs_allCustomersRange.getResultSet();
+            while (resultSet.next()) {
+
+                Address address = new Address(
+                        resultSet.getLong("customers.address_id"),
+                        resultSet.getString("addresses.line_1")
+                );
+
+                Branch branch = new Branch(
+                        resultSet.getLong("customers.branch_id"),
+                        resultSet.getString("branches.branch_details")
+                );
+
+                Customer customer = new Customer(
+                        resultSet.getLong("customers.customer_id"),
+                        address,
+                        branch,
+                        resultSet.getString("customers.personal_details"),
+                        resultSet.getString("customers.contact_details")
+                );
+
+                customers.add(customer);
+            }
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return customers;
+    }
+
     @Override public Customer single(Long id) {
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");

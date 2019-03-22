@@ -71,6 +71,11 @@ public class BankService implements IBankService {
         return banks;
     }
 
+    public List<Bank> getAllBanksByDetails(String details) {
+        List<Bank> banks = bankRepository.allByDetails(details);
+        return banks;
+    }
+
     @Override public ListPage<Bank> getAllBanksByPage(int pageIndex, int pageSize) {
         ListPage<Bank> banks = bankRepository.allRange(pageIndex, pageSize);
         return banks;
