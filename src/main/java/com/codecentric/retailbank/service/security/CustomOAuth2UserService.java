@@ -80,6 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setUsing2FA(false);
         user.setFirstName((String) oAuth2UserInfo.getAttributes().get("name"));
 
+        // We first add the user to the DB because we need it to have an ID
         try {
             userRepository.add(user);
         } catch (Exception ex) {

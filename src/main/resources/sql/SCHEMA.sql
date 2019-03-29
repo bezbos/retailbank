@@ -112,7 +112,9 @@ CREATE TABLE user_account(
     enabled BOOLEAN,
     is_using2fa BOOLEAN,
     secret VARCHAR(255),
-    last_login TIMESTAMP
+    last_login TIMESTAMP,
+    auth_provider VARCHAR(255) DEFAULT 'local' NOT NULL,
+    auth_provider_id VARCHAR(255) NULL
 );
 
 CREATE TABLE user_role(
