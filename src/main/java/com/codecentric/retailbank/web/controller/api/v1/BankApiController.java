@@ -3,6 +3,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 import com.codecentric.retailbank.model.domain.Bank;
 import com.codecentric.retailbank.model.dto.BankDto;
 import com.codecentric.retailbank.repository.helpers.ListPage;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.BankService;
 import com.codecentric.retailbank.web.controller.api.v1.helpers.PageableList;
 import org.slf4j.Logger;
@@ -118,6 +119,9 @@ public class BankApiController {
     //region HTTP POST
     @PostMapping("/bank")
     ResponseEntity<BankDto> createBank(@RequestBody BankDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             bankService.addBank(clientDto.getDBModel());
         } catch (Exception e) {
@@ -134,6 +138,9 @@ public class BankApiController {
     //region HTTP PUT
     @PutMapping("/bank")
     ResponseEntity<BankDto> updateBank(@RequestBody BankDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             bankService.updateBank(clientDto.getDBModel());
         } catch (Exception e) {
@@ -150,6 +157,9 @@ public class BankApiController {
     //region HTTP DELETE
     @DeleteMapping("/bank/{id}")
     ResponseEntity<BankDto> deleteBank(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             bankService.deleteBank(id);
         } catch (Exception e) {

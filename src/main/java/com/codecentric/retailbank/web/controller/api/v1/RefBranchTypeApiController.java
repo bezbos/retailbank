@@ -2,6 +2,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 
 import com.codecentric.retailbank.model.domain.RefBranchType;
 import com.codecentric.retailbank.model.dto.RefBranchTypeDto;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.RefBranchTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,9 @@ public class RefBranchTypeApiController {
     //region HTTP POST
     @PostMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> createRefBranchType(@RequestBody RefBranchTypeDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refBranchTypeService.addRefBranchType(clientDto.getDBModel());
         } catch (Exception e) {
@@ -122,6 +126,9 @@ public class RefBranchTypeApiController {
     //region HTTP PUT
     @PutMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> updateRefBranchType(@RequestBody RefBranchTypeDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refBranchTypeService.updateRefBranchType(clientDto.getDBModel());
         } catch (Exception e) {
@@ -138,6 +145,9 @@ public class RefBranchTypeApiController {
     //region HTTP DELETE
     @DeleteMapping("/refBranchType/{id}")
     ResponseEntity<RefBranchTypeDto> deleteRefBranchType(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refBranchTypeService.deleteRefBranchType(id);
         } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 
 import com.codecentric.retailbank.model.domain.RefTransactionType;
 import com.codecentric.retailbank.model.dto.RefTransactionTypeDto;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.RefTransactionTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +102,9 @@ public class RefTransactionTypeApiController {
     //region HTTP POST
     @PostMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> createRefTransactionType(@RequestBody RefTransactionTypeDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refTransactionTypeService.addRefTransactionType(clientDto.getDBModel());
         } catch (Exception e) {
@@ -117,6 +121,9 @@ public class RefTransactionTypeApiController {
     //region HTTP PUT
     @PutMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> updateRefTransactionType(@RequestBody RefTransactionTypeDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refTransactionTypeService.updateRefTransactionType(clientDto.getDBModel());
         } catch (Exception e) {
@@ -133,6 +140,9 @@ public class RefTransactionTypeApiController {
     //region HTTP DELETE
     @DeleteMapping("/refTransactionType/{id}")
     ResponseEntity<RefTransactionTypeDto> deleteRefTransactionType(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refTransactionTypeService.deleteRefTransactionType(id);
         } catch (Exception e) {

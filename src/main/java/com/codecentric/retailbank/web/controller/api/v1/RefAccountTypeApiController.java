@@ -2,6 +2,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 
 import com.codecentric.retailbank.model.domain.RefAccountType;
 import com.codecentric.retailbank.model.dto.RefAccountTypeDto;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.RefAccountTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,9 @@ public class RefAccountTypeApiController {
     //region HTTP POST
     @PostMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> createRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refAccountTypeService.addRefAccountType(clientDto.getDBModel());
         } catch (Exception e) {
@@ -128,6 +132,9 @@ public class RefAccountTypeApiController {
     //region HTTP PUT
     @PutMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> updateRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
         } catch (Exception e) {
@@ -144,6 +151,9 @@ public class RefAccountTypeApiController {
     //region HTTP DELETE
     @DeleteMapping("/refAccountType/{id}")
     ResponseEntity<RefAccountTypeDto> deleteRefAccountType(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             refAccountTypeService.deleteRefAccountType(id);
         } catch (Exception e) {

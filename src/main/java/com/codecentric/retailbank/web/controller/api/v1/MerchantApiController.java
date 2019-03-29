@@ -3,6 +3,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 import com.codecentric.retailbank.model.domain.Merchant;
 import com.codecentric.retailbank.model.dto.MerchantDto;
 import com.codecentric.retailbank.repository.helpers.ListPage;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.MerchantService;
 import com.codecentric.retailbank.web.controller.api.v1.helpers.PageableList;
 import org.slf4j.Logger;
@@ -117,6 +118,9 @@ public class MerchantApiController {
     //region HTTP POST
     @PostMapping("/merchant")
     ResponseEntity<MerchantDto> createMerchant(@RequestBody MerchantDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             merchantService.addMerchant(clientDto.getDBModel());
         } catch (Exception e) {
@@ -133,6 +137,9 @@ public class MerchantApiController {
     //region HTTP PUT
     @PutMapping("/merchant")
     ResponseEntity<MerchantDto> updateMerchant(@RequestBody MerchantDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             merchantService.updateMerchant(clientDto.getDBModel());
         } catch (Exception e) {
@@ -149,6 +156,9 @@ public class MerchantApiController {
     //region HTTP DELETE
     @DeleteMapping("/merchant/{id}")
     ResponseEntity<MerchantDto> deleteMerchant(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             merchantService.deleteMerchant(id);
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 import com.codecentric.retailbank.model.domain.Transaction;
 import com.codecentric.retailbank.model.dto.TransactionDto;
 import com.codecentric.retailbank.repository.helpers.ListPage;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.TransactionService;
 import com.codecentric.retailbank.web.controller.api.v1.helpers.PageableList;
 import org.slf4j.Logger;
@@ -45,6 +46,8 @@ public class TransactionApiController {
     @GetMapping({"/transactions", "/transactions/{page}"})
     ResponseEntity<PageableList<TransactionDto>> transactions(@PathVariable("page") Optional<Integer> page) {
 
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;
         pageIndex = pageIndex == 0 || pageIndex < 0 || pageIndex == null ?
@@ -76,6 +79,9 @@ public class TransactionApiController {
 
     @GetMapping("/transaction/{id}")
     ResponseEntity<TransactionDto> transactionById(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         Transaction transaction = transactionService.getById(id);
         TransactionDto transactionDto = transaction == null
                 ? null
@@ -97,6 +103,9 @@ public class TransactionApiController {
 
     @GetMapping("/transaction")
     ResponseEntity<TransactionDto> transactionByDetails(@RequestParam("details") String details) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         Transaction transaction = transactionService.getByDetails(details);
         TransactionDto transactionDto = transaction == null
                 ? null
@@ -120,6 +129,9 @@ public class TransactionApiController {
     //region HTTP POST
     @PostMapping("/transaction")
     ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             transactionService.addTransaction(clientDto.getDBModel());
         } catch (Exception e) {LOGGER.error(e.getMessage());

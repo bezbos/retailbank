@@ -3,6 +3,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.model.dto.BranchDto;
 import com.codecentric.retailbank.repository.helpers.ListPage;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.BranchService;
 import com.codecentric.retailbank.web.controller.api.v1.helpers.PageableList;
 import org.slf4j.Logger;
@@ -137,6 +138,9 @@ public class BranchApiController {
     //region HTTP POST
     @PostMapping("/branch")
     ResponseEntity<BranchDto> createBranch(@RequestBody BranchDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             branchService.addBranch(clientDto.getDBModel());
         } catch (Exception e) {
@@ -153,6 +157,9 @@ public class BranchApiController {
     //region HTTP PUT
     @PutMapping("/branch")
     ResponseEntity<BranchDto> updateBranch(@RequestBody BranchDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             branchService.updateBranch(clientDto.getDBModel());
         } catch (Exception e) {
@@ -169,6 +176,9 @@ public class BranchApiController {
     //region HTTP DELETE
     @DeleteMapping("/branch/{id}")
     ResponseEntity<BranchDto> deleteBranch(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             branchService.deleteBranch(id);
         } catch (Exception e) {

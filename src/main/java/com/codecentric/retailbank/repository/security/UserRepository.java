@@ -2,6 +2,7 @@ package com.codecentric.retailbank.repository.security;
 
 import com.codecentric.retailbank.exception.nullpointer.ArgumentNullException;
 import com.codecentric.retailbank.exception.nullpointer.InvalidOperationException;
+import com.codecentric.retailbank.model.security.AuthProvider;
 import com.codecentric.retailbank.model.security.Role;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.repository.configuration.DBType;
@@ -67,6 +68,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
                                 resultSet.getBoolean("user_account.enabled"),
                                 resultSet.getBoolean("user_account.is_using2fa"),
                                 resultSet.getString("user_account.secret"),
+                                resultSet.getString("user_account.auth_provider"),
+                                resultSet.getString("user_account.auth_provider_id"),
                                 roles
                         )
                 );
@@ -127,6 +130,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
                                 resultSet.getBoolean("user_account.enabled"),
                                 resultSet.getBoolean("user_account.is_using2fa"),
                                 resultSet.getString("user_account.secret"),
+                                resultSet.getString("user_account.auth_provider"),
+                                resultSet.getString("user_account.auth_provider_id"),
                                 roles
                         )
                 );
@@ -203,6 +208,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
                         resultSet.getBoolean("user_account.enabled"),
                         resultSet.getBoolean("user_account.is_using2fa"),
                         resultSet.getString("user_account.secret"),
+                        resultSet.getString("user_account.auth_provider"),
+                        resultSet.getString("user_account.auth_provider_id"),
                         roles
                 );
             }
@@ -270,6 +277,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
                         resultSet.getBoolean("user_account.enabled"),
                         resultSet.getBoolean("user_account.is_using2fa"),
                         resultSet.getString("user_account.secret"),
+                        resultSet.getString("user_account.auth_provider"),
+                        resultSet.getString("user_account.auth_provider_id"),
                         roles
                 );
             }
@@ -291,7 +300,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?)}");
+             CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?,?,?)}");
              CallableStatement csSingleUser = conn.prepareCall("{call singleUserAccountByUsername(?)}");
              CallableStatement cs_setRoleToUser = conn.prepareCall("{call setRoleToUser(?,?)}")) {
 
@@ -304,6 +313,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             cs_addUser.setBoolean("p_is_using2fa", model.isUsing2FA());
             cs_addUser.setString("p_secret", model.getSecret());
             cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
+            cs_addUser.setString("p_auth_provider", model.getProvider() == null ? AuthProvider.local.toString() : model.getProvider().toString());
+            cs_addUser.setString("p_auth_provider_id", model.getProviderId());
             cs_addUser.execute();
 
             // Retrieve the newly created user's ID
@@ -311,7 +322,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             csSingleUser.execute();
             Long userId = null;
             resultSet = csSingleUser.getResultSet();
-            while(resultSet.next())
+            while (resultSet.next())
                 userId = resultSet.getLong(1);
 
             // Add roles to user
@@ -322,8 +333,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
-        }
-        finally {
+        } finally {
             closeConnections(resultSet);
         }
 
@@ -335,7 +345,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?)}");
+             CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?,?,?)}");
              CallableStatement cs_setRoleToUser = conn.prepareCall("{call setRoleToUser(?,?)}")) {
 
             // Add a user to DB
@@ -347,6 +357,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             cs_addUser.setBoolean("p_is_using2fa", model.isUsing2FA());
             cs_addUser.setString("p_secret", model.getSecret());
             cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
+            cs_addUser.setString("p_auth_provider", model.getProvider() == null ? AuthProvider.local.toString() : model.getProvider().toString());
+            cs_addUser.setString("p_auth_provider_id", model.getProviderId());
             cs_addUser.execute();
 
             // Add roles to user
@@ -370,20 +382,23 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addUser = conn.prepareCall("{call updateUserAccount(?,?,?,?,?,?,?,?,?)}");
+             CallableStatement cs_updateUser = conn.prepareCall("{call updateUserAccount(?,?,?,?,?,?,?,?,?,?,?)}");
              CallableStatement cs_setRoleToUser = conn.prepareCall("{call setRoleToUser(?,?)}")) {
 
             // Add a user to DB
-            cs_addUser.setLong("p_user_account_id", model.getId());
-            cs_addUser.setString("p_first_name", model.getFirstName());
-            cs_addUser.setString("p_last_name", model.getLastName());
-            cs_addUser.setString("p_email", model.getEmail());
-            cs_addUser.setString("p_user_password", model.getPassword());
-            cs_addUser.setBoolean("p_enabled", model.isEnabled());
-            cs_addUser.setBoolean("p_is_using2fa", model.isUsing2FA());
-            cs_addUser.setString("p_secret", model.getSecret());
-            cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
-            cs_addUser.execute();
+            cs_updateUser.setLong("p_user_account_id", model.getId());
+            cs_updateUser.setString("p_first_name", model.getFirstName());
+            cs_updateUser.setString("p_last_name", model.getLastName());
+            cs_updateUser.setString("p_email", model.getEmail());
+            cs_updateUser.setString("p_user_password", model.getPassword());
+            cs_updateUser.setBoolean("p_enabled", model.isEnabled());
+            cs_updateUser.setBoolean("p_is_using2fa", model.isUsing2FA());
+            cs_updateUser.setString("p_secret", model.getSecret());
+            cs_updateUser.setNull("p_last_login", Types.TIMESTAMP);
+            if (model.getProvider() != null)
+                cs_updateUser.setString("p_auth_provider", model.getProvider().name());
+            cs_updateUser.setString("p_auth_provider_id", model.getProviderId());
+            cs_updateUser.execute();
 
             cs_setRoleToUser.setLong("p_user_id", model.getId());
             cs_setRoleToUser.setLong("p_role_id", 2L);
@@ -398,7 +413,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
     @Override public void insertBatch(Iterable<User> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?)}");
+             CallableStatement cs_addUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?,?,?)}");
              CallableStatement cs_setRoleToUser = conn.prepareCall("{call setRoleToUser(?,?)}")) {
 
             // Add calls to batch
@@ -414,6 +429,8 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
                     cs_addUser.setBoolean("p_is_using2fa", model.isUsing2FA());
                     cs_addUser.setString("p_secret", model.getSecret());
                     cs_addUser.setNull("p_last_login", Types.TIMESTAMP);
+                    cs_addUser.setString("p_auth_provider", model.getProvider() == null ? AuthProvider.local.toString() : model.getProvider().toString());
+                    cs_addUser.setString("p_auth_provider_id", model.getProviderId());
 
                     // Add role to user
                     cs_setRoleToUser.setLong("p_user_id", model.getId());
@@ -436,7 +453,7 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
 
     @Override public void updateBatch(Iterable<User> models) {
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?)}")) {
+             CallableStatement cs_updateUser = conn.prepareCall("{call addUserAccount(?,?,?,?,?,?,?,?,?,?)}")) {
 
             // Add calls to batch
             for (User model : models) {
@@ -451,6 +468,9 @@ public class UserRepository extends JDBCRepositoryUtilities implements JDBCRepos
                     cs_updateUser.setBoolean("p_is_using2fa", model.isUsing2FA());
                     cs_updateUser.setString("p_secret", model.getSecret());
                     cs_updateUser.setNull("p_last_login", Types.TIMESTAMP);
+                    if (model.getProvider() != null)
+                        cs_updateUser.setString("p_auth_provider", model.getProvider().toString());
+                    cs_updateUser.setString("p_auth_provider_id", model.getProviderId());
 
                     cs_updateUser.addBatch();
                 } catch (SQLException ex) {

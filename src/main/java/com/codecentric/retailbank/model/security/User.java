@@ -23,6 +23,10 @@ public class User {
 
     private String secret;
 
+    private AuthProvider authProvider;
+
+    private String authProviderId;
+
     private Collection<Role> roles;
     //endregion
 
@@ -59,6 +63,30 @@ public class User {
         this.enabled = enabled;
         this.isUsing2FA = isUsing2FA;
         this.secret = secret;
+        this.roles = roles;
+    }
+
+    public User(Long id,
+                String firstName,
+                String lastName,
+                String email,
+                String password,
+                boolean enabled,
+                boolean isUsing2FA,
+                String secret,
+                String authProvider,
+                String authProviderId,
+                Collection<Role> roles){
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.isUsing2FA = isUsing2FA;
+        this.secret = secret;
+        this.authProvider = authProvider == null ? AuthProvider.local : AuthProvider.valueOf(authProvider);
+        this.authProviderId = authProviderId;
         this.roles = roles;
     }
     //endregion
@@ -135,6 +163,23 @@ public class User {
     public void setSecret(String secret) {
         this.secret = secret;
     }
+
+    public AuthProvider getProvider() {
+        return authProvider;
+    }
+
+    public void setProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
+    public String getProviderId() {
+        return authProviderId;
+    }
+
+    public void setProviderId(String authProviderId) {
+        this.authProviderId = authProviderId;
+    }
+
     //endregion
 
     //region OVERRIDES

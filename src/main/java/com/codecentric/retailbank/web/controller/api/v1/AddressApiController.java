@@ -3,6 +3,7 @@ package com.codecentric.retailbank.web.controller.api.v1;
 import com.codecentric.retailbank.model.domain.Address;
 import com.codecentric.retailbank.model.dto.AddressDto;
 import com.codecentric.retailbank.repository.helpers.ListPage;
+import com.codecentric.retailbank.security.UsersUtil;
 import com.codecentric.retailbank.service.AddressService;
 import com.codecentric.retailbank.web.controller.api.v1.helpers.PageableList;
 import org.slf4j.Logger;
@@ -34,6 +35,8 @@ public class AddressApiController {
     private final AddressService addressService;
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    private UsersUtil rolesUtil = new UsersUtil();
     //endregion
 
     //region CONSTRUCTOR
@@ -145,6 +148,9 @@ public class AddressApiController {
     //region HTTP POST
     @PostMapping("/address")
     ResponseEntity<AddressDto> createBank(@RequestBody AddressDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             addressService.addAddress(clientDto.getDBModel());
         } catch (Exception e) {
@@ -161,6 +167,9 @@ public class AddressApiController {
     //region HTTP PUT
     @PutMapping("/address")
     ResponseEntity<AddressDto> updateBank(@RequestBody AddressDto clientDto) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             addressService.updateAddress(clientDto.getDBModel());
         } catch (Exception e) {
@@ -177,6 +186,9 @@ public class AddressApiController {
     //region HTTP DELETE
     @DeleteMapping("/address/{id}")
     ResponseEntity<AddressDto> deleteBank(@PathVariable("id") Long id) {
+
+        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
             addressService.deleteAddress(id);
         } catch (Exception e) {

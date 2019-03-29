@@ -34,7 +34,8 @@ public class UserService implements IUserService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     //endregion
 
 
@@ -42,13 +43,11 @@ public class UserService implements IUserService {
     @Autowired public UserService(UserRepository userRepository,
                                   RoleRepository roleRepository,
                                   VerificationTokenRepository verificationTokenRepository,
-                                  PasswordResetTokenRepository passwordResetTokenRepository,
-                                  PasswordEncoder passwordEncoder) {
+                                  PasswordResetTokenRepository passwordResetTokenRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.verificationTokenRepository = verificationTokenRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
-        this.passwordEncoder = passwordEncoder;
     }
     //endregion
 

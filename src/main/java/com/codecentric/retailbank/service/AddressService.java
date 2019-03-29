@@ -8,6 +8,7 @@ import com.codecentric.retailbank.repository.BranchRepository;
 import com.codecentric.retailbank.repository.CustomerRepository;
 import com.codecentric.retailbank.repository.TransactionRepository;
 import com.codecentric.retailbank.repository.helpers.ListPage;
+import com.codecentric.retailbank.repository.security.UserRepository;
 import com.codecentric.retailbank.service.interfaces.IAddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class AddressService implements IAddressService {
     private final BankAccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
     private final AddressRepository addressRepository;
+
+    private final UserRepository userRepository;
     //endregion
 
     //region CONSTRUCTOR
@@ -36,12 +39,13 @@ public class AddressService implements IAddressService {
                                      CustomerRepository customerRepository,
                                      BankAccountRepository bankAccountRepository,
                                      TransactionRepository transactionRepository,
-                                     AddressRepository addressRepository) {
+                                     AddressRepository addressRepository, UserRepository userRepository) {
         this.branchRepository = branchRepository;
         this.customerRepository = customerRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.transactionRepository = transactionRepository;
         this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
     }
     //endregion
 
