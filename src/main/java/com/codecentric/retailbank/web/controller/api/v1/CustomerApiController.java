@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,15 +35,9 @@ public class CustomerApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    @Autowired
     private CustomerService customerService;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public CustomerApiController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
-    //endregion
-
 
     //region HTTP GET
     @GetMapping({"/customers", "/customers/{page}"})
@@ -53,20 +48,22 @@ public class CustomerApiController {
             List<Customer> customers = customerService.getAllByPersonalDetails(personalDetails.get());
             List<CustomerDto> customerDtos = new ArrayList<>();
             customers.forEach(
-                    b -> customerDtos.add(
+                    customer -> customerDtos.add(
                             new CustomerDto(
-                                    b.getId(),
-                                    b.getAddress().getDto(),
-                                    b.getBranch().getDto(),
-                                    b.getPersonalDetails(),
-                                    b.getContactDetails()
+                                    customer.getId(),
+                                    customer.getAddress().getDto(),
+                                    customer.getBranch().getDto(),
+                                    customer.getPersonalDetails(),
+                                    customer.getContactDetails()
                             )));
+
+            PageableList<CustomerDto> pagableCustomerDtoList = new PageableList<>(customerDtos);
 
             return customerDtos.size() == 0
                     //  404 NOT FOUND
-                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    ? ResponseEntity.notFound().build()
                     //  200 OK
-                    : new ResponseEntity<>(new PageableList<>(0L, customerDtos, 0L, 0L), HttpStatus.OK);
+                    : ResponseEntity.ok().location(URI.create("/customers?" + personalDetails.get())).body(pagableCustomerDtoList);
         }
 
         // If pageIndex is less than 1 set it to 1.
@@ -78,13 +75,13 @@ public class CustomerApiController {
         List<CustomerDto> customerDtos = new ArrayList<>();
         customers.getModels()
                 .forEach(
-                        b -> customerDtos.add(
+                        customer -> customerDtos.add(
                                 new CustomerDto(
-                                        b.getId(),
-                                        b.getAddress().getDto(),
-                                        b.getBranch().getDto(),
-                                        b.getPersonalDetails(),
-                                        b.getContactDetails()
+                                        customer.getId(),
+                                        customer.getAddress().getDto(),
+                                        customer.getBranch().getDto(),
+                                        customer.getPersonalDetails(),
+                                        customer.getContactDetails()
                                 )));
 
 
@@ -92,9 +89,9 @@ public class CustomerApiController {
 
         return pageableCustomerDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(pageableCustomerDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/customers/" + pageIndex)).body(pageableCustomerDtos);
     }
 
     @GetMapping("/customer/{id}")
@@ -109,11 +106,11 @@ public class CustomerApiController {
                 customer.getPersonalDetails(),
                 customer.getContactDetails());
 
-        return customer == null
+        return customerDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(customerDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/customer/" + id)).body(customerDto);
     }
 
     @GetMapping("/customer")
@@ -128,30 +125,31 @@ public class CustomerApiController {
                 customer.getPersonalDetails(),
                 customer.getContactDetails());
 
-        return customer == null
+        return customerDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(customerDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/customer?personalDetails=" + personalDetails)).body(customerDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/customer")
-    ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto clientDto) {
+    ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Customer createdCustomer;
         try {
-            customerService.addCustomer(clientDto.getDBModel());
+            createdCustomer = customerService.addCustomer(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/customer/" + createdCustomer.getId())).body(createdCustomer.getDto());
     }
     //endregion
 
@@ -159,18 +157,19 @@ public class CustomerApiController {
     @PutMapping("/customer")
     ResponseEntity<CustomerDto> updateCustomer(@RequestBody CustomerDto clientDto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Customer updatedCustomer;
         try {
-            customerService.updateCustomer(clientDto.getDBModel());
+            updatedCustomer = customerService.updateCustomer(clientDto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(clientDto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/customer/" + clientDto.getId())).body(updatedCustomer.getDto());
     }
     //endregion
 
@@ -178,18 +177,18 @@ public class CustomerApiController {
     @DeleteMapping("/customer/{id}")
     ResponseEntity<CustomerDto> deleteCustomer(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             customerService.deleteCustomer(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

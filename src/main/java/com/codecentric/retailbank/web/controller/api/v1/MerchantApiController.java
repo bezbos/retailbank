@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,13 +35,8 @@ public class MerchantApiController {
     //region FIELDS
     private Logger Logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
     private MerchantService merchantService;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public MerchantApiController(MerchantService merchantService) {
-        this.merchantService = merchantService;
-    }
     //endregion
 
 
@@ -53,16 +49,16 @@ public class MerchantApiController {
             List<Merchant> merchants = merchantService.getAllMerchantsByDetails(details.get());
             List<MerchantDto> merchantDtos = new ArrayList<>();
             merchants.forEach(
-                    b -> merchantDtos.add(new MerchantDto(b.getId(), b.getDetails()))
+                    merchant -> merchantDtos.add(new MerchantDto(merchant.getId(), merchant.getDetails()))
             );
 
             PageableList<MerchantDto> pageableMerchantDtos = new PageableList<>(merchantDtos);
 
             return merchantDtos.size() == 0
                     //  404 NOT FOUND
-                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    ? ResponseEntity.notFound().build()
                     //  200 OK
-                    : new ResponseEntity<>(pageableMerchantDtos, HttpStatus.OK);
+                    : ResponseEntity.ok().location(URI.create("/merchants?details=" + details)).body(pageableMerchantDtos);
         }
 
         // If pageIndex is less than 1 set it to 1.
@@ -74,16 +70,16 @@ public class MerchantApiController {
         List<MerchantDto> merchantDtos = new ArrayList<>();
         merchants.getModels()
                 .forEach(
-                        b -> merchantDtos.add(new MerchantDto(b.getId(), b.getDetails()))
+                        merchant -> merchantDtos.add(new MerchantDto(merchant.getId(), merchant.getDetails()))
                 );
 
         PageableList<MerchantDto> pageableMerchantDtos = new PageableList<>(pageIndex, merchantDtos, merchants.getPageCount(), merchants.getModelsCount());
 
         return pageableMerchantDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(pageableMerchantDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/merchants/" + pageIndex)).body(pageableMerchantDtos);
     }
 
     @GetMapping("/merchant/{id}")
@@ -93,11 +89,11 @@ public class MerchantApiController {
                 ? null
                 : new MerchantDto(merchant.getId(), merchant.getDetails());
 
-        return merchant == null
+        return merchantDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(merchantDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/merchant/" + id)).body(merchantDto);
     }
 
     @GetMapping("/merchant")
@@ -107,49 +103,51 @@ public class MerchantApiController {
                 ? null
                 : new MerchantDto(merchant.getId(), merchant.getDetails());
 
-        return merchant == null
+        return merchantDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(merchantDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/merchant?details=" + details)).body(merchantDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/merchant")
-    ResponseEntity<MerchantDto> createMerchant(@RequestBody MerchantDto clientDto) {
+    ResponseEntity<MerchantDto> createMerchant(@RequestBody MerchantDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Merchant createdMerchant;
         try {
-            merchantService.addMerchant(clientDto.getDBModel());
+            createdMerchant = merchantService.addMerchant(dto.getDBModel());
         } catch (Exception e) {
-            Logger.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/merchant/" + createdMerchant.getId())).body(createdMerchant.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/merchant")
-    ResponseEntity<MerchantDto> updateMerchant(@RequestBody MerchantDto clientDto) {
+    ResponseEntity<MerchantDto> updateMerchant(@RequestBody MerchantDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Merchant updatedMerchant;
         try {
-            merchantService.updateMerchant(clientDto.getDBModel());
+            updatedMerchant = merchantService.updateMerchant(dto.getDBModel());
         } catch (Exception e) {
-            Logger.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/merchant/" + updatedMerchant.getId())).body(updatedMerchant.getDto());
     }
     //endregion
 
@@ -157,18 +155,18 @@ public class MerchantApiController {
     @DeleteMapping("/merchant/{id}")
     ResponseEntity<MerchantDto> deleteMerchant(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             merchantService.deleteMerchant(id);
         } catch (Exception e) {
-            Logger.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

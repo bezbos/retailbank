@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +30,8 @@ public class RefAccountStatusApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final RefAccountStatusService refAccountStatusService;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public RefAccountStatusApiController(RefAccountStatusService refAccountStatusService) {
-        this.refAccountStatusService = refAccountStatusService;
-    }
+    @Autowired
+    private RefAccountStatusService refAccountStatusService;
     //endregion
 
 
@@ -47,17 +43,17 @@ public class RefAccountStatusApiController {
         List<RefAccountStatusDto> refAccountStatusDtos = new ArrayList<>();
         refAccountStatuses
                 .forEach(
-                        x -> refAccountStatusDtos.add(
+                        status -> refAccountStatusDtos.add(
                                 new RefAccountStatusDto(
-                                        x.getId(),
-                                        x.getCode(),
-                                        x.getDescription(),
-                                        x.getIsActive(),
-                                        x.getIsClosed()
+                                        status.getId(),
+                                        status.getCode(),
+                                        status.getDescription(),
+                                        status.getIsActive(),
+                                        status.getIsClosed()
                                 )));
 
         //  200 OK
-        return new ResponseEntity<>(refAccountStatusDtos, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/refAccountStatuses")).body(refAccountStatusDtos);
     }
 
     @GetMapping("/refAccountStatus/{id}")
@@ -72,11 +68,11 @@ public class RefAccountStatusApiController {
                 refAccountStatus.getIsActive(),
                 refAccountStatus.getIsClosed());
 
-        return refAccountStatus == null
+        return refAccountStatusDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refAccountStatusDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refAccountStatuses/" + id)).body(refAccountStatusDto);
     }
 
     @GetMapping("/refAccountStatus")
@@ -91,49 +87,51 @@ public class RefAccountStatusApiController {
                 refAccountStatus.getIsActive(),
                 refAccountStatus.getIsClosed());
 
-        return refAccountStatus == null
+        return refAccountStatusDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refAccountStatusDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refAccountStatuses?code=" + code)).body(refAccountStatusDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/refAccountStatus")
-    ResponseEntity<RefAccountStatusDto> createRefAccountStatus(@RequestBody RefAccountStatusDto clientDto) {
+    ResponseEntity<RefAccountStatusDto> createRefAccountStatus(@RequestBody RefAccountStatusDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefAccountStatus createdStatus;
         try {
-            refAccountStatusService.addRefAccountStatus(clientDto.getDBModel());
+            createdStatus = refAccountStatusService.addRefAccountStatus(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/refAccountStatus/" + createdStatus.getId())).body(createdStatus.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/refAccountStatus")
-    ResponseEntity<RefAccountStatusDto> updateRefAccountStatus(@RequestBody RefAccountStatusDto clientDto) {
+    ResponseEntity<RefAccountStatusDto> updateRefAccountStatus(@RequestBody RefAccountStatusDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefAccountStatus updatedStatus;
         try {
-            refAccountStatusService.updateRefAccountStatus(clientDto.getDBModel());
+            updatedStatus= refAccountStatusService.updateRefAccountStatus(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/refAccountStatus/" + updatedStatus.getId())).body(updatedStatus.getDto());
     }
     //endregion
 
@@ -141,18 +139,18 @@ public class RefAccountStatusApiController {
     @DeleteMapping("/refAccountStatus/{id}")
     ResponseEntity<RefAccountStatusDto> deleteRefAccountStatus(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refAccountStatusService.deleteRefAccountStatus(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -29,13 +30,8 @@ public class RefTransactionTypeApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final RefTransactionTypeService refTransactionTypeService;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public RefTransactionTypeApiController(RefTransactionTypeService refTransactionTypeService) {
-        this.refTransactionTypeService = refTransactionTypeService;
-    }
+    @Autowired
+    private RefTransactionTypeService refTransactionTypeService;
     //endregion
 
 
@@ -43,22 +39,19 @@ public class RefTransactionTypeApiController {
     @GetMapping("/refTransactionTypes")
     ResponseEntity<List<RefTransactionTypeDto>> refTransactionTypes() {
         List<RefTransactionType> refTransactionTypes = refTransactionTypeService.getAllRefTransactionTypes();
-        List<RefTransactionTypeDto> refTransactionTypeDtos = new ArrayList<>();
-        refTransactionTypes
-                .forEach(
-                        x -> refTransactionTypeDtos.add(new RefTransactionTypeDto(
-                                x.getId(),
-                                x.getCode(),
-                                x.getDescription(),
-                                x.getIsDeposit(),
-                                x.getIsWithdrawal()
-                        )));
+        List<RefTransactionTypeDto> refTransactionTypeDtos = refTransactionTypes.stream().map(type -> new RefTransactionTypeDto(
+                type.getId(),
+                type.getCode(),
+                type.getDescription(),
+                type.getIsDeposit(),
+                type.getIsWithdrawal()
+        )).collect(Collectors.toList());
 
         return refTransactionTypeDtos.size() == 0
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refTransactionTypeDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refTransactionTypes")).body(refTransactionTypeDtos);
     }
 
     @GetMapping("/refTransactionType/{id}")
@@ -73,11 +66,11 @@ public class RefTransactionTypeApiController {
                 refTransactionType.getIsDeposit(),
                 refTransactionType.getIsWithdrawal());
 
-        return refTransactionType == null
+        return refTransactionTypeDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refTransactionTypeDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refTransactionType/" + id)).body(refTransactionTypeDto);
     }
 
     @GetMapping("/refTransactionType")
@@ -91,49 +84,51 @@ public class RefTransactionTypeApiController {
                 refTransactionType.getIsDeposit(),
                 refTransactionType.getIsWithdrawal());
 
-        return refTransactionType == null
+        return refTransactionTypeDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refTransactionTypeDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refTransactionType?code=" + code)).body(refTransactionTypeDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/refTransactionType")
-    ResponseEntity<RefTransactionTypeDto> createRefTransactionType(@RequestBody RefTransactionTypeDto clientDto) {
+    ResponseEntity<RefTransactionTypeDto> createRefTransactionType(@RequestBody RefTransactionTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefTransactionType createdType;
         try {
-            refTransactionTypeService.addRefTransactionType(clientDto.getDBModel());
+            createdType = refTransactionTypeService.addRefTransactionType(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/refTransactionType/" + createdType.getId())).body(createdType.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/refTransactionType")
-    ResponseEntity<RefTransactionTypeDto> updateRefTransactionType(@RequestBody RefTransactionTypeDto clientDto) {
+    ResponseEntity<RefTransactionTypeDto> updateRefTransactionType(@RequestBody RefTransactionTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefTransactionType updatedType;
         try {
-            refTransactionTypeService.updateRefTransactionType(clientDto.getDBModel());
+            updatedType = refTransactionTypeService.updateRefTransactionType(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/refTransactionType/" + updatedType.getId())).body(updatedType.getDto());
     }
     //endregion
 
@@ -141,18 +136,18 @@ public class RefTransactionTypeApiController {
     @DeleteMapping("/refTransactionType/{id}")
     ResponseEntity<RefTransactionTypeDto> deleteRefTransactionType(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refTransactionTypeService.deleteRefTransactionType(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

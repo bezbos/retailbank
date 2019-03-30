@@ -11,9 +11,6 @@ public class PageableList<T> {
     public Long pageCount;
     public List<T> items;
 
-    public PageableList() {
-    }
-
     public PageableList(List<T> items) {
         this.items = items;
     }

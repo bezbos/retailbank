@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,23 +33,18 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class AddressApiController {
 
-    private final AddressService addressService;
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private UsersUtil rolesUtil = new UsersUtil();
+    @Autowired
+    private AddressService addressService;
     //endregion
 
-    //region CONSTRUCTOR
-    @Autowired public AddressApiController(AddressService addressService) {
-        this.addressService = addressService;
-    }
-    //endregion
 
     //region HTTP GET
     @GetMapping({"/addresses", "/addresses/{page}"})
-    ResponseEntity<PageableList<AddressDto>> addresses(@PathVariable("page") Optional<Integer> page,
-                                                       @RequestParam("line1") Optional<String> line1) {
+    ResponseEntity<?> addresses(@PathVariable("page") Optional<Integer> page,
+                                @RequestParam("line1") Optional<String> line1) {
 
         if (line1.isPresent()) {
             List<Address> addresses = addressService.getManyByLine1(line1.get());
@@ -67,9 +63,9 @@ public class AddressApiController {
             PageableList<AddressDto> pageableAddressDtos = new PageableList<>(0L, addressDtos, 0L, 0L);
             return addressDtos.size() == 0
                     //  404 NOT FOUND
-                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    ? ResponseEntity.notFound().build()
                     //  200 OK
-                    : new ResponseEntity<>(pageableAddressDtos, HttpStatus.OK);
+                    : ResponseEntity.ok().location(URI.create("/addresses?line1=" + line1)).body(pageableAddressDtos);
         }
 
         // If pageIndex is less than 1 set it to 1.
@@ -80,25 +76,25 @@ public class AddressApiController {
         ListPage<Address> addresses = addressService.getAllAddressesByPage(pageIndex, PAGE_SIZE);
         List<AddressDto> addressDtos = new ArrayList<>();
         addresses.getModels()
-                .forEach(x -> addressDtos.add(
+                .forEach(address -> addressDtos.add(
                         new AddressDto(
-                                x.getId(),
-                                x.getLine1(),
-                                x.getLine2(),
-                                x.getTownCity(),
-                                x.getZipPostcode(),
-                                x.getStateProvinceCountry(),
-                                x.getCountry(),
-                                x.getOtherDetails())
+                                address.getId(),
+                                address.getLine1(),
+                                address.getLine2(),
+                                address.getTownCity(),
+                                address.getZipPostcode(),
+                                address.getStateProvinceCountry(),
+                                address.getCountry(),
+                                address.getOtherDetails())
                 ));
 
         PageableList<AddressDto> pageableAddressDtos = new PageableList<>(pageIndex, addressDtos, addresses.getPageCount(), addresses.getModelsCount());
 
         return pageableAddressDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(pageableAddressDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/addresses/" + pageIndex)).body(pageableAddressDtos);
     }
 
     @GetMapping("/address/{id}")
@@ -116,11 +112,11 @@ public class AddressApiController {
                 address.getCountry(),
                 address.getOtherDetails());
 
-        return address == null
+        return addressDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(addressDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/address/" + id)).body(addressDto);
     }
 
     @GetMapping("/address")
@@ -137,49 +133,51 @@ public class AddressApiController {
                 address.getCountry(),
                 address.getOtherDetails());
 
-        return address == null
+        return addressDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(addressDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/address?line1=" + line1)).body(addressDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/address")
-    ResponseEntity<AddressDto> createBank(@RequestBody AddressDto clientDto) {
+    ResponseEntity<AddressDto> createBank(@RequestBody AddressDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Address createdAddress;
         try {
-            addressService.addAddress(clientDto.getDBModel());
+            createdAddress = addressService.addAddress(dto.getDBModel());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/address/" + createdAddress.getId())).body(createdAddress.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/address")
-    ResponseEntity<AddressDto> updateBank(@RequestBody AddressDto clientDto) {
+    ResponseEntity<AddressDto> updateBank(@RequestBody AddressDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Address updatedAddress;
         try {
-            addressService.updateAddress(clientDto.getDBModel());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            updatedAddress = addressService.updateAddress(dto.getDBModel());
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/address/" + updatedAddress.getId())).body(updatedAddress.getDto());
     }
     //endregion
 
@@ -187,18 +185,18 @@ public class AddressApiController {
     @DeleteMapping("/address/{id}")
     ResponseEntity<AddressDto> deleteBank(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             addressService.deleteAddress(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

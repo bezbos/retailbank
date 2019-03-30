@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,15 +35,9 @@ public class BankAccountApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final BankAccountService bankAccountService;
+    @Autowired
+    private BankAccountService bankAccountService;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public BankAccountApiController(BankAccountService bankAccountService) {
-        this.bankAccountService = bankAccountService;
-    }
-    //endregion
-
 
     //region HTTP GET
     @GetMapping({"/bankAccounts", "/bankAccounts/{page}"})
@@ -56,23 +51,23 @@ public class BankAccountApiController {
         ListPage<BankAccount> bankAccounts = bankAccountService.getAllAccounts(pageIndex, PAGE_SIZE);
         List<BankAccountDto> bankAccountDtos = new ArrayList<>();
         bankAccounts.getModels()
-                .forEach(x -> bankAccountDtos.add(
+                .forEach(account -> bankAccountDtos.add(
                         new BankAccountDto(
-                                x.getId(),
-                                x.getStatus().getDto(),
-                                x.getType().getDto(),
-                                x.getCustomer().getDto(),
-                                x.getBalance(),
-                                x.getDetails()
+                                account.getId(),
+                                account.getStatus().getDto(),
+                                account.getType().getDto(),
+                                account.getCustomer().getDto(),
+                                account.getBalance(),
+                                account.getDetails()
                         )));
 
         PageableList<BankAccountDto> pageableBankAccountDtos = new PageableList<>(pageIndex, bankAccountDtos, bankAccounts.getPageCount(), bankAccounts.getModelsCount());
 
         return pageableBankAccountDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(pageableBankAccountDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/bankAccounts/" + pageIndex)).body(pageableBankAccountDtos);
     }
 
     @GetMapping("/bankAccount/{id}")
@@ -88,11 +83,11 @@ public class BankAccountApiController {
                 bankAccount.getBalance(),
                 bankAccount.getDetails());
 
-        return bankAccount == null
+        return bankAccountDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(bankAccountDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/bankAccount/" + id)).body(bankAccountDto);
     }
 
     @GetMapping("/bankAccount")
@@ -108,49 +103,51 @@ public class BankAccountApiController {
                 bankAccount.getBalance(),
                 bankAccount.getDetails());
 
-        return bankAccount == null
+        return bankAccountDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(bankAccountDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/bankAccount?details=" + details)).body(bankAccountDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/bankAccount")
-    ResponseEntity<BankAccountDto> createBank(@RequestBody BankAccountDto clientDto) {
+    ResponseEntity<BankAccountDto> createBank(@RequestBody BankAccountDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        BankAccount createdBankAccount;
         try {
-            bankAccountService.addAccount(clientDto.getDBModel());
+            createdBankAccount = bankAccountService.addAccount(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/bankAccount/" + createdBankAccount.getId())).body(createdBankAccount.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/bankAccount")
-    ResponseEntity<BankAccountDto> updateBank(@RequestBody BankAccountDto clientDto) {
+    ResponseEntity<BankAccountDto> updateBank(@RequestBody BankAccountDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        BankAccount updatedBankAccount;
         try {
-            bankAccountService.updateAccount(clientDto.getDBModel());
+             updatedBankAccount = bankAccountService.updateAccount(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/bankAccount/" + updatedBankAccount.getId())).body(updatedBankAccount.getDto());
     }
     //endregion
 
@@ -158,18 +155,18 @@ public class BankAccountApiController {
     @DeleteMapping("/bankAccount/{id}")
     ResponseEntity<BankAccountDto> deleteBank(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             bankAccountService.deleteAccount(id);
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

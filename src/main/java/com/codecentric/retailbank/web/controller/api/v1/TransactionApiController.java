@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 
@@ -32,13 +33,8 @@ public class TransactionApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final TransactionService transactionService;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public TransactionApiController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
+    @Autowired
+    private TransactionService transactionService;
     //endregion
 
 
@@ -46,7 +42,7 @@ public class TransactionApiController {
     @GetMapping({"/transactions", "/transactions/{page}"})
     ResponseEntity<PageableList<TransactionDto>> transactions(@PathVariable("page") Optional<Integer> page) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;
@@ -54,33 +50,29 @@ public class TransactionApiController {
                 0 : pageIndex;
 
         ListPage<Transaction> transactions = transactionService.getAllTransactions(pageIndex, PAGE_SIZE);
-        List<TransactionDto> transactionDtos = new ArrayList<>();
-        transactions.getModels()
-                .forEach(
-                        x -> transactionDtos.add(
-                                new TransactionDto(
-                                        x.getId(),
-                                        x.getAccount().getDto(),
-                                        x.getMerchant().getDto(),
-                                        x.getType().getDto(),
-                                        x.getDate(),
-                                        x.getAmount(),
-                                        x.getDetails()
-                                )));
+        List<TransactionDto> transactionDtos = transactions.getModels().stream().map(transaction -> new TransactionDto(
+                transaction.getId(),
+                transaction.getAccount().getDto(),
+                transaction.getMerchant().getDto(),
+                transaction.getType().getDto(),
+                transaction.getDate(),
+                transaction.getAmount(),
+                transaction.getDetails()
+        )).collect(Collectors.toList());
 
         PageableList<TransactionDto> pageableTransactionDtos = new PageableList<>(pageIndex, transactionDtos, transactions.getPageCount(), transactions.getModelsCount());
 
         return pageableTransactionDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(pageableTransactionDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/transactions/" + pageIndex)).body(pageableTransactionDtos);
     }
 
     @GetMapping("/transaction/{id}")
     ResponseEntity<TransactionDto> transactionById(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Transaction transaction = transactionService.getById(id);
         TransactionDto transactionDto = transaction == null
@@ -96,15 +88,15 @@ public class TransactionApiController {
 
         return transaction == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(transactionDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/transaction/" + id)).body(transactionDto);
     }
 
     @GetMapping("/transaction")
     ResponseEntity<TransactionDto> transactionByDetails(@RequestParam("details") String details) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Transaction transaction = transactionService.getByDetails(details);
         TransactionDto transactionDto = transaction == null
@@ -120,9 +112,9 @@ public class TransactionApiController {
 
         return transaction == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(transactionDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/transaction?details=" + details)).body(transactionDto);
     }
     //endregion
 
@@ -130,17 +122,19 @@ public class TransactionApiController {
     @PostMapping("/transaction")
     ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto clientDto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Transaction createdTransaction;
         try {
-            transactionService.addTransaction(clientDto.getDBModel());
-        } catch (Exception e) {LOGGER.error(e.getMessage());
+            createdTransaction = transactionService.addTransaction(clientDto.getDBModel());
+        } catch (Exception e) {
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(clientDto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/transaction/" + createdTransaction.getId())).body(createdTransaction.getDto());
     }
     //endregion
 

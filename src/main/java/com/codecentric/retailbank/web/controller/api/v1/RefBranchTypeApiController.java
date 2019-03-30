@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -29,38 +30,30 @@ public class RefBranchTypeApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final RefBranchTypeService refBranchTypeService;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public RefBranchTypeApiController(RefBranchTypeService refBranchTypeService) {
-        this.refBranchTypeService = refBranchTypeService;
-    }
+    @Autowired
+    private RefBranchTypeService refBranchTypeService;
     //endregion
 
 
     //region HTTP GET
     @GetMapping("/refBranchTypes")
-    ResponseEntity<List<RefBranchTypeDto>> refBranchTypes() {
+    ResponseEntity<?> refBranchTypes() {
 
         List<RefBranchType> refBranchTypes = refBranchTypeService.getAllRefBranchTypes();
-        List<RefBranchTypeDto> refBranchTypeDtos = new ArrayList<>();
-        refBranchTypes
-                .forEach(
-                        x -> refBranchTypeDtos.add(new RefBranchTypeDto(
-                                x.getId(),
-                                x.getCode(),
-                                x.getDescription(),
-                                x.getIsLargeUrban(),
-                                x.getIsSmallRural(),
-                                x.getIsMediumSuburban()
-                        )));
+        List<RefBranchTypeDto> refBranchTypeDtos = refBranchTypes.stream().map(type -> new RefBranchTypeDto(
+                type.getId(),
+                type.getCode(),
+                type.getDescription(),
+                type.getIsLargeUrban(),
+                type.getIsSmallRural(),
+                type.getIsMediumSuburban()
+        )).collect(Collectors.toList());
 
         return refBranchTypeDtos.size() == 0
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refBranchTypeDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refBranchTypes")).body(refBranchTypeDtos);
     }
 
     @GetMapping("/refBranchType/{id}")
@@ -76,11 +69,11 @@ public class RefBranchTypeApiController {
                 refBranchType.getIsSmallRural(),
                 refBranchType.getIsMediumSuburban());
 
-        return refBranchType == null
+        return refBranchTypeDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refBranchTypeDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refBranchType/" + id)).body(refBranchTypeDto);
     }
 
     @GetMapping("/refBranchType")
@@ -96,49 +89,51 @@ public class RefBranchTypeApiController {
                 refBranchType.getIsSmallRural(),
                 refBranchType.getIsMediumSuburban());
 
-        return refBranchType == null
+        return refBranchTypeDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refBranchTypeDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refBranchType/" + code)).body(refBranchTypeDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/refBranchType")
-    ResponseEntity<RefBranchTypeDto> createRefBranchType(@RequestBody RefBranchTypeDto clientDto) {
+    ResponseEntity<RefBranchTypeDto> createRefBranchType(@RequestBody RefBranchTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefBranchType createdType;
         try {
-            refBranchTypeService.addRefBranchType(clientDto.getDBModel());
+            createdType= refBranchTypeService.addRefBranchType(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/refBranchType" + createdType.getId())).body(createdType.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/refBranchType")
-    ResponseEntity<RefBranchTypeDto> updateRefBranchType(@RequestBody RefBranchTypeDto clientDto) {
+    ResponseEntity<RefBranchTypeDto> updateRefBranchType(@RequestBody RefBranchTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefBranchType updatedType;
         try {
-            refBranchTypeService.updateRefBranchType(clientDto.getDBModel());
+            updatedType = refBranchTypeService.updateRefBranchType(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/refBranchType/" + updatedType)).body(updatedType.getDto());
     }
     //endregion
 
@@ -146,18 +141,18 @@ public class RefBranchTypeApiController {
     @DeleteMapping("/refBranchType/{id}")
     ResponseEntity<RefBranchTypeDto> deleteRefBranchType(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refBranchTypeService.deleteRefBranchType(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

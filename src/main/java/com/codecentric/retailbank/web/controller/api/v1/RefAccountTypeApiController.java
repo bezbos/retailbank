@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -29,13 +30,8 @@ public class RefAccountTypeApiController {
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final RefAccountTypeService refAccountTypeService;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public RefAccountTypeApiController(RefAccountTypeService refAccountTypeService) {
-        this.refAccountTypeService = refAccountTypeService;
-    }
+    @Autowired
+    private RefAccountTypeService refAccountTypeService;
     //endregion
 
 
@@ -44,25 +40,22 @@ public class RefAccountTypeApiController {
     ResponseEntity<List<RefAccountTypeDto>> refAccountTypes() {
 
         List<RefAccountType> refAccountTypes = refAccountTypeService.getAllRefAccountTypes();
-        List<RefAccountTypeDto> refAccountTypeDtos = new ArrayList<>();
-        refAccountTypes
-                .forEach(
-                        x -> refAccountTypeDtos.add(new RefAccountTypeDto(
-                                x.getId(),
-                                x.getCode(),
-                                x.getDescription(),
-                                x.getIsCheckingType(),
-                                x.getIsSavingsType(),
-                                x.getIsCertificateOfDepositType(),
-                                x.getIsMoneyMarketType(),
-                                x.getIsIndividualRetirementType()
-                        )));
+        List<RefAccountTypeDto> refAccountTypeDtos = refAccountTypes.stream().map(type -> new RefAccountTypeDto(
+                type.getId(),
+                type.getCode(),
+                type.getDescription(),
+                type.getIsCheckingType(),
+                type.getIsSavingsType(),
+                type.getIsCertificateOfDepositType(),
+                type.getIsMoneyMarketType(),
+                type.getIsIndividualRetirementType()
+        )).collect(Collectors.toList());
 
         return refAccountTypeDtos.size() == 0
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refAccountTypeDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refAccountTypes")).body(refAccountTypeDtos);
     }
 
     @GetMapping("/refAccountType/{id}")
@@ -80,11 +73,11 @@ public class RefAccountTypeApiController {
                 refAccountType.getIsMoneyMarketType(),
                 refAccountType.getIsIndividualRetirementType());
 
-        return refAccountType == null
+        return refAccountTypeDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refAccountTypeDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refAccountType/" + id)).body(refAccountTypeDto);
     }
 
     @GetMapping("/refAccountType")
@@ -102,30 +95,31 @@ public class RefAccountTypeApiController {
                 refAccountType.getIsMoneyMarketType(),
                 refAccountType.getIsIndividualRetirementType());
 
-        return refAccountType == null
+        return refAccountTypeDto == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(refAccountTypeDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/refAccountType?code=" + code)).body(refAccountTypeDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/refAccountType")
-    ResponseEntity<RefAccountTypeDto> createRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
+    ResponseEntity<RefAccountTypeDto> createRefAccountType(@RequestBody RefAccountTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefAccountType createdType;
         try {
-            refAccountTypeService.addRefAccountType(clientDto.getDBModel());
+            createdType = refAccountTypeService.addRefAccountType(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/refAccountType/" + createdType.getId())).body(createdType.getDto());
     }
     //endregion
 
@@ -133,18 +127,19 @@ public class RefAccountTypeApiController {
     @PutMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> updateRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        RefAccountType updatedType;
         try {
-            refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
+            updatedType= refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/refAccountType/" + updatedType.getId())).body(updatedType.getDto());
     }
     //endregion
 
@@ -152,18 +147,18 @@ public class RefAccountTypeApiController {
     @DeleteMapping("/refAccountType/{id}")
     ResponseEntity<RefAccountTypeDto> deleteRefAccountType(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refAccountTypeService.deleteRefAccountType(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

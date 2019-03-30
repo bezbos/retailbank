@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,22 +33,18 @@ import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
 @RequestMapping("/api/v1")
 public class BankApiController {
 
-    private final BankService bankService;
     //region FIELDS
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    //endregion
 
-    //region CONSTRUCTOR
-    @Autowired public BankApiController(BankService bankService) {
-        this.bankService = bankService;
-    }
+    @Autowired
+    private BankService bankService;
     //endregion
 
 
     //region HTTP GET
     @GetMapping({"/banks", "/banks/{page}"})
-    ResponseEntity<PageableList<BankDto>> banks(@PathVariable("page") Optional<Integer> page,
-                                                @RequestParam("details") Optional<String> details) {
+    ResponseEntity<?> banks(@PathVariable("page") Optional<Integer> page,
+                            @RequestParam("details") Optional<String> details) {
 
         if (details.isPresent()) {
             List<Bank> banks = bankService.getAllBanksByDetails(details.get());
@@ -59,11 +56,13 @@ public class BankApiController {
 
             PageableList<BankDto> pageableBankDtos = new PageableList<>(0L, bankDtos, 0L, 0L);
 
+
             return bankDtos.size() == 0
                     //  404 NOT FOUND
-                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                    ? ResponseEntity.notFound().build()
                     //  200 OK
-                    : new ResponseEntity<>(pageableBankDtos, HttpStatus.OK);
+                    : ResponseEntity.ok().location(URI.create("/banks?details=" + details.get())).body(pageableBankDtos);
+
         }
 
         // If pageIndex is less than 1 set it to 1.
@@ -82,13 +81,13 @@ public class BankApiController {
 
         return pageableBankDtos.currentPage == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(pageableBankDtos, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/banks/" + pageIndex)).body(pageableBankDtos);
     }
 
     @GetMapping("/bank/{id}")
-    ResponseEntity<BankDto> bankById(@PathVariable("id") Long id) {
+    ResponseEntity<?> bankById(@PathVariable("id") Long id) {
         Bank bank = bankService.getById(id);
         BankDto bankDto = bank == null
                 ? null
@@ -96,13 +95,13 @@ public class BankApiController {
 
         return bank == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(bankDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/bank/"+id)).body(bankDto);
     }
 
     @GetMapping("/bank")
-    ResponseEntity<BankDto> bankByDetails(@RequestParam("details") String details) {
+    ResponseEntity<?> bankByDetails(@RequestParam("details") String details) {
         Bank bank = bankService.getByDetails(details);
         BankDto bankDto = bank == null
                 ? null
@@ -110,66 +109,67 @@ public class BankApiController {
 
         return bank == null
                 //  404 NOT FOUND
-                ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                ? ResponseEntity.notFound().build()
                 //  200 OK
-                : new ResponseEntity<>(bankDto, HttpStatus.OK);
+                : ResponseEntity.ok().location(URI.create("/bank?details=" + details)).body(bankDto);
     }
     //endregion
 
     //region HTTP POST
     @PostMapping("/bank")
-    ResponseEntity<BankDto> createBank(@RequestBody BankDto clientDto) {
+    ResponseEntity<?> createBank(@RequestBody BankDto dto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Bank createdBank;
         try {
-            bankService.addBank(clientDto.getDBModel());
+            createdBank = bankService.addBank(dto.getDBModel());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return new ResponseEntity<>(clientDto, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/bank/" + createdBank.getId())).body(createdBank.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/bank")
-    ResponseEntity<BankDto> updateBank(@RequestBody BankDto clientDto) {
+    ResponseEntity<?> updateBank(@RequestBody BankDto clientDto) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             bankService.updateBank(clientDto.getDBModel());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
-            return new ResponseEntity<>(clientDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(clientDto);
         }
 
         //  200 OK
-        return new ResponseEntity<>(clientDto, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/bank/" + clientDto.getId())).body(clientDto);
     }
     //endregion
 
     //region HTTP DELETE
     @DeleteMapping("/bank/{id}")
-    ResponseEntity<BankDto> deleteBank(@PathVariable("id") Long id) {
+    ResponseEntity<?> deleteBank(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             bankService.deleteBank(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
 
         //  204 NO CONTENT
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 }

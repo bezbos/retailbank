@@ -17,6 +17,10 @@ public class BankDto {
     public BankDto() {
     }
 
+    public BankDto(String details) {
+        this.details = details;
+    }
+
     public BankDto(Long id, String details) {
         this.id = id;
         this.details = details;
