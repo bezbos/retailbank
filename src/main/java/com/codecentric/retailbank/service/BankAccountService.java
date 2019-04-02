@@ -49,6 +49,11 @@ public class BankAccountService implements IBankAccountService {
         List<BankAccount> bankAccounts = bankAccountRepository.all();
         return bankAccounts;
     }
+
+    public List<BankAccount> getAllAccountsByDetails(String details) {
+        List<BankAccount> bankAccounts = bankAccountRepository.allByDetails(details);
+        return bankAccounts;
+    }
     //endregion
 
     //region WRITE

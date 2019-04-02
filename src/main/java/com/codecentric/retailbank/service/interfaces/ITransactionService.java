@@ -11,9 +11,7 @@ public interface ITransactionService {
 
     ListPage<Transaction> getAllTransactions(int pageIndex, int pageSize);
 
-    Transaction addTransaction(Transaction transaction);
-
-    Transaction updateTransaction(Transaction transaction);
+    Transaction createPayment(Transaction transaction);
 
     void deleteTransaction(Transaction transaction);
 

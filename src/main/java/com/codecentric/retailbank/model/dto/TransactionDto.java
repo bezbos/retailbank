@@ -14,7 +14,10 @@ public class TransactionDto {
     private Long id;
 
     @NotNull
-    private BankAccountDto account;
+    private BankAccountDto senderAccount;
+
+    @NotNull
+    private BankAccountDto receiverAccount;
 
     @NotNull
     private MerchantDto merchant;
@@ -33,18 +36,17 @@ public class TransactionDto {
     //endregion
 
     //region CONSTRUCTOR
-    public TransactionDto() {
-    }
-
     public TransactionDto(Long id,
-                          @NotNull BankAccountDto account,
-                          @NotNull MerchantDto merchant,
-                          @NotNull RefTransactionTypeDto type,
-                          @NotNull Date date,
-                          @NotNull BigDecimal amount,
-                          @Size(max = 255) String details) {
+                          BankAccountDto senderAccount,
+                          BankAccountDto receiverAccount,
+                          MerchantDto merchant,
+                          RefTransactionTypeDto type,
+                          Date date,
+                          BigDecimal amount,
+                          String details) {
         this.id = id;
-        this.account = account;
+        this.senderAccount = senderAccount;
+        this.receiverAccount = receiverAccount;
         this.merchant = merchant;
         this.type = type;
         this.date = date;
@@ -62,12 +64,12 @@ public class TransactionDto {
         this.id = id;
     }
 
-    public BankAccountDto getAccount() {
-        return account;
+    public BankAccountDto getSenderAccount() {
+        return senderAccount;
     }
 
-    public void setAccount(BankAccountDto account) {
-        this.account = account;
+    public void setSenderAccount(BankAccountDto senderAccount) {
+        this.senderAccount = senderAccount;
     }
 
     public MerchantDto getMerchant() {
@@ -109,6 +111,14 @@ public class TransactionDto {
     public void setDetails(String details) {
         this.details = details;
     }
+
+    public BankAccountDto getReceiverAccount() {
+        return receiverAccount;
+    }
+
+    public void setReceiverAccount(BankAccountDto receiverAccount) {
+        this.receiverAccount = receiverAccount;
+    }
     //endregion
 
     //region HELPERS
@@ -116,7 +126,8 @@ public class TransactionDto {
     public Transaction getDBModel() {
         return new Transaction(
                 this.id,
-                this.account != null ? this.account.getDBModel() : null,
+                this.senderAccount != null ? this.senderAccount.getDBModel() : null,
+                this.receiverAccount != null ? this.receiverAccount.getDBModel() : null,
                 this.merchant != null ? merchant.getDBModel() : null,
                 this.type != null ? this.type.getDBModel() : null,
                 this.date,

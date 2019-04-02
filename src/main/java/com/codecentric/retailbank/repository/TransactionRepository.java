@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,10 +38,12 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             resultSet = cs_allTransactions.getResultSet();
             while (resultSet.next()) {
 
-                BankAccount account = new BankAccount(
-                        resultSet.getLong("transactions.account_number"),
-                        resultSet.getBigDecimal("accounts.current_balance"),
-                        resultSet.getString("accounts.other_details")
+                BankAccount senderAccount = new BankAccount(
+                        resultSet.getLong("transactions.sender_account_number")
+                );
+
+                BankAccount receiverAccount = new BankAccount(
+                        resultSet.getLong("transactions.receiver_account_number")
                 );
 
                 Merchant merchant = new Merchant(
@@ -57,7 +58,8 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
 
                 Transaction transaction = new Transaction(
                         resultSet.getLong("transactions.transaction_id"),
-                        account,
+                        senderAccount,
+                        receiverAccount,
                         merchant,
                         refTransactionType,
                         resultSet.getDate("transactions.transaction_date_time"),
@@ -94,10 +96,12 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             resultSet = cs_allTransactionsRange.getResultSet();
             List<Transaction> transactions = new ArrayList<>();
             while (resultSet.next()) {
-                BankAccount account = new BankAccount(
-                        resultSet.getLong("transactions.account_number"),
-                        resultSet.getBigDecimal("accounts.current_balance"),
-                        resultSet.getString("accounts.other_details")
+                BankAccount senderAccount = new BankAccount(
+                        resultSet.getLong("transactions.sender_account_number")
+                );
+
+                BankAccount receiverAccount = new BankAccount(
+                        resultSet.getLong("transactions.receiver_account_number")
                 );
 
                 Merchant merchant = new Merchant(
@@ -112,7 +116,8 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
 
                 Transaction transaction = new Transaction(
                         resultSet.getLong("transactions.transaction_id"),
-                        account,
+                        senderAccount,
+                        receiverAccount,
                         merchant,
                         refTransactionType,
                         resultSet.getDate("transactions.transaction_date_time"),
@@ -166,11 +171,14 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a Transaction object
-                BankAccount account = new BankAccount(
-                        resultSet.getLong("transactions.account_number"),
-                        resultSet.getBigDecimal("accounts.current_balance"),
-                        resultSet.getString("accounts.other_details")
+                BankAccount senderAccount = new BankAccount(
+                        resultSet.getLong("transactions.sender_account_number")
                 );
+
+                BankAccount receiverAccount = new BankAccount(
+                        resultSet.getLong("transactions.receiver_account_number")
+                );
+
 
                 Merchant merchant = new Merchant(
                         resultSet.getLong("transactions.merchant_id"),
@@ -184,7 +192,8 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
 
                 transaction = new Transaction(
                         resultSet.getLong("transactions.transaction_id"),
-                        account,
+                        senderAccount,
+                        receiverAccount,
                         merchant,
                         refTransactionType,
                         resultSet.getDate("transactions.transaction_date_time"),
@@ -221,10 +230,12 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
             while (resultSet.next()) {
 
                 // Transform ResultSet row into a Transaction object
-                BankAccount account = new BankAccount(
-                        resultSet.getLong("transactions.account_number"),
-                        resultSet.getBigDecimal("accounts.current_balance"),
-                        resultSet.getString("accounts.other_details")
+                BankAccount senderAccount = new BankAccount(
+                        resultSet.getLong("transactions.sender_account_number")
+                );
+
+                BankAccount receiverAccount = new BankAccount(
+                        resultSet.getLong("transactions.receiver_account_number")
                 );
 
                 Merchant merchant = new Merchant(
@@ -239,7 +250,8 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
 
                 transaction = new Transaction(
                         resultSet.getLong("transactions.transaction_id"),
-                        account,
+                        senderAccount,
+                        receiverAccount,
                         merchant,
                         refTransactionType,
                         resultSet.getDate("transactions.transaction_date_time"),
@@ -264,18 +276,17 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
     //endregion
 
     //region WRITE
-    @Override public Transaction add(Transaction model) {
+    public Transaction createPayment(Transaction model){
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addTransaction = conn.prepareCall("{call addTransaction(?,?,?,?,?,?)}")) {
+             CallableStatement cs_addTransaction = conn.prepareCall("{call create_payment(?,?,?,?,?)}")) {
 
-            // Add a new Transaction to DB
-            cs_addTransaction.setLong("p_account_number", model.getAccount().getId());
+            // Create new payment
+            cs_addTransaction.setLong("p_sender_account_number", model.getSenderAccount().getId());
+            cs_addTransaction.setLong("p_receiver_account_number", model.getReceiverAccount().getId());
             cs_addTransaction.setLong("p_merchant_id", model.getMerchant().getId());
-            cs_addTransaction.setLong("p_transaction_type_id", model.getType().getId());
-            cs_addTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
             cs_addTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
             cs_addTransaction.setString("p_other_details", model.getDetails());
             cs_addTransaction.execute();
@@ -286,90 +297,8 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
 
         return model;
     }
-
-    @Override public Transaction update(Transaction model) {
-        if (model == null)
-            throw new ArgumentNullException("The model argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateTransaction = conn.prepareCall("{call updateTransaction(?,?,?,?,?,?,?)}")) {
-
-            // Update an existing Transaction
-            cs_updateTransaction.setLong("p_transaction_id", model.getId());
-            cs_updateTransaction.setLong("p_account_number", model.getAccount().getId());
-            cs_updateTransaction.setLong("p_merchant_id", model.getMerchant().getId());
-            cs_updateTransaction.setLong("p_transaction_type_id", model.getType().getId());
-            cs_updateTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-            cs_updateTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
-            cs_updateTransaction.setString("p_other_details", model.getDetails());
-            cs_updateTransaction.execute();
-
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-
-        return model;
-    }
-
-    @Override public void insertBatch(Iterable<Transaction> models) {
-        if (models == null)
-            throw new ArgumentNullException("The models argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addTransaction = conn.prepareCall("{call addTransaction(?,?,?,?,?,?)}")) {
-
-            // Add calls to batch
-            for (Transaction model : models) {
-                try {
-                    cs_addTransaction.setLong("p_account_number", model.getAccount().getId());
-                    cs_addTransaction.setLong("p_merchant_id", model.getMerchant().getId());
-                    cs_addTransaction.setLong("p_transaction_type_id", model.getType().getId());
-                    cs_addTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-                    cs_addTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
-                    cs_addTransaction.setString("p_other_details", model.getDetails());
-                    cs_addTransaction.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_addTransaction.executeBatch();
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
-
-    @Override public void updateBatch(Iterable<Transaction> models) {
-        if (models == null)
-            throw new ArgumentNullException("The models argument must have a value/cannot be null.");
-
-        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_updateTransaction = conn.prepareCall("{call updateTransaction(?,?,?,?,?,?,?)}")) {
-
-            // Add calls to batch
-            for (Transaction model : models) {
-                try {
-                    cs_updateTransaction.setLong("p_transaction_id", model.getId());
-                    cs_updateTransaction.setLong("p_account_number", model.getAccount().getId());
-                    cs_updateTransaction.setLong("p_merchant_id", model.getMerchant().getId());
-                    cs_updateTransaction.setLong("p_transaction_type_id", model.getType().getId());
-                    cs_updateTransaction.setDate("p_transaction_date_time", new Date(model.getDate().getTime()));
-                    cs_updateTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
-                    cs_updateTransaction.setString("p_other_details", model.getDetails());
-                    cs_updateTransaction.addBatch();
-                } catch (SQLException ex) {
-                    DBUtil.showErrorMessage(ex);
-                }
-            }
-
-            // Execute batch!
-            cs_updateTransaction.executeBatch();
-        } catch (SQLException ex) {
-            DBUtil.showErrorMessage(ex);
-        }
-    }
     //endregion
+
 
     //region DELETE
     @Override public void delete(Transaction model) {
@@ -452,4 +381,36 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         }
     }
     //endregion
+
+    //region Unused Overrides
+    /**
+     * Use <code>createPayment()</code> instead of this!
+     */
+    @Deprecated
+    @Override
+    public Transaction add(Transaction model) {
+        return null;
+    }
+
+    /**
+     * Use <code>createPayment()</code> instead of this!
+     */
+    @Deprecated
+    @Override public Transaction update(Transaction model) {
+        return null;
+    }
+
+    /**
+     * Use <code>createPayment()</code> instead of this!
+     */
+    @Deprecated
+    @Override public void insertBatch(Iterable<Transaction> models) { }
+
+    /**
+     * Use <code>createPayment()</code> instead of this!
+     */
+    @Deprecated
+    @Override public void updateBatch(Iterable<Transaction> models) { }
+    //endregion
+
 }

@@ -14,7 +14,10 @@ public class Transaction {
     private Long id;
 
     @NotNull
-    private BankAccount account;
+    private BankAccount senderAccount;
+
+    @NotNull
+    private BankAccount receiverAccount;
 
     @NotNull
     private Merchant merchant;
@@ -37,14 +40,16 @@ public class Transaction {
     }
 
     public Transaction(Long id,
-                       @NotNull BankAccount account,
-                       @NotNull Merchant merchant,
-                       @NotNull RefTransactionType type,
-                       @NotNull Date date,
-                       @NotNull BigDecimal amount,
-                       @Size(max = 255) String details) {
+                       BankAccount senderAccount,
+                       BankAccount receiverAccount,
+                       Merchant merchant,
+                       RefTransactionType type,
+                       Date date,
+                       BigDecimal amount,
+                       String details) {
         this.id = id;
-        this.account = account;
+        this.senderAccount = senderAccount;
+        this.receiverAccount = receiverAccount;
         this.merchant = merchant;
         this.type = type;
         this.date = date;
@@ -62,12 +67,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public BankAccount getAccount() {
-        return account;
+    public BankAccount getSenderAccount() {
+        return senderAccount;
     }
 
-    public void setAccount(BankAccount account) {
-        this.account = account;
+    public void setSenderAccount(BankAccount senderAccount) {
+        this.senderAccount = senderAccount;
     }
 
     public Merchant getMerchant() {
@@ -109,14 +114,23 @@ public class Transaction {
     public void setDetails(String details) {
         this.details = details;
     }
+
+    public BankAccount getReceiverAccount() {
+        return receiverAccount;
+    }
+
+    public void setReceiverAccount(BankAccount receiverAccount) {
+        this.receiverAccount = receiverAccount;
+    }
     //endregion
 
     //region HELPERS
     @JsonIgnore
-    public TransactionDto getDto(){
+    public TransactionDto getDto() {
         return new TransactionDto(
                 this.id,
-                this.account.getDto(),
+                this.senderAccount.getDto(),
+                this.receiverAccount.getDto(),
                 this.merchant.getDto(),
                 this.type.getDto(),
                 this.date,

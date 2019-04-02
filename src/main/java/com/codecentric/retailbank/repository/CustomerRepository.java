@@ -196,21 +196,21 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
 
                 // Transform ResultSet row into a Branch object
                 Address address = new Address(
-                        resultSet.getLong("customers.address_id"),
-                        resultSet.getString("addresses.line_1")
+                        resultSet.getLong("address_id"),
+                        resultSet.getString("line_1")
                 );
 
                 Branch branch = new Branch(
-                        resultSet.getLong("customers.branch_id"),
-                        resultSet.getString("branches.branch_details")
+                        resultSet.getLong("branch_id"),
+                        resultSet.getString("branch_details")
                 );
 
                 customer = new Customer(
-                        resultSet.getLong("customers.customer_id"),
+                        resultSet.getLong("customer_id"),
                         address,
                         branch,
-                        resultSet.getString("customers.personal_details"),
-                        resultSet.getString("customers.contact_details")
+                        resultSet.getString("personal_details"),
+                        resultSet.getString("contact_details")
                 );
 
             }

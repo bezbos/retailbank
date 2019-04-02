@@ -81,8 +81,8 @@ money_market,-- 'Y' or 'N'
 individual_retirement -- 'Y' or 'N'
 )
 VALUES
-('01-CHK', ' A checking account offers easy access to your money for your daily transactional needs and helps keep your cash secure. Customers can use a debit card or checks to make purchases or pay bills.', 'Y', 'N', 'N', 'N', 'N'),
-('02-SAV', 'A savings account allows you to accumulate interest on funds you’ve saved for future needs. Interest rates can be compounded on a daily, weekly, monthly, or annual basis.', 'N', 'Y', 'N', 'N', 'N'),
+('01-CHK', ' A checking senderAccount offers easy access to your money for your daily transactional needs and helps keep your cash secure. Customers can use a debit card or checks to make purchases or pay bills.', 'Y', 'N', 'N', 'N', 'N'),
+('02-SAV', 'A savings senderAccount allows you to accumulate interest on funds you’ve saved for future needs. Interest rates can be compounded on a daily, weekly, monthly, or annual basis.', 'N', 'Y', 'N', 'N', 'N'),
 ('03-COD', 'Certificates of deposit, or CDs, allow you to invest your money at a set interest rate for a pre-set period of time.', 'N', 'N', 'Y', 'N', 'N'),
 ('04-MMA', 'Money market accounts are similar to savings accounts, but they require you to maintain a higher balance to avoid a monthly service fee.', 'N', 'N', 'N', 'Y', 'N'),
 ('05-IRA', 'IRAs, or individual retirement accounts, allow you to save independently for your retirement.', 'N', 'N', 'N', 'N', 'Y');
@@ -93,8 +93,8 @@ active, -- 'Y' or 'N'
 closed -- 'Y' or 'N'
 )
 VALUES
-('01-ACT', 'The account is active and can be withdrawn from and receive deposits.', 'Y', 'N'),
-('02-CLS', 'The account is closed and cannot be withdrawn from or receive deposits.', 'N', 'Y');
+('01-ACT', 'The senderAccount is active and can be withdrawn from and receive deposits.', 'Y', 'N'),
+('02-CLS', 'The senderAccount is closed and cannot be withdrawn from or receive deposits.', 'N', 'Y');
 
 INSERT INTO 
 accounts(account_status_id, account_type_id, customer_id, current_balance, other_details)

@@ -74,6 +74,60 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
         return bankAccounts;
     }
 
+    public List<BankAccount> allByDetails(String details) {
+        if (details == null)
+            throw new ArgumentNullException("The details argument must have a value/cannot be null.");
+
+        ResultSet resultSet = null;
+        List<BankAccount> bankAccounts = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
+             CallableStatement callableStatement = conn.prepareCall("{call allAccountsByDetails(?)}")) {
+
+            // Retrieve all bankAccounts
+            callableStatement.setString(1, details);
+            callableStatement.execute();
+
+            // Transform each ResultSet row into BankAccount model and add to "bankAccounts" list
+            resultSet = callableStatement.getResultSet();
+            while (resultSet.next()) {
+
+                RefAccountStatus refAccountStatus = new RefAccountStatus(
+                        resultSet.getLong("accounts.account_status_id"),
+                        resultSet.getString("ref_account_status.account_status_code")
+                );
+
+                RefAccountType refAccountType = new RefAccountType(
+                        resultSet.getLong("accounts.account_type_id"),
+                        resultSet.getString("ref_account_types.account_type_code")
+                );
+
+                Customer customer = new Customer(
+                        resultSet.getLong("accounts.customer_id"),
+                        resultSet.getString("customers.personal_details")
+                );
+
+                BankAccount bankAccount = new BankAccount(
+                        resultSet.getLong("accounts.account_number"),
+                        refAccountStatus,
+                        refAccountType,
+                        customer,
+                        resultSet.getBigDecimal("accounts.current_balance"),
+                        resultSet.getString("accounts.other_details")
+                );
+
+                bankAccounts.add(bankAccount);
+            }
+
+        } catch (SQLException ex) {
+            DBUtil.showErrorMessage(ex);
+        } finally {
+            closeConnections(resultSet);
+        }
+
+        return bankAccounts;
+    }
+
     @Override public ListPage<BankAccount> allRange(int pageIndex, int pageSize) {
         ResultSet resultSet = null;
         ListPage<BankAccount> bankAccountListPage = new ListPage<>();

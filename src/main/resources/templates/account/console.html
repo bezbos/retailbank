@@ -9,9 +9,9 @@
 
     <div sec:authorize="hasAuthority('WRITE_PRIVILEGE')"> This text is only visible to an admin</div>
 
-    <a class="btn btn-default" th:href="@{/account/admin.html}" th:text="#{label.pages.admin}">admin</a>
+    <a class="btn btn-default" th:href="@{/senderAccount/admin.html}" th:text="#{label.pages.admin}">admin</a>
     <br/>
-    <a class="btn btn-default" th:href="@{/account/changePassword.html}" th:text="#{message.changePassword}">change password</a>
+    <a class="btn btn-default" th:href="@{/senderAccount/changePassword.html}" th:text="#{message.changePassword}">change password</a>
     <br/>
     <br/>
     <br/>
@@ -44,7 +44,7 @@
         }
 
         function set2FA(use2FA) {
-            $.post("/account/update/2fa", {use2FA: use2FA}, function (data) {
+            $.post("/senderAccount/update/2fa", {use2FA: use2FA}, function (data) {
                 if (use2FA) {
                     $("#qr").append('<img src="' + data.message + '" />').show();
                 } else {

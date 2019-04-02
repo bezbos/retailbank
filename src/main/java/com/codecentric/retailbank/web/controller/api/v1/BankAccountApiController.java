@@ -41,7 +41,30 @@ public class BankAccountApiController {
 
     //region HTTP GET
     @GetMapping({"/bankAccounts", "/bankAccounts/{page}"})
-    ResponseEntity<PageableList<BankAccountDto>> bankAccounts(@PathVariable("page") Optional<Integer> page) {
+    ResponseEntity<PageableList<BankAccountDto>> bankAccounts(@PathVariable("page") Optional<Integer> page,
+                                                              @RequestParam("details") Optional<String> details) {
+
+        if (details.isPresent()) {
+            List<BankAccount> bankAccounts = bankAccountService.getAllAccountsByDetails(details.get());
+            List<BankAccountDto> bankAccountDtos = new ArrayList<>();
+            bankAccounts.forEach(
+                    account -> bankAccountDtos.add(new BankAccountDto(
+                            account.getId(),
+                            account.getStatus().getDto(),
+                            account.getType().getDto(),
+                            account.getCustomer().getDto(),
+                            account.getBalance(),
+                            account.getDetails()))
+            );
+
+            PageableList<BankAccountDto> pageableBankAccounts = new PageableList<>(bankAccountDtos);
+
+            return bankAccountDtos.size() == 0
+                    //  404 NOT FOUND
+                    ? ResponseEntity.notFound().build()
+                    //  200 OK
+                    : ResponseEntity.ok().location(URI.create("/bankAccounts?details=" + details)).body(pageableBankAccounts);
+        }
 
         // If pageIndex is less than 1 set it to 1.
         Integer pageIndex = page.isPresent() ? page.get() : 0;

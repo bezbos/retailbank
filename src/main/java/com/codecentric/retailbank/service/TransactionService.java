@@ -21,13 +21,8 @@ public class TransactionService implements ITransactionService {
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final TransactionRepository transactionRepository;
-    //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public TransactionService(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
-    }
+    @Autowired
+    private TransactionRepository transactionRepository;
     //endregion
 
 
@@ -62,13 +57,10 @@ public class TransactionService implements ITransactionService {
     //endregion
 
     //region WRITE
-    @Override public Transaction addTransaction(Transaction transaction) {
-        Transaction result = transactionRepository.add(transaction);
-        return result;
-    }
 
-    @Override public Transaction updateTransaction(Transaction transaction) {
-        Transaction result = transactionRepository.update(transaction);
+    @Override
+    public Transaction createPayment(Transaction transaction) {
+        Transaction result = transactionRepository.createPayment(transaction);
         return result;
     }
     //endregion

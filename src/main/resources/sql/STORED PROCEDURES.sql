@@ -2070,7 +2070,7 @@ BEGIN
 END$$
 DELIMITER ;
 
--- /user account
+-- /user senderAccount
 
 
 

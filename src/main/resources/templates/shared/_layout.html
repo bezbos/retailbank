@@ -43,7 +43,7 @@
                     <a th:href="@{~/customer/list}" class="nav-link">Customers</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a th:href="@{~/account/list}" class="nav-link">Accounts</a>
+                    <a th:href="@{~/senderAccount/list}" class="nav-link">Accounts</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <a th:href="@{~/transaction/list}" class="nav-link">Transactions</a>
@@ -51,17 +51,17 @@
             </ul>
             <ul class="navbar-nav my-2 my-lg-0">
                 <li sec:authorize="isAnonymous()" class="nav-item">
-                    <a th:href="@{~/account/login}" class="nav-link">Login</a>
+                    <a th:href="@{~/senderAccount/login}" class="nav-link">Login</a>
                 </li>
                 <li sec:authorize="isAnonymous()" class="nav-item">
-                    <a th:href="@{~/account/registration}" class="nav-link">Register</a>
+                    <a th:href="@{~/senderAccount/registration}" class="nav-link">Register</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a th:href="@{~/account/updatePassword}" th:text="'Hello '+ ${session.username} + '!'" class="nav-link">
+                    <a th:href="@{~/senderAccount/updatePassword}" th:text="'Hello '+ ${session.username} + '!'" class="nav-link">
                     </a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a th:href="@{~/account/logout}" class="nav-link">Logout</a>
+                    <a th:href="@{~/senderAccount/logout}" class="nav-link">Logout</a>
                 </li>
             </ul>
         </div>

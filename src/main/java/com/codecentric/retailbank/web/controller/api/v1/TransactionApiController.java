@@ -52,7 +52,8 @@ public class TransactionApiController {
         ListPage<Transaction> transactions = transactionService.getAllTransactions(pageIndex, PAGE_SIZE);
         List<TransactionDto> transactionDtos = transactions.getModels().stream().map(transaction -> new TransactionDto(
                 transaction.getId(),
-                transaction.getAccount().getDto(),
+                transaction.getSenderAccount().getDto(),
+                transaction.getReceiverAccount().getDto(),
                 transaction.getMerchant().getDto(),
                 transaction.getType().getDto(),
                 transaction.getDate(),
@@ -79,7 +80,8 @@ public class TransactionApiController {
                 ? null
                 : new TransactionDto(
                 transaction.getId(),
-                transaction.getAccount().getDto(),
+                transaction.getSenderAccount().getDto(),
+                transaction.getReceiverAccount().getDto(),
                 transaction.getMerchant().getDto(),
                 transaction.getType().getDto(),
                 transaction.getDate(),
@@ -103,7 +105,8 @@ public class TransactionApiController {
                 ? null
                 : new TransactionDto(
                 transaction.getId(),
-                transaction.getAccount().getDto(),
+                transaction.getSenderAccount().getDto(),
+                transaction.getReceiverAccount().getDto(),
                 transaction.getMerchant().getDto(),
                 transaction.getType().getDto(),
                 transaction.getDate(),
@@ -120,13 +123,13 @@ public class TransactionApiController {
 
     //region HTTP POST
     @PostMapping("/transaction")
-    ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto clientDto) {
+    ResponseEntity<TransactionDto> createPayment(@RequestBody TransactionDto clientDto) {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Transaction createdTransaction;
         try {
-            createdTransaction = transactionService.addTransaction(clientDto.getDBModel());
+            createdTransaction = transactionService.createPayment(clientDto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -136,6 +139,7 @@ public class TransactionApiController {
         //  201 CREATED
         return ResponseEntity.created(URI.create("/transaction/" + createdTransaction.getId())).body(createdTransaction.getDto());
     }
+
     //endregion
 
     // NOTE: Transactions cannot be updated or deleted.
