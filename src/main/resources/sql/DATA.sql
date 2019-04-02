@@ -65,6 +65,9 @@ VALUES
 INSERT INTO
 customers(address_id, branch_id, personal_details, contact_details)
 VALUES
+(1, 1, 'MAIN BANK', 'MAIN BANK'),
+(1, 1, 'ATM 01', 'ATM 01'),
+(1, 1, 'ATM 02', 'ATM 02'),
 (1, 1, 'Wyndham Fausch, wfausch0@blogspot.com, Male', 'nibh ligula nec sem duis aliquam convallis nunc proin at turpis a'),
 (2, 2, 'Clayson MacRinn, cmacrinn1@craigslist.org, Male', 'blandit ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing elit proin interdum mauris non ligula'),
 (3, 7, 'Berenice Mitchener, bmitchener2@bluehost.com, Female', 'nulla tellus in sagittis dui vel nisl duis ac nibh fusce'),
@@ -81,8 +84,8 @@ money_market,-- 'Y' or 'N'
 individual_retirement -- 'Y' or 'N'
 )
 VALUES
-('01-CHK', ' A checking senderAccount offers easy access to your money for your daily transactional needs and helps keep your cash secure. Customers can use a debit card or checks to make purchases or pay bills.', 'Y', 'N', 'N', 'N', 'N'),
-('02-SAV', 'A savings senderAccount allows you to accumulate interest on funds you’ve saved for future needs. Interest rates can be compounded on a daily, weekly, monthly, or annual basis.', 'N', 'Y', 'N', 'N', 'N'),
+('01-CHK', ' A checking account offers easy access to your money for your daily transactional needs and helps keep your cash secure. Customers can use a debit card or checks to make purchases or pay bills.', 'Y', 'N', 'N', 'N', 'N'),
+('02-SAV', 'A savings account allows you to accumulate interest on funds you’ve saved for future needs. Interest rates can be compounded on a daily, weekly, monthly, or annual basis.', 'N', 'Y', 'N', 'N', 'N'),
 ('03-COD', 'Certificates of deposit, or CDs, allow you to invest your money at a set interest rate for a pre-set period of time.', 'N', 'N', 'Y', 'N', 'N'),
 ('04-MMA', 'Money market accounts are similar to savings accounts, but they require you to maintain a higher balance to avoid a monthly service fee.', 'N', 'N', 'N', 'Y', 'N'),
 ('05-IRA', 'IRAs, or individual retirement accounts, allow you to save independently for your retirement.', 'N', 'N', 'N', 'N', 'Y');
@@ -93,18 +96,21 @@ active, -- 'Y' or 'N'
 closed -- 'Y' or 'N'
 )
 VALUES
-('01-ACT', 'The senderAccount is active and can be withdrawn from and receive deposits.', 'Y', 'N'),
-('02-CLS', 'The senderAccount is closed and cannot be withdrawn from or receive deposits.', 'N', 'Y');
+('01-ACT', 'The account is active and can be withdrawn from and receive deposits.', 'Y', 'N'),
+('02-CLS', 'The account is closed and cannot be withdrawn from or receive deposits.', 'N', 'Y');
 
 INSERT INTO 
 accounts(account_status_id, account_type_id, customer_id, current_balance, other_details)
 VALUES
-(2, 2, 1, 50000, 'No additional details.'),
-(2, 4, 2, 0, 'Account closed due to being inactive for 2 years.'),
-(1, 2, 3, 9000, 'No additional details.'),
-(1, 3, 4, 23500, 'No additional details.'),
-(1, 5, 5, 100000, 'No additional details.'),
-(2, 1, 6, 9000000, 'Account closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
+(1, 1, 1, 9999999999999999999, 'MAIN BANK'),
+(1, 1, 2, 10000, 'ATM 01'),
+(1, 1, 3, 10000, 'ATM 02'),
+(2, 2, 4, 50000, 'No additional details.'),
+(2, 4, 5, 0, 'Account closed due to being inactive for 2 years.'),
+(1, 2, 6, 9000, 'No additional details.'),
+(1, 3, 7, 23500, 'No additional details.'),
+(1, 5, 8, 100000, 'No additional details.'),
+(2, 1, 9, 9000000, 'Account closed under the suspicion of money laundering. Balance is frozen until the investigation is over.');
 
 INSERT INTO
 merchants(merchant_details)
@@ -126,12 +132,12 @@ VALUES
 
 
 INSERT INTO
-transactions(account_number, merchant_id, transaction_type_id, transaction_date_time, transaction_amount, other_details)
+transactions(sender_account_number, receiver_account_number, merchant_id, transaction_type_id, transaction_date_time, transaction_amount, other_details)
 VALUES
-(1, 1, 1, NOW(), 250, 'No additional details.'),
-(3, 3, 1, NOW(), 2500, 'No additional details.'),
-(4, 4, 2, NOW(), 555, 'No additional details.'),
-(5, 1, 1, NOW(), 25000, 'No additional details.');
+(1, 2, 1, 1, NOW(), 250, 'No additional details.'),
+(3, 1, 3, 1, NOW(), 2500, 'No additional details.'),
+(4, 3, 4, 2, NOW(), 555, 'No additional details.'),
+(5, 4, 1, 1, NOW(), 25000, 'No additional details.');
 
 
 INSERT INTO
