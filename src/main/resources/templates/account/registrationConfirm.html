@@ -1,9 +1,0 @@
-<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
-     layout:decorate="~{shared/_layout}" layout:fragment="content">
-    <h1 class="alert alert-info" th:text="#{message.regSucc}">success</h1>
-    <br/>
-    <span th:if="${param.token != null}" th:text="#{token.message}">token</span>
-    <span th:text="${param.token}">token</span>
-    <br/>
-    <a class="btn btn-primary" th:href="@{/senderAccount/login}" th:text="#{label.login}">login</a>
-</div>

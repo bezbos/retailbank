@@ -8,9 +8,13 @@ USE `bankcentric`$$
 CREATE
   DEFINER =`root`@`localhost` PROCEDURE `addBank`(p_bank_details VARCHAR(255))
 BEGIN
+  # First we insert the new record.
   INSERT INTO banks
   VALUES (DEFAULT,
           p_bank_details);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(), p_bank_details;
 END $$
 DELIMITER ;
 
@@ -22,9 +26,14 @@ CREATE
   DEFINER =`root`@`localhost` PROCEDURE `updateBank`(p_bank_id BIGINT,
                                                      p_bank_details VARCHAR(255))
 BEGIN
+  # First we update the existing record.
   UPDATE banks
   SET bank_details = p_bank_details
   WHERE bank_id = p_bank_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_bank_id,
+         p_bank_details;
 END $$
 DELIMITER ;
 
@@ -154,6 +163,7 @@ CREATE
                                                      p_country VARCHAR(50),
                                                      p_other_details VARCHAR(255))
 BEGIN
+  # First we insert the new record.
   INSERT INTO addresses
   VALUES (DEFAULT,
           p_line_1,
@@ -163,6 +173,16 @@ BEGIN
           p_state_province_country,
           p_country,
           p_other_details);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_line_1,
+         p_line_2,
+         p_town_city,
+         p_zip_postcode,
+         p_state_province_country,
+         p_country,
+         p_other_details;
 END $$
 DELIMITER ;
 
@@ -180,6 +200,7 @@ CREATE
                                                         p_country VARCHAR(50),
                                                         p_other_details VARCHAR(255))
 BEGIN
+  # First we update the existing record.
   UPDATE addresses
   SET line_1                 = p_line_1,
       line_2                 = p_line_2,
@@ -189,6 +210,16 @@ BEGIN
       country                = p_country,
       other_details          = p_other_details
   WHERE address_id = p_address_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_address_id,
+         p_line_1,
+         p_line_2,
+         p_town_city,
+         p_zip_postcode,
+         p_state_province_country,
+         p_country,
+         p_other_details;
 END $$
 DELIMITER ;
 
@@ -316,6 +347,7 @@ CREATE
                                                            p_small_rural CHAR(1),
                                                            p_medium_suburban CHAR(1))
 BEGIN
+  # First we insert the new record.
   INSERT INTO ref_branch_types
   VALUES (DEFAULT,
           p_branch_type_code,
@@ -323,6 +355,14 @@ BEGIN
           p_large_urban,
           p_small_rural,
           p_medium_suburban);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_branch_type_code,
+         p_branch_type_description,
+         p_large_urban,
+         p_small_rural,
+         p_medium_suburban;
 END $$
 DELIMITER ;
 
@@ -338,6 +378,7 @@ CREATE
                                                               p_small_rural CHAR(1),
                                                               p_medium_suburban CHAR(1))
 BEGIN
+  # First we update the existing record.
   UPDATE ref_branch_types
   SET branch_type_code        = p_branch_type_code,
       branch_type_description = p_branch_type_description,
@@ -345,6 +386,14 @@ BEGIN
       small_rural             = p_small_rural,
       medium_suburban         = p_medium_suburban
   WHERE branch_type_id = p_branch_type_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_branch_type_id,
+         p_branch_type_code,
+         p_branch_type_description,
+         p_large_urban,
+         p_small_rural,
+         p_medium_suburban;
 END $$
 DELIMITER ;
 
@@ -445,12 +494,20 @@ CREATE
                                                     p_branch_type_id BIGINT,
                                                     p_branch_details VARCHAR(255))
 BEGIN
+  # First we insert the new record.
   INSERT INTO branches
   VALUES (DEFAULT,
           p_address_id,
           p_bank_id,
           p_branch_type_id,
           p_branch_details);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_address_id,
+         p_bank_id,
+         p_branch_type_id,
+         p_branch_details;
 END $$
 DELIMITER ;
 
@@ -465,12 +522,20 @@ CREATE
                                                        p_branch_type_id BIGINT,
                                                        p_branch_details VARCHAR(255))
 BEGIN
+  # First we update the existing record.
   UPDATE branches
   SET bank_id        = p_bank_id,
       address_id     = p_address_id,
       branch_type_id = p_branch_type_id,
       branch_details = p_branch_details
   WHERE branch_id = p_branch_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_branch_id,
+         p_address_id,
+         p_bank_id,
+         p_branch_type_id,
+         p_branch_details;
 END $$
 DELIMITER ;
 
@@ -697,12 +762,20 @@ CREATE
                                                       p_personal_details VARCHAR(255),
                                                       p_contact_details VARCHAR(255))
 BEGIN
+  # First we insert the new record.
   INSERT INTO customers
   VALUES (DEFAULT,
           p_address_id,
           p_branch_id,
           p_personal_details,
           p_contact_details);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_address_id,
+         p_branch_id,
+         p_personal_details,
+         p_contact_details;
 END $$
 DELIMITER ;
 
@@ -717,12 +790,20 @@ CREATE
                                                          p_personal_details VARCHAR(255),
                                                          p_contact_details VARCHAR(255))
 BEGIN
+  # First we update the existing record.
   UPDATE customers
   SET address_id       = p_address_id,
       branch_id        = p_branch_id,
       personal_details = p_personal_details,
       contact_details  = p_contact_details
   WHERE customers.customer_id = p_customer_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_customer_id,
+         p_address_id,
+         p_branch_id,
+         p_personal_details,
+         p_contact_details;
 END $$
 DELIMITER ;
 
@@ -825,17 +906,17 @@ USE `bankcentric`$$
 CREATE
   DEFINER =`root`@`localhost` PROCEDURE `singleCustomer`(p_customer_id BIGINT)
 BEGIN
-  SELECT c.customer_id,
-         c.address_id,
-         c.branch_id,
-         c.personal_details,
-         c.contact_details,
-         a.line_1,
-         b.branch_details
-  FROM customers c
-         LEFT JOIN addresses a USING (address_id)
-         LEFT JOIN branches b USING (branch_id)
-  WHERE c.customer_id = p_customer_id
+  SELECT customers.customer_id,
+         customers.address_id,
+         customers.branch_id,
+         customers.personal_details,
+         customers.contact_details,
+         addresses.line_1,
+         branches.branch_details
+  FROM customers
+         LEFT JOIN addresses USING (address_id)
+         LEFT JOIN branches USING (branch_id)
+  WHERE customers.customer_id = p_customer_id
   LIMIT 1;
 END $$
 DELIMITER ;
@@ -854,17 +935,17 @@ BEGIN
     SIGNAL SQLSTATE '21000'
       SET MESSAGE_TEXT = 'Multiple records with the same \"personal_details\" value found. This query must return only a single record!';
   END IF;
-  SELECT c.customer_id,
-         c.address_id,
-         c.branch_id,
-         c.personal_details,
-         c.contact_details,
-         a.line_1,
-         b.branch_details
-  FROM customers c
-         LEFT JOIN addresses a USING (address_id)
-         LEFT JOIN branches b USING (branch_id)
-  WHERE c.personal_details = p_customer_details
+  SELECT customers.customer_id,
+         customers.address_id,
+         customers.branch_id,
+         customers.personal_details,
+         customers.contact_details,
+         addresses.line_1,
+         branches.branch_details
+  FROM customers
+         LEFT JOIN addresses USING (address_id)
+         LEFT JOIN branches USING (branch_id)
+  WHERE personal_details = p_customer_details
   LIMIT 1;
 END $$
 DELIMITER ;
@@ -922,6 +1003,7 @@ CREATE
                                                             p_money_market CHAR(1),
                                                             p_individual_retirement CHAR(1))
 BEGIN
+  # First we insert the new record.
   INSERT INTO ref_account_types
   VALUES (DEFAULT,
           p_account_type_code,
@@ -931,6 +1013,16 @@ BEGIN
           p_certificate_of_deposit,
           p_money_market,
           p_individual_retirement);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_account_type_code,
+         p_account_type_description,
+         p_checking,
+         p_savings,
+         p_certificate_of_deposit,
+         p_money_market,
+         p_individual_retirement;
 END $$
 DELIMITER ;
 
@@ -948,6 +1040,7 @@ CREATE
                                                                p_money_market CHAR(1),
                                                                p_individual_retirement CHAR(1))
 BEGIN
+  # First we update the existing record.
   UPDATE ref_account_types
   SET account_type_code        = p_account_type_code,
       account_type_description = p_account_type_description,
@@ -957,6 +1050,16 @@ BEGIN
       money_market             = p_money_market,
       individual_retirement    = p_individual_retirement
   WHERE account_type_id = p_account_type_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_account_type_id,
+         p_account_type_code,
+         p_account_type_description,
+         p_checking,
+         p_savings,
+         p_certificate_of_deposit,
+         p_money_market,
+         p_individual_retirement;
 END $$
 DELIMITER ;
 
@@ -1071,12 +1174,20 @@ CREATE
                                                               p_active CHAR(1),
                                                               p_closed CHAR(1))
 BEGIN
+  # First we insert the new record.
   INSERT INTO ref_account_status
   VALUES (DEFAULT,
           p_account_status_code,
           p_account_status_description,
           p_active,
           p_closed);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_account_status_code,
+         p_account_status_description,
+         p_active,
+         p_closed;
 END $$
 DELIMITER ;
 
@@ -1091,12 +1202,20 @@ CREATE
                                                                  p_active CHAR(1),
                                                                  p_closed CHAR(1))
 BEGIN
+  # First we update the existing record.
   UPDATE ref_account_status
   SET account_status_code        = p_account_status_code,
       account_status_description = p_account_status_description,
       active                     = p_active,
       closed                     = p_closed
   WHERE account_status_id = p_account_status_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_account_status_id,
+         p_account_status_code,
+         p_account_status_description,
+         p_active,
+         p_closed;
 END $$
 DELIMITER ;
 
@@ -1142,6 +1261,16 @@ BEGIN
   FROM ref_account_status
   WHERE account_status_id = p_account_status_id
   LIMIT 1;
+END $$
+DELIMITER ;
+
+DROP procedure IF EXISTS `singleRefAccountStatus`;
+DELIMITER $$
+USE `bankcentric`$$
+CREATE
+  DEFINER =`root`@`localhost` PROCEDURE `singleRefAccountStatus`(p_account_status_id BIGINT)
+BEGIN
+  SELECT * FROM ref_account_status WHERE account_status_id = p_account_status_id LIMIT 1;
 END $$
 DELIMITER ;
 
@@ -1202,6 +1331,7 @@ CREATE
                                                      p_current_balance DECIMAL(65, 5),
                                                      p_other_details VARCHAR(255))
 BEGIN
+  # First we insert the new record.
   INSERT INTO accounts
   VALUES (DEFAULT,
           p_account_status_id,
@@ -1209,6 +1339,14 @@ BEGIN
           p_customer_id,
           p_current_balance,
           p_other_details);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_account_status_id,
+         p_account_type_id,
+         p_customer_id,
+         p_current_balance,
+         p_other_details;
 END $$
 DELIMITER ;
 
@@ -1224,6 +1362,7 @@ CREATE
                                                         p_current_balance DECIMAL(65, 5),
                                                         p_other_details VARCHAR(255))
 BEGIN
+  # First we update the existing record.
   UPDATE accounts
   SET account_status_id = p_account_status_id,
       account_status_id = p_account_status_id,
@@ -1232,6 +1371,14 @@ BEGIN
       current_balance   = p_current_balance,
       other_details     = p_other_details
   WHERE account_number = p_account_number;
+
+  # Then we return the updated record to the client.
+  SELECT p_account_number,
+         p_account_status_id,
+         p_account_type_id,
+         p_customer_id,
+         p_current_balance,
+         p_other_details;
 END $$
 DELIMITER ;
 
@@ -1453,9 +1600,13 @@ USE `bankcentric`$$
 CREATE
   DEFINER =`root`@`localhost` PROCEDURE `addMerchant`(p_merchant_details VARCHAR(255))
 BEGIN
+  # First we insert the new record.
   INSERT INTO merchants
   VALUES (DEFAULT,
           p_merchant_details);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(), p_merchant_details;
 END $$
 DELIMITER ;
 
@@ -1467,9 +1618,14 @@ CREATE
   DEFINER =`root`@`localhost` PROCEDURE `updateMerchant`(p_merchant_id BIGINT,
                                                          p_merchant_details VARCHAR(255))
 BEGIN
+  # First we update the existing record.
   UPDATE merchants
   SET merchant_details = p_merchant_details
   WHERE merchant_id = p_merchant_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_merchant_id,
+         p_merchant_details;
 END $$
 DELIMITER ;
 
@@ -1600,12 +1756,20 @@ CREATE
                                                                 p_deposit CHAR(1),
                                                                 p_withdrawal CHAR(1))
 BEGIN
+  # First we insert the new record.
   INSERT INTO ref_transaction_types
   VALUES (DEFAULT,
           p_transaction_type_code,
           p_transaction_type_description,
           p_deposit,
           p_withdrawal);
+
+  # Then we return the newly inserted record to the client.
+  SELECT LAST_INSERT_ID(),
+         p_transaction_type_code,
+         p_transaction_type_description,
+         p_deposit,
+         p_withdrawal;
 END $$
 DELIMITER ;
 
@@ -1620,12 +1784,20 @@ CREATE
                                                                    p_deposit CHAR(1),
                                                                    p_withdrawal CHAR(1))
 BEGIN
+  # First we update the existing record.
   UPDATE ref_transaction_types
   SET transaction_type_code        = p_transaction_type_code,
       transaction_type_description = p_transaction_type_description,
       deposit                      = p_deposit,
       withdrawal                   = p_withdrawal
   WHERE Transaction_type_id = p_Transaction_type_id;
+
+  # Then we return the updated record to the client.
+  SELECT p_transaction_type_id,
+         p_transaction_type_code,
+         p_transaction_type_description,
+         p_deposit,
+         p_withdrawal;
 END $$
 DELIMITER ;
 
@@ -1769,6 +1941,15 @@ BEGIN
     WHERE account_number = p_receiver_account_number
     LIMIT 1;
 
+    SELECT LAST_INSERT_ID(),
+           p_sender_account_number,
+           p_receiver_account_number,
+           p_merchant_id,
+           2,
+           NOW(),
+           p_transaction_amount,
+           p_other_details;
+
   COMMIT;
 
 END $$
@@ -1794,7 +1975,8 @@ BEGIN
          ref_transaction_types.transaction_type_code
   FROM transactions
          LEFT JOIN accounts
-                   ON transactions.sender_account_number = accounts.account_number AND transactions.receiver_account_number = accounts.account_number
+                   ON transactions.sender_account_number = accounts.account_number AND
+                      transactions.receiver_account_number = accounts.account_number
          LEFT JOIN merchants
                    ON transactions.merchant_id = merchants.merchant_id
          LEFT JOIN ref_transaction_types
@@ -1825,7 +2007,8 @@ BEGIN
          ref_transaction_types.transaction_type_code
   FROM transactions
          LEFT JOIN accounts
-                   ON transactions.sender_account_number = accounts.account_number AND  transactions.receiver_account_number = accounts.account_number
+                   ON transactions.sender_account_number = accounts.account_number AND
+                      transactions.receiver_account_number = accounts.account_number
          LEFT JOIN merchants
                    ON transactions.merchant_id = merchants.merchant_id
          LEFT JOIN ref_transaction_types
@@ -1843,7 +2026,7 @@ CREATE
   DEFINER =`root`@`localhost` PROCEDURE `singleTransaction`(p_transaction_id BIGINT)
 BEGIN
   SELECT transactions.transaction_id,
-          transactions.sender_account_number,
+         transactions.sender_account_number,
          transactions.receiver_account_number,
          transactions.merchant_id,
          transactions.transaction_type_id,
@@ -1856,8 +2039,9 @@ BEGIN
          ref_transaction_types.transaction_type_id,
          ref_transaction_types.transaction_type_code
   FROM transactions
-        LEFT JOIN accounts
-                   ON transactions.sender_account_number = accounts.account_number AND  transactions.receiver_account_number = accounts.account_number
+         LEFT JOIN accounts
+                   ON transactions.sender_account_number = accounts.account_number AND
+                      transactions.receiver_account_number = accounts.account_number
          LEFT JOIN merchants
                    ON transactions.merchant_id = merchants.merchant_id
          LEFT JOIN ref_transaction_types
@@ -1899,7 +2083,8 @@ BEGIN
          ref_transaction_types.transaction_type_code
   FROM transactions
          LEFT JOIN accounts
-                   ON transactions.sender_account_number = accounts.account_number AND  transactions.receiver_account_number = accounts.account_number
+                   ON transactions.sender_account_number = accounts.account_number AND
+                      transactions.receiver_account_number = accounts.account_number
          LEFT JOIN merchants
                    ON transactions.merchant_id = merchants.merchant_id
          LEFT JOIN ref_transaction_types
@@ -1940,8 +2125,9 @@ BEGIN
          ref_transaction_types.transaction_type_id,
          ref_transaction_types.transaction_type_code
   FROM transactions
-       LEFT JOIN accounts
-                   ON transactions.sender_account_number = accounts.account_number AND  transactions.receiver_account_number = accounts.account_number
+         LEFT JOIN accounts
+                   ON transactions.sender_account_number = accounts.account_number AND
+                      transactions.receiver_account_number = accounts.account_number
          LEFT JOIN merchants
                    ON transactions.merchant_id = merchants.merchant_id
          LEFT JOIN ref_transaction_types

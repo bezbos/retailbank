@@ -1,13 +1,8 @@
 package com.codecentric.retailbank.model.dto;
 
-import com.codecentric.retailbank.model.validation.annotation.PasswordMatches;
-import com.codecentric.retailbank.model.validation.annotation.ValidEmail;
-import com.codecentric.retailbank.model.validation.annotation.ValidPassword;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@PasswordMatches
 public class UserDto {
 
     //region FIELDS
@@ -21,12 +16,10 @@ public class UserDto {
 
     @NotNull
     @NotEmpty
-    @ValidPassword
     private String password;
 
     private String matchingPassword;
 
-    @ValidEmail
     @NotNull
     @NotEmpty
     private String email;

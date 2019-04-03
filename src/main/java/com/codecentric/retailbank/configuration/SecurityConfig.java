@@ -90,6 +90,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers(
                 "/",
+                "/index",
                 "/api/*/banks*",
                 "/api/*/banks/*",
                 "/api/*/addresses*",
@@ -121,6 +122,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/**/*.jpg",
                 "/**/*.html",
                 "/**/*.css",
+                "/**/*.json",
                 "/**/*.js").permitAll()
                 .anyRequest().authenticated().and()
                 .oauth2Login()
