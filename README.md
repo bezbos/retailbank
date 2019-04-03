@@ -35,7 +35,7 @@
 * OAUTH2 single sign in via Google is implemented, although it works only when I run my React project in development. For whatever reason when I use a production build of my React app it doesn't work. I've been debugging this for a while and it seems to have something to do with the lack of React Pre Rendering.
 
 ### REST Controllers
-* I version my API using the popular `/api/{versionNumber}` convention.
+* I version my API using the popular `/api{versionNumber}/` convention.
 * I use nouns instead of verbs in my API names `/api/v1/customers` returns all customers, `/api/v1/customer/1` returns a single customer with ID of 1,  `/api/v1/customers/3` returns the third page containing multiple customers.
 * `ResponseEntity<>` is used to format the HTTP responses.
 * I've taken care to return proper HTTP status codes.
