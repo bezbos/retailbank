@@ -1,4 +1,4 @@
-package com.codecentric.retailbank.repository.security;
+package com.codecentric.retailbank.security.oauth;
 
 import com.codecentric.retailbank.security.CookieUtils;
 import com.nimbusds.oauth2.sdk.util.StringUtils;

@@ -240,6 +240,8 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Address address = null;
+        ResultSet resultSet = null;
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addAddress = conn.prepareCall("{call addAddress(?,?,?,?,?,?,?)}")) {
 
@@ -253,17 +255,42 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             cs_addAddress.setString(7, model.getOtherDetails());
             cs_addAddress.execute();
 
+            // Transform ResultSet row into a Address model
+            byte rowCounter = 0;
+            resultSet = cs_addAddress.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Address object
+                address = new Address(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)
+                );
+            }
+
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return address;
     }
 
     @Override public Address update(Address model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Address address = null;
+        ResultSet resultSet = null;
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateAddress = conn.prepareCall("{call updateAddress(?,?,?,?,?,?,?,?)}")) {
 
@@ -278,11 +305,34 @@ public class AddressRepository extends JDBCRepositoryUtilities implements JDBCRe
             cs_updateAddress.setString(8, model.getOtherDetails());
             cs_updateAddress.execute();
 
+            // Transform ResultSet row into a Address model
+            byte rowCounter = 0;
+            resultSet = cs_updateAddress.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Address object
+                address = new Address(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)
+                );
+            }
+
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return address;
     }
 
     @Override public void insertBatch(Iterable<Address> models) {

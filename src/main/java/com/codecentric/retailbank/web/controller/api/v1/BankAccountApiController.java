@@ -140,9 +140,9 @@ public class BankAccountApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        BankAccount createdBankAccount;
+        BankAccount result;
         try {
-            createdBankAccount = bankAccountService.addAccount(dto.getDBModel());
+            result = bankAccountService.addAccount(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -150,7 +150,7 @@ public class BankAccountApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/bankAccount/" + createdBankAccount.getId())).body(createdBankAccount.getDto());
+        return ResponseEntity.created(URI.create("/bankAccount/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -160,9 +160,9 @@ public class BankAccountApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        BankAccount updatedBankAccount;
+        BankAccount result;
         try {
-             updatedBankAccount = bankAccountService.updateAccount(dto.getDBModel());
+              result = bankAccountService.updateAccount(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -170,7 +170,7 @@ public class BankAccountApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/bankAccount/" + updatedBankAccount.getId())).body(updatedBankAccount.getDto());
+        return ResponseEntity.ok().location(URI.create("/bankAccount/" + result.getId())).body(result.getDto());
     }
     //endregion
 

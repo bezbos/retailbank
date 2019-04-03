@@ -1,8 +1,8 @@
 package com.codecentric.retailbank.web.controller.api.v1;
 
-import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.dto.BankDto;
-import com.codecentric.retailbank.service.BankService;
+import com.codecentric.retailbank.model.domain.Merchant;
+import com.codecentric.retailbank.model.dto.MerchantDto;
+import com.codecentric.retailbank.service.MerchantService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,12 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class BankApiControllerMockTest {
+class MerchantApiControllerMockTest {
 
     private final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJpZCI6MSwiZXhwIjoxNTU0NTQ3MTQwLCJpYXQiOjE1NTM5NDIzNDAsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIn0.nMCPTeGHD1mK0l2G7M3jRt5JAoBnt6YQhBA1e6u9lovzMuunFzerZxcI5fhuL_P_EpEF3x-gCTpZ_a1SyF_wDQ";
 
     @MockBean
-    private BankService bankService;
+    private MerchantService merchantService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,15 +52,15 @@ class BankApiControllerMockTest {
     }
 
     @Test
-    @DisplayName("GET /bank/1 - Found")
-    void testGetBankByIdFound() throws Exception {
+    @DisplayName("GET /merchant/1 - Found")
+    void testGetMerchantByIdFound() throws Exception {
 
         // Setup our mocked service
-        Bank mockBank = new Bank(1L, "Mock Bank of Test Land");
-        doReturn(mockBank).when(bankService).getById(1L);
+        Merchant mockMerchant = new Merchant(1L, "Mock Merchant of Test Land");
+        doReturn(mockMerchant).when(merchantService).getById(1L);
 
         // Execute the GET request
-        mockMvc.perform(get("/api/v1/bank/{id}", 1L)
+        mockMvc.perform(get("/api/v1/merchant/{id}", 1L)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate the response code and content type
@@ -68,23 +68,23 @@ class BankApiControllerMockTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 
                 // Validate the headers
-                .andExpect(header().string(HttpHeaders.LOCATION, "/bank/1"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/merchant/1"))
 
                 // Validate the returned fields
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details", is("Mock Bank of Test Land")));
+                .andExpect(jsonPath("$.details", is("Mock Merchant of Test Land")));
 
     }
 
     @Test
-    @DisplayName("GET /bank/1 - Not Found")
-    void testGetBankByIdNotFound() throws Exception {
+    @DisplayName("GET /merchant/1 - Not Found")
+    void testGetMerchantByIdNotFound() throws Exception {
 
         // Setup our mocked service
-        doReturn(null).when(bankService).getById(1L);
+        doReturn(null).when(merchantService).getById(1L);
 
         // Execute the GET request
-        mockMvc.perform(get("/api/v1/bank/{id}", 1L)
+        mockMvc.perform(get("/api/v1/merchant/{id}", 1L)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate that we get a 404 Not Found response
@@ -92,71 +92,71 @@ class BankApiControllerMockTest {
     }
 
     @Test
-    @DisplayName("POST /bank - Success")
-    void testCreateBank() throws Exception {
+    @DisplayName("POST /merchant - Success")
+    void testCreateMerchant() throws Exception {
 
         // Setup our mocked service
-        BankDto postBank = new BankDto("Posted Bank");
-        Bank mockBank = new Bank(1L, "Posted Bank");
-        doReturn(mockBank).when(bankService).addBank(any());
+        MerchantDto postMerchant = new MerchantDto(null, "Posted Merchant");
+        Merchant mockMerchant = new Merchant(1L, "Posted Merchant");
+        doReturn(mockMerchant).when(merchantService).addMerchant(any());
 
         // Execute the POST request
-        mockMvc.perform(post("/api/v1/bank")
+        mockMvc.perform(post("/api/v1/merchant")
                 .header("Authorization", ADMIN_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(postBank)))
+                .content(asJsonString(postMerchant)))
 
                 // Validate the response code and content type
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 
                 // Validate the headers
-                .andExpect(header().string(HttpHeaders.LOCATION, "/bank/1"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/merchant/1"))
 
                 // Validate the returned fields
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details", is("Posted Bank")));
+                .andExpect(jsonPath("$.details", is("Posted Merchant")));
     }
 
     @Test
-    @DisplayName("PUT /bank/1 - Success")
-    void testBankPutSuccess() throws Exception {
+    @DisplayName("PUT /merchant/1 - Success")
+    void testMerchantPutSuccess() throws Exception {
 
         // Setup mocked service
-        Bank putBank = new Bank(1L, "Updated Bank");
-        doReturn(putBank).when(bankService).updateBank(putBank);
+        Merchant putMerchant = new Merchant(1L, "Updated Merchant");
+        doReturn(putMerchant).when(merchantService).updateMerchant(putMerchant);
 
         // Execute the PUT request
-        mockMvc.perform(put("/api/v1/bank")
+        mockMvc.perform(put("/api/v1/merchant")
                 .header("Authorization", ADMIN_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(putBank)))
+                .content(asJsonString(putMerchant)))
 
                 // Validate the response code and content type
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 
                 // Validate the headers
-                .andExpect(header().string(HttpHeaders.LOCATION, "/bank/1"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/merchant/1"))
 
                 // Validate the returned fields
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details", is("Updated Bank")));
+                .andExpect(jsonPath("$.details", is("Updated Merchant")));
     }
 
     @Test
-    @DisplayName("DELETE /bank/1 - Success")
-    void testBankDeleteSuccess() throws Exception {
+    @DisplayName("DELETE /merchant/1 - Success")
+    void testMerchantDeleteSuccess() throws Exception {
 
-        // Setup mocked bank
-        Bank mockBank = new Bank(1L, "Bank Name");
+        // Setup mocked merchant
+        Merchant mockMerchant = new Merchant(1L, "Merchant Name");
 
         // Setup mocked service
-        doReturn(mockBank).when(bankService).getById(1L);
-        doNothing().when(bankService).deleteBank(1L);
+        doReturn(mockMerchant).when(merchantService).getById(1L);
+        doNothing().when(merchantService).deleteMerchant(1L);
 
         // Execute our DELETE request
-        mockMvc.perform(delete("/api/v1/bank/{id}", 1)
+        mockMvc.perform(delete("/api/v1/merchant/{id}", 1)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate the response code
@@ -164,18 +164,17 @@ class BankApiControllerMockTest {
     }
 
     @Test
-    @DisplayName("DELETE /bank/1 - Failure")
-    void testBankDeleteFailure() throws Exception {
+    @DisplayName("DELETE /merchant/1 - Failure")
+    void testMerchantDeleteFailure() throws Exception {
 
         // Setup mocked service
-        doThrow(NullPointerException.class).when(bankService).deleteBank(1L);
+        doThrow(NullPointerException.class).when(merchantService).deleteMerchant(1L);
 
         // Execute our DELETE request
-        mockMvc.perform(delete("/api/v1/bank/{id}", 1)
+        mockMvc.perform(delete("/api/v1/merchant/{id}", 1)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate the response code
                 .andExpect(status().isBadRequest());
     }
 }
-

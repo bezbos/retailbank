@@ -42,7 +42,7 @@ public class BranchApiController {
 
     //region HTTP GET
     @GetMapping({"/branches", "/branches/{page}"})
-    ResponseEntity<?> branches(@PathVariable("page") Optional<Integer> page,
+    ResponseEntity<PageableList<BranchDto>> branches(@PathVariable("page") Optional<Integer> page,
                                @RequestParam("details") Optional<String> details) {
 
         if (details.isPresent()) {
@@ -137,9 +137,9 @@ public class BranchApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Branch createdBranch;
+        Branch result;
         try {
-            createdBranch = branchService.addBranch(dto.getDBModel());
+            result = branchService.addBranch(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -147,7 +147,7 @@ public class BranchApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/branch/" + createdBranch.getId())).body(createdBranch.getDto());
+        return ResponseEntity.created(URI.create("/branch/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -157,9 +157,9 @@ public class BranchApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Branch updatedBranch;
+        Branch result;
         try {
-            updatedBranch = branchService.updateBranch(dto.getDBModel());
+             result = branchService.updateBranch(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -167,7 +167,7 @@ public class BranchApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/branch/" + updatedBranch.getId())).body(updatedBranch.getDto());
+        return ResponseEntity.ok().location(URI.create("/branch/" + result.getId())).body(result.getDto());
     }
     //endregion
 

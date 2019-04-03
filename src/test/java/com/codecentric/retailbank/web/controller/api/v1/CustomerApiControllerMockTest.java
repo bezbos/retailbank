@@ -1,8 +1,12 @@
 package com.codecentric.retailbank.web.controller.api.v1;
 
-import com.codecentric.retailbank.model.domain.Bank;
-import com.codecentric.retailbank.model.dto.BankDto;
-import com.codecentric.retailbank.service.BankService;
+import com.codecentric.retailbank.model.domain.Address;
+import com.codecentric.retailbank.model.domain.Branch;
+import com.codecentric.retailbank.model.domain.Customer;
+import com.codecentric.retailbank.model.dto.AddressDto;
+import com.codecentric.retailbank.model.dto.BranchDto;
+import com.codecentric.retailbank.model.dto.CustomerDto;
+import com.codecentric.retailbank.service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,12 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class BankApiControllerMockTest {
+class CustomerApiControllerMockTest {
 
     private final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJpZCI6MSwiZXhwIjoxNTU0NTQ3MTQwLCJpYXQiOjE1NTM5NDIzNDAsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIn0.nMCPTeGHD1mK0l2G7M3jRt5JAoBnt6YQhBA1e6u9lovzMuunFzerZxcI5fhuL_P_EpEF3x-gCTpZ_a1SyF_wDQ";
 
     @MockBean
-    private BankService bankService;
+    private CustomerService customerService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,15 +56,17 @@ class BankApiControllerMockTest {
     }
 
     @Test
-    @DisplayName("GET /bank/1 - Found")
-    void testGetBankByIdFound() throws Exception {
-
+    @DisplayName("GET /customer/1 - Found")
+    void testGetCustomerByIdFound() throws Exception {
         // Setup our mocked service
-        Bank mockBank = new Bank(1L, "Mock Bank of Test Land");
-        doReturn(mockBank).when(bankService).getById(1L);
+        Address address = new Address();
+        Branch branch = new Branch();
+
+        Customer mockCustomer = new Customer(1L, address, branch, "Mock Customer", "");
+        doReturn(mockCustomer).when(customerService).getById(1L);
 
         // Execute the GET request
-        mockMvc.perform(get("/api/v1/bank/{id}", 1L)
+        mockMvc.perform(get("/api/v1/customer/{id}", 1L)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate the response code and content type
@@ -68,23 +74,23 @@ class BankApiControllerMockTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 
                 // Validate the headers
-                .andExpect(header().string(HttpHeaders.LOCATION, "/bank/1"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/customer/1"))
 
                 // Validate the returned fields
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details", is("Mock Bank of Test Land")));
+                .andExpect(jsonPath("$.personalDetails", is("Mock Customer")));
 
     }
 
     @Test
-    @DisplayName("GET /bank/1 - Not Found")
-    void testGetBankByIdNotFound() throws Exception {
+    @DisplayName("GET /customer/1 - Not Found")
+    void testGetCustomerByIdNotFound() throws Exception {
 
         // Setup our mocked service
-        doReturn(null).when(bankService).getById(1L);
+        doReturn(null).when(customerService).getById(1L);
 
         // Execute the GET request
-        mockMvc.perform(get("/api/v1/bank/{id}", 1L)
+        mockMvc.perform(get("/api/v1/customer/{id}", 1L)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate that we get a 404 Not Found response
@@ -92,71 +98,75 @@ class BankApiControllerMockTest {
     }
 
     @Test
-    @DisplayName("POST /bank - Success")
-    void testCreateBank() throws Exception {
-
+    @DisplayName("POST /customer - Success")
+    void testCreateCustomer() throws Exception {
         // Setup our mocked service
-        BankDto postBank = new BankDto("Posted Bank");
-        Bank mockBank = new Bank(1L, "Posted Bank");
-        doReturn(mockBank).when(bankService).addBank(any());
+        AddressDto address = new AddressDto();
+        BranchDto branch = new BranchDto();
+
+        CustomerDto postCustomer = new CustomerDto(address, branch, "Posted Customer", "");
+        Customer mockCustomer = new Customer(1L, "Posted Customer");
+        doReturn(mockCustomer).when(customerService).addCustomer(any());
 
         // Execute the POST request
-        mockMvc.perform(post("/api/v1/bank")
+        mockMvc.perform(post("/api/v1/customer")
                 .header("Authorization", ADMIN_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(postBank)))
+                .content(asJsonString(postCustomer)))
 
                 // Validate the response code and content type
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 
                 // Validate the headers
-                .andExpect(header().string(HttpHeaders.LOCATION, "/bank/1"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/customer/1"))
 
                 // Validate the returned fields
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details", is("Posted Bank")));
+                .andExpect(jsonPath("$.personalDetails", is("Posted Customer")));
     }
 
     @Test
-    @DisplayName("PUT /bank/1 - Success")
-    void testBankPutSuccess() throws Exception {
-
+    @DisplayName("PUT /customer/1 - Success")
+    void testCustomerPutSuccess() throws Exception {
         // Setup mocked service
-        Bank putBank = new Bank(1L, "Updated Bank");
-        doReturn(putBank).when(bankService).updateBank(putBank);
+        Address address = new Address();
+        Branch branch = new Branch();
+
+        Customer putCustomer = new Customer(1L, address, branch, "Updated Customer", "");
+        doReturn(putCustomer).when(customerService).updateCustomer(putCustomer);
 
         // Execute the PUT request
-        mockMvc.perform(put("/api/v1/bank")
+        mockMvc.perform(put("/api/v1/customer")
                 .header("Authorization", ADMIN_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(putBank)))
+                .content(asJsonString(putCustomer)))
 
                 // Validate the response code and content type
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 
                 // Validate the headers
-                .andExpect(header().string(HttpHeaders.LOCATION, "/bank/1"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "/customer/1"))
 
                 // Validate the returned fields
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.details", is("Updated Bank")));
+                .andExpect(jsonPath("$.personalDetails", is("Updated Customer")));
     }
 
     @Test
-    @DisplayName("DELETE /bank/1 - Success")
-    void testBankDeleteSuccess() throws Exception {
-
-        // Setup mocked bank
-        Bank mockBank = new Bank(1L, "Bank Name");
-
+    @DisplayName("DELETE /customer/1 - Success")
+    void testCustomerDeleteSuccess() throws Exception {
         // Setup mocked service
-        doReturn(mockBank).when(bankService).getById(1L);
-        doNothing().when(bankService).deleteBank(1L);
+        Address address = new Address();
+        Branch branch = new Branch();
+
+        Customer mockCustomer = new Customer(1L, address, branch, "Customer Name", "");
+        doReturn(mockCustomer).when(customerService).getById(1L);
+        doNothing().when(customerService).deleteCustomer(1L);
 
         // Execute our DELETE request
-        mockMvc.perform(delete("/api/v1/bank/{id}", 1)
+        mockMvc.perform(delete("/api/v1/customer/{id}", 1)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate the response code
@@ -164,18 +174,16 @@ class BankApiControllerMockTest {
     }
 
     @Test
-    @DisplayName("DELETE /bank/1 - Failure")
-    void testBankDeleteFailure() throws Exception {
-
+    @DisplayName("DELETE /customer/1 - Failure")
+    void testCustomerDeleteFailure() throws Exception {
         // Setup mocked service
-        doThrow(NullPointerException.class).when(bankService).deleteBank(1L);
+        doThrow(NullPointerException.class).when(customerService).deleteCustomer(1L);
 
         // Execute our DELETE request
-        mockMvc.perform(delete("/api/v1/bank/{id}", 1)
+        mockMvc.perform(delete("/api/v1/customer/{id}", 1)
                 .header("Authorization", ADMIN_TOKEN))
 
                 // Validate the response code
                 .andExpect(status().isBadRequest());
     }
 }
-

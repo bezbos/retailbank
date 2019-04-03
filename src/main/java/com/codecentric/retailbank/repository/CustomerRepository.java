@@ -282,6 +282,9 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Customer customer = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addCustomer = conn.prepareCall("{call addCustomer(?,?,?,?)}")) {
 
@@ -295,16 +298,39 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             cs_addCustomer.setString("p_contact_details", model.getContactDetails());
             cs_addCustomer.execute();
 
+            // Transform ResultSet row into a Branch model
+            byte rowCounter = 0;
+            resultSet = cs_addCustomer.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Branch object
+                customer = new Customer(
+                        resultSet.getLong(1),
+                        model.getAddress(),
+                        model.getBranch(),
+                        resultSet.getString(4),
+                        resultSet.getString(5)
+                );
+
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return customer;
     }
 
     @Override public Customer update(Customer model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        Customer customer = null;
+        ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateCustomer = conn.prepareCall("{call updateCustomer(?,?,?,?,?)}")) {
@@ -320,11 +346,31 @@ public class CustomerRepository extends JDBCRepositoryUtilities implements JDBCR
             cs_updateCustomer.setString("p_contact_details", model.getContactDetails());
             cs_updateCustomer.execute();
 
+            // Transform ResultSet row into a Branch model
+            byte rowCounter = 0;
+            resultSet = cs_updateCustomer.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Branch object
+                customer = new Customer(
+                        resultSet.getLong(1),
+                        model.getAddress(),
+                        model.getBranch(),
+                        resultSet.getString(4),
+                        resultSet.getString(5)
+                );
+
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return customer;
     }
 
     @Override public void insertBatch(Iterable<Customer> models) {

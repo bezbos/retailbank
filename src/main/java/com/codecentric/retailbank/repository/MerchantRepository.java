@@ -198,6 +198,9 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Merchant merchant = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addMerchant = conn.prepareCall("{call addMerchant(?)}")) {
 
@@ -205,30 +208,59 @@ public class MerchantRepository extends JDBCRepositoryUtilities implements JDBCR
             cs_addMerchant.setString(1, model.getDetails());
             cs_addMerchant.execute();
 
+            // Transform ResultSet row into a Merchant model
+            resultSet = cs_addMerchant.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Merchant object
+                merchant = new Merchant(resultSet.getLong(1), resultSet.getString(2));
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return merchant;
     }
 
     @Override public Merchant update(Merchant model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Merchant merchant = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csSingleMerchant = conn.prepareCall("{call updateMerchant(?,?)}")) {
+             CallableStatement cs_UpdateMerchant = conn.prepareCall("{call updateMerchant(?,?)}")) {
 
             // Update an existing merchant in DB
-            csSingleMerchant.setLong(1, model.getId());
-            csSingleMerchant.setString(2, model.getDetails());
-            csSingleMerchant.execute();
+            cs_UpdateMerchant.setLong(1, model.getId());
+            cs_UpdateMerchant.setString(2, model.getDetails());
+            cs_UpdateMerchant.execute();
 
+            // Transform ResultSet row into a Merchant model
+            resultSet = cs_UpdateMerchant.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Merchant object
+                merchant = new Merchant(resultSet.getLong(1), resultSet.getString(2));
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return merchant;
     }
 
     @Override public void insertBatch(Iterable<Merchant> models) {

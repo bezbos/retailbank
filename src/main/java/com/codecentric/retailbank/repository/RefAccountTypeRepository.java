@@ -110,7 +110,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        RefAccountType refBranchType = null;
+        RefAccountType refAccountType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -131,7 +131,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a RefAccountType object
-                refBranchType = new RefAccountType(
+                refAccountType = new RefAccountType(
                                 resultSet.getLong(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -148,7 +148,7 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             closeConnections(resultSet);
         }
 
-        return refBranchType;
+        return refAccountType;
     }
 
     public RefAccountType singleByCode(String code) throws ArgumentNullException, InvalidOperationException {
@@ -203,6 +203,9 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        RefAccountType refAccountType = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addRefAccountType = conn.prepareCall("{call addRefAccountType(?,?,?,?,?,?,?)}")) {
 
@@ -216,16 +219,41 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             cs_addRefAccountType.setString(7, model.getIsIndividualRetirementType());
             cs_addRefAccountType.execute();
 
+            // Transform ResultSet row into a RefAccountType model
+            byte rowCounter = 0;
+            resultSet = cs_addRefAccountType.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefAccountType object
+                refAccountType = new RefAccountType(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refAccountType;
     }
 
     @Override public RefAccountType update(RefAccountType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        RefAccountType refAccountType = null;
+        ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateRefAccountType = conn.prepareCall("{call updateRefAccountType(?,?,?,?,?,?,?,?)}")) {
@@ -241,11 +269,33 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
             cs_updateRefAccountType.setString(8, model.getIsIndividualRetirementType());
             cs_updateRefAccountType.execute();
 
+            // Transform ResultSet row into a RefAccountType model
+            byte rowCounter = 0;
+            resultSet = cs_updateRefAccountType.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefAccountType object
+                refAccountType = new RefAccountType(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refAccountType;
     }
 
     @Override public void insertBatch(Iterable<RefAccountType> models) {

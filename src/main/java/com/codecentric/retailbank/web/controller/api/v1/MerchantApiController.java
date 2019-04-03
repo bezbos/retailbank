@@ -117,9 +117,9 @@ public class MerchantApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Merchant createdMerchant;
+        Merchant result;
         try {
-            createdMerchant = merchantService.addMerchant(dto.getDBModel());
+            result = merchantService.addMerchant(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -127,7 +127,7 @@ public class MerchantApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/merchant/" + createdMerchant.getId())).body(createdMerchant.getDto());
+        return ResponseEntity.created(URI.create("/merchant/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -137,9 +137,9 @@ public class MerchantApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Merchant updatedMerchant;
+        Merchant result;
         try {
-            updatedMerchant = merchantService.updateMerchant(dto.getDBModel());
+            result = merchantService.updateMerchant(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -147,7 +147,7 @@ public class MerchantApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/merchant/" + updatedMerchant.getId())).body(updatedMerchant.getDto());
+        return ResponseEntity.ok().location(URI.create("/merchant/" + result.getId())).body(result.getDto());
     }
     //endregion
 

@@ -103,9 +103,9 @@ public class RefBranchTypeApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefBranchType createdType;
+        RefBranchType result;
         try {
-            createdType= refBranchTypeService.addRefBranchType(dto.getDBModel());
+            result= refBranchTypeService.addRefBranchType(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -113,7 +113,7 @@ public class RefBranchTypeApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/refBranchType" + createdType.getId())).body(createdType.getDto());
+        return ResponseEntity.created(URI.create("/refBranchType" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -123,9 +123,9 @@ public class RefBranchTypeApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefBranchType updatedType;
+        RefBranchType result;
         try {
-            updatedType = refBranchTypeService.updateRefBranchType(dto.getDBModel());
+            result = refBranchTypeService.updateRefBranchType(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -133,7 +133,7 @@ public class RefBranchTypeApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/refBranchType/" + updatedType)).body(updatedType.getDto());
+        return ResponseEntity.ok().location(URI.create("/refBranchType/" + result)).body(result.getDto());
     }
     //endregion
 

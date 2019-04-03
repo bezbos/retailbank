@@ -38,6 +38,10 @@ public class AddressDto {
     public AddressDto() {
     }
 
+    public AddressDto(@NotNull @Length(max = 255) String line1) {
+        this.line1 = line1;
+    }
+
     public AddressDto(Long id,
                       @NotNull @Length(max = 255) String line1,
                       @Length(max = 255) String line2,

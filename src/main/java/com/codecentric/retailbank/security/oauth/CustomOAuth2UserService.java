@@ -1,12 +1,10 @@
-package com.codecentric.retailbank.service.security;
+package com.codecentric.retailbank.security.oauth;
 
 import com.codecentric.retailbank.exception.runtime.OAuth2AuthenticationProcessingException;
 import com.codecentric.retailbank.model.security.AuthProvider;
 import com.codecentric.retailbank.model.security.User;
 import com.codecentric.retailbank.repository.security.UserRepository;
 import com.codecentric.retailbank.security.UserPrincipal;
-import com.codecentric.retailbank.security.oauth.OAuth2UserInfo;
-import com.codecentric.retailbank.security.oauth.OAuth2UserInfoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -196,7 +196,6 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
 
         BankAccount bankAccount = null;
         ResultSet resultSet = null;
-
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_singleBankAccount = conn.prepareCall("{call singleAccount(?)}")) {
 
@@ -313,6 +312,8 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        BankAccount bankAccount = null;
+        ResultSet resultSet = null;
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addBankAccount = conn.prepareCall("{call addAccount(?,?,?,?,?)}")) {
 
@@ -324,17 +325,39 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             cs_addBankAccount.setString("p_other_details", model.getDetails());
             cs_addBankAccount.execute();
 
+            // Transform ResultSet row into a BankAccount model
+            byte rowCounter = 0;
+            resultSet = cs_addBankAccount.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a BankAccount object
+                bankAccount = new BankAccount(
+                        resultSet.getLong(1),
+                        model.getStatus(),
+                        model.getType(),
+                        model.getCustomer(),
+                        resultSet.getBigDecimal(5),
+                        resultSet.getString(6)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return bankAccount;
     }
 
     @Override public BankAccount update(BankAccount model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        BankAccount bankAccount = null;
+        ResultSet resultSet = null;
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateBankAccount = conn.prepareCall("{call updateAccount(?,?,?,?,?,?)}")) {
 
@@ -347,11 +370,31 @@ public class BankAccountRepository extends JDBCRepositoryUtilities implements JD
             cs_updateBankAccount.setString("p_other_details", model.getDetails());
             cs_updateBankAccount.execute();
 
+            // Transform ResultSet row into a BankAccount model
+            byte rowCounter = 0;
+            resultSet = cs_updateBankAccount.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a BankAccount object
+                bankAccount = new BankAccount(
+                        resultSet.getLong(1),
+                        model.getStatus(),
+                        model.getType(),
+                        model.getCustomer(),
+                        resultSet.getBigDecimal(5),
+                        resultSet.getString(6)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return bankAccount;
     }
 
     @Override public void insertBatch(Iterable<BankAccount> models) {

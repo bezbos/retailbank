@@ -190,6 +190,9 @@ public class RefAccountStatusRepository extends JDBCRepositoryUtilities implemen
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        RefAccountStatus refBranchType = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addRefAccountStatus = conn.prepareCall("{call addRefAccountStatus(?,?,?,?)}")) {
 
@@ -200,16 +203,38 @@ public class RefAccountStatusRepository extends JDBCRepositoryUtilities implemen
             cs_addRefAccountStatus.setString(4, model.getIsClosed());
             cs_addRefAccountStatus.execute();
 
+            // Transform ResultSet row into a RefAccountStatus model
+            byte rowCounter = 0;
+            resultSet = cs_addRefAccountStatus.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefAccountStatus object
+                refBranchType = new RefAccountStatus(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refBranchType;
     }
 
     @Override public RefAccountStatus update(RefAccountStatus model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        RefAccountStatus refBranchType = null;
+        ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateRefAccountStatus = conn.prepareCall("{call updateRefAccountStatus(?,?,?,?,?)}")) {
@@ -222,11 +247,30 @@ public class RefAccountStatusRepository extends JDBCRepositoryUtilities implemen
             cs_updateRefAccountStatus.setString(5, model.getIsClosed());
             cs_updateRefAccountStatus.execute();
 
+            // Transform ResultSet row into a RefAccountStatus model
+            byte rowCounter = 0;
+            resultSet = cs_updateRefAccountStatus.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefAccountStatus object
+                refBranchType = new RefAccountStatus(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refBranchType;
     }
 
     @Override public void insertBatch(Iterable<RefAccountStatus> models) {

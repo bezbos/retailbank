@@ -104,7 +104,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         if (id == null)
             throw new ArgumentNullException("The id argument must have a value/cannot be null.");
 
-        RefTransactionType refBranchType = null;
+        RefTransactionType refTransactionType = null;
         ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
@@ -125,7 +125,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
                     throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
 
                 // Transform ResultSet row into a RefTransactionType object
-                refBranchType = new RefTransactionType(
+                refTransactionType = new RefTransactionType(
                         resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
@@ -139,7 +139,7 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             closeConnections(resultSet);
         }
 
-        return refBranchType;
+        return refTransactionType;
     }
 
     public RefTransactionType singleByCode(String code) throws ArgumentNullException, InvalidOperationException {
@@ -191,6 +191,9 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        RefTransactionType refTransactionType = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addRefTransactionType = conn.prepareCall("{call addRefTransactionType(?,?,?,?)}")) {
 
@@ -201,16 +204,38 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             cs_addRefTransactionType.setString(4, model.getIsWithdrawal());
             cs_addRefTransactionType.execute();
 
+            // Transform ResultSet row into a RefTransactionType model
+            byte rowCounter = 0;
+            resultSet = cs_addRefTransactionType.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefTransactionType object
+                refTransactionType = new RefTransactionType(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(4)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refTransactionType;
     }
 
     @Override public RefTransactionType update(RefTransactionType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        RefTransactionType refTransactionType = null;
+        ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateRefTransactionType = conn.prepareCall("{call updateRefTransactionType(?,?,?,?,?)}")) {
@@ -223,11 +248,31 @@ public class RefTransactionTypeRepository extends JDBCRepositoryUtilities implem
             cs_updateRefTransactionType.setString(5, model.getIsWithdrawal());
             cs_updateRefTransactionType.execute();
 
+            // Transform ResultSet row into a RefTransactionType model
+            byte rowCounter = 0;
+            resultSet = cs_updateRefTransactionType.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefTransactionType object
+                refTransactionType = new RefTransactionType(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(4)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+
+        return refTransactionType;
     }
 
     @Override public void insertBatch(Iterable<RefTransactionType> models) {

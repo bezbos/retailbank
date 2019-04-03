@@ -139,9 +139,9 @@ public class CustomerApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Customer createdCustomer;
+        Customer result;
         try {
-            createdCustomer = customerService.addCustomer(dto.getDBModel());
+            result = customerService.addCustomer(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -149,27 +149,27 @@ public class CustomerApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/customer/" + createdCustomer.getId())).body(createdCustomer.getDto());
+        return ResponseEntity.created(URI.create("/customer/" + result.getId())).body(result.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/customer")
-    ResponseEntity<CustomerDto> updateCustomer(@RequestBody CustomerDto clientDto) {
+    ResponseEntity<CustomerDto> updateCustomer(@RequestBody CustomerDto dto) {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Customer updatedCustomer;
+        Customer result;
         try {
-            updatedCustomer = customerService.updateCustomer(clientDto.getDBModel());
+             result = customerService.updateCustomer(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
-            return ResponseEntity.badRequest().body(clientDto);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/customer/" + clientDto.getId())).body(updatedCustomer.getDto());
+        return ResponseEntity.ok().location(URI.create("/customer/" + result.getId())).body(result.getDto());
     }
     //endregion
 

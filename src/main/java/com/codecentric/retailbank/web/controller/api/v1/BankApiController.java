@@ -43,7 +43,7 @@ public class BankApiController {
 
     //region HTTP GET
     @GetMapping({"/banks", "/banks/{page}"})
-    ResponseEntity<?> banks(@PathVariable("page") Optional<Integer> page,
+    ResponseEntity<PageableList<BankDto>> banks(@PathVariable("page") Optional<Integer> page,
                             @RequestParam("details") Optional<String> details) {
 
         if (details.isPresent()) {
@@ -87,7 +87,7 @@ public class BankApiController {
     }
 
     @GetMapping("/bank/{id}")
-    ResponseEntity<?> bankById(@PathVariable("id") Long id) {
+    ResponseEntity<BankDto> bankById(@PathVariable("id") Long id) {
         Bank bank = bankService.getById(id);
         BankDto bankDto = bank == null
                 ? null
@@ -101,7 +101,7 @@ public class BankApiController {
     }
 
     @GetMapping("/bank")
-    ResponseEntity<?> bankByDetails(@RequestParam("details") String details) {
+    ResponseEntity<BankDto> bankByDetails(@RequestParam("details") String details) {
         Bank bank = bankService.getByDetails(details);
         BankDto bankDto = bank == null
                 ? null
@@ -117,13 +117,13 @@ public class BankApiController {
 
     //region HTTP POST
     @PostMapping("/bank")
-    ResponseEntity<?> createBank(@RequestBody BankDto dto) {
+    ResponseEntity<BankDto> createBank(@RequestBody BankDto dto) {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Bank createdBank;
+        Bank result;
         try {
-            createdBank = bankService.addBank(dto.getDBModel());
+            result = bankService.addBank(dto.getDBModel());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
@@ -131,18 +131,19 @@ public class BankApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/bank/" + createdBank.getId())).body(createdBank.getDto());
+        return ResponseEntity.created(URI.create("/bank/" + result.getId())).body(result.getDto());
     }
     //endregion
 
     //region HTTP PUT
     @PutMapping("/bank")
-    ResponseEntity<?> updateBank(@RequestBody BankDto clientDto) {
+    ResponseEntity<BankDto> updateBank(@RequestBody BankDto clientDto) {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Bank result;
         try {
-            bankService.updateBank(clientDto.getDBModel());
+            result = bankService.updateBank(clientDto.getDBModel());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
@@ -150,13 +151,13 @@ public class BankApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/bank/" + clientDto.getId())).body(clientDto);
+        return ResponseEntity.ok().location(URI.create("/bank/" + result.getId())).body(result.getDto());
     }
     //endregion
 
     //region HTTP DELETE
     @DeleteMapping("/bank/{id}")
-    ResponseEntity<?> deleteBank(@PathVariable("id") Long id) {
+    ResponseEntity<BankDto> deleteBank(@PathVariable("id") Long id) {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 

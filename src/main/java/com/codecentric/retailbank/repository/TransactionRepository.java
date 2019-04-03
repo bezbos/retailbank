@@ -280,22 +280,47 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Transaction transaction = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement cs_addTransaction = conn.prepareCall("{call create_payment(?,?,?,?,?)}")) {
+             CallableStatement cs_create_payment = conn.prepareCall("{call create_payment(?,?,?,?,?)}")) {
 
             // Create new payment
-            cs_addTransaction.setLong("p_sender_account_number", model.getSenderAccount().getId());
-            cs_addTransaction.setLong("p_receiver_account_number", model.getReceiverAccount().getId());
-            cs_addTransaction.setLong("p_merchant_id", model.getMerchant().getId());
-            cs_addTransaction.setBigDecimal("p_transaction_amount", model.getAmount());
-            cs_addTransaction.setString("p_other_details", model.getDetails());
-            cs_addTransaction.execute();
+            cs_create_payment.setLong("p_sender_account_number", model.getSenderAccount().getId());
+            cs_create_payment.setLong("p_receiver_account_number", model.getReceiverAccount().getId());
+            cs_create_payment.setLong("p_merchant_id", model.getMerchant().getId());
+            cs_create_payment.setBigDecimal("p_transaction_amount", model.getAmount());
+            cs_create_payment.setString("p_other_details", model.getDetails());
+            cs_create_payment.execute();
 
+            // Transform ResultSet row into a Transaction model
+            byte rowCounter = 0;
+            resultSet = cs_create_payment.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Transaction object
+                transaction = new Transaction(
+                        resultSet.getLong(1),
+                        model.getSenderAccount(),
+                        model.getReceiverAccount(),
+                        model.getMerchant(),
+                        model.getType(),
+                        resultSet.getDate(6),
+                        resultSet.getBigDecimal(7),
+                        resultSet.getString(8)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return transaction;
     }
     //endregion
 

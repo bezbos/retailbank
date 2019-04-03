@@ -98,9 +98,9 @@ public class RefTransactionTypeApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefTransactionType createdType;
+        RefTransactionType result;
         try {
-            createdType = refTransactionTypeService.addRefTransactionType(dto.getDBModel());
+            result = refTransactionTypeService.addRefTransactionType(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -108,7 +108,7 @@ public class RefTransactionTypeApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/refTransactionType/" + createdType.getId())).body(createdType.getDto());
+        return ResponseEntity.created(URI.create("/refTransactionType/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -118,9 +118,9 @@ public class RefTransactionTypeApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefTransactionType updatedType;
+        RefTransactionType result;
         try {
-            updatedType = refTransactionTypeService.updateRefTransactionType(dto.getDBModel());
+            result = refTransactionTypeService.updateRefTransactionType(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -128,7 +128,7 @@ public class RefTransactionTypeApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/refTransactionType/" + updatedType.getId())).body(updatedType.getDto());
+        return ResponseEntity.ok().location(URI.create("/refTransactionType/" + result.getId())).body(result.getDto());
     }
     //endregion
 

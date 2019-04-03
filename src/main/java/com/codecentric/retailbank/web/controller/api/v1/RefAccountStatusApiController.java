@@ -101,9 +101,9 @@ public class RefAccountStatusApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefAccountStatus createdStatus;
+        RefAccountStatus result;
         try {
-            createdStatus = refAccountStatusService.addRefAccountStatus(dto.getDBModel());
+            result = refAccountStatusService.addRefAccountStatus(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -111,7 +111,7 @@ public class RefAccountStatusApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/refAccountStatus/" + createdStatus.getId())).body(createdStatus.getDto());
+        return ResponseEntity.created(URI.create("/refAccountStatus/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -121,9 +121,9 @@ public class RefAccountStatusApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefAccountStatus updatedStatus;
+        RefAccountStatus result;
         try {
-            updatedStatus= refAccountStatusService.updateRefAccountStatus(dto.getDBModel());
+            result= refAccountStatusService.updateRefAccountStatus(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -131,7 +131,7 @@ public class RefAccountStatusApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/refAccountStatus/" + updatedStatus.getId())).body(updatedStatus.getDto());
+        return ResponseEntity.ok().location(URI.create("/refAccountStatus/" + result.getId())).body(result.getDto());
     }
     //endregion
 

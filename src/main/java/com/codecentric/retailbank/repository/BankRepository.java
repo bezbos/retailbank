@@ -198,6 +198,8 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Bank bank = null;
+        ResultSet resultSet = null;
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addBank = conn.prepareCall("{call addBank(?)}")) {
 
@@ -205,30 +207,60 @@ public class BankRepository extends JDBCRepositoryUtilities implements JDBCRepos
             cs_addBank.setString(1, model.getDetails());
             cs_addBank.execute();
 
+            // Transform ResultSet row into a Bank model
+            resultSet = cs_addBank.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Bank object
+                bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
+            }
+
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return bank;
     }
 
     @Override public Bank update(Bank model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Bank bank = null;
+        ResultSet resultSet = null;
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
-             CallableStatement csSingleBank = conn.prepareCall("{call updateBank(?,?)}")) {
+             CallableStatement csUpdateBank = conn.prepareCall("{call updateBank(?,?)}")) {
 
             // Update an existing bank in DB
-            csSingleBank.setLong(1, model.getId());
-            csSingleBank.setString(2, model.getDetails());
-            csSingleBank.execute();
+            csUpdateBank.setLong(1, model.getId());
+            csUpdateBank.setString(2, model.getDetails());
+            csUpdateBank.execute();
+
+            // Transform ResultSet row into a Bank model
+            resultSet = csUpdateBank.getResultSet();
+            byte rowCounter = 0;
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Bank object
+                bank = new Bank(resultSet.getLong(1), resultSet.getString(2));
+            }
 
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return bank;
     }
 
     @Override public void insertBatch(Iterable<Bank> models) {

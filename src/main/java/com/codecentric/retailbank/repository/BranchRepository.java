@@ -417,6 +417,9 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        Branch branch = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addBranch = conn.prepareCall("{call addBranch(?,?,?,?)}")) {
 
@@ -430,16 +433,38 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             cs_addBranch.setString("p_branch_details", model.getDetails());
             cs_addBranch.execute();
 
+            // Transform ResultSet row into a Branch model
+            byte rowCounter = 0;
+            resultSet = cs_addBranch.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Branch object
+                branch = new Branch(
+                        resultSet.getLong(1),
+                        model.getAddress(),
+                        model.getBank(),
+                        model.getRefBranchType(),
+                        resultSet.getString(5)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return branch;
     }
 
     @Override public Branch update(Branch model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        Branch branch = null;
+        ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addBranch = conn.prepareCall("{call updateBranch(?,?,?,?,?)}")) {
@@ -455,11 +480,31 @@ public class BranchRepository extends JDBCRepositoryUtilities implements JDBCRep
             cs_addBranch.setString("p_branch_details", model.getDetails());
             cs_addBranch.execute();
 
+            // Transform ResultSet row into a Branch model
+            byte rowCounter = 0;
+            resultSet = cs_addBranch.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a Branch object
+                branch = new Branch(
+                        resultSet.getLong(1),
+                        model.getAddress(),
+                        model.getBank(),
+                        model.getRefBranchType(),
+                        resultSet.getString(5)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+
+        return branch;
     }
 
     @Override public void insertBatch(Iterable<Branch> models) {

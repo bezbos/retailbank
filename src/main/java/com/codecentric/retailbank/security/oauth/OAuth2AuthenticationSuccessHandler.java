@@ -2,7 +2,6 @@ package com.codecentric.retailbank.security.oauth;
 
 import com.codecentric.retailbank.configuration.AppProperties;
 import com.codecentric.retailbank.exception.runtime.rest.BadRequestException;
-import com.codecentric.retailbank.repository.security.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.codecentric.retailbank.security.CookieUtils;
 import com.codecentric.retailbank.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
-import static com.codecentric.retailbank.repository.security.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.codecentric.retailbank.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {

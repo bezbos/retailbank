@@ -1,12 +1,12 @@
 package com.codecentric.retailbank.configuration;
 
-import com.codecentric.retailbank.repository.security.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.codecentric.retailbank.security.CustomUserDetailsService;
 import com.codecentric.retailbank.security.JwtAuthenticationEntryPoint;
 import com.codecentric.retailbank.security.JwtAuthenticationFilter;
+import com.codecentric.retailbank.security.oauth.CustomOAuth2UserService;
+import com.codecentric.retailbank.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.codecentric.retailbank.security.oauth.OAuth2AuthenticationFailureHandler;
 import com.codecentric.retailbank.security.oauth.OAuth2AuthenticationSuccessHandler;
-import com.codecentric.retailbank.service.security.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

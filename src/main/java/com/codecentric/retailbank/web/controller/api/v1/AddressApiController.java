@@ -43,7 +43,7 @@ public class AddressApiController {
 
     //region HTTP GET
     @GetMapping({"/addresses", "/addresses/{page}"})
-    ResponseEntity<?> addresses(@PathVariable("page") Optional<Integer> page,
+    ResponseEntity<PageableList<AddressDto>> addresses(@PathVariable("page") Optional<Integer> page,
                                 @RequestParam("line1") Optional<String> line1) {
 
         if (line1.isPresent()) {
@@ -147,9 +147,9 @@ public class AddressApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Address createdAddress;
+        Address result;
         try {
-            createdAddress = addressService.addAddress(dto.getDBModel());
+            result = addressService.addAddress(dto.getDBModel());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             //  400 BAD REQUEST
@@ -157,7 +157,7 @@ public class AddressApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/address/" + createdAddress.getId())).body(createdAddress.getDto());
+        return ResponseEntity.created(URI.create("/address/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -167,9 +167,9 @@ public class AddressApiController {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Address updatedAddress;
+        Address result;
         try {
-            updatedAddress = addressService.updateAddress(dto.getDBModel());
+             result = addressService.updateAddress(dto.getDBModel());
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
             //  400 BAD REQUEST
@@ -177,7 +177,7 @@ public class AddressApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/address/" + updatedAddress.getId())).body(updatedAddress.getDto());
+        return ResponseEntity.ok().location(URI.create("/address/" + result.getId())).body(result.getDto());
     }
     //endregion
 

@@ -123,21 +123,21 @@ public class TransactionApiController {
 
     //region HTTP POST
     @PostMapping("/transaction")
-    ResponseEntity<TransactionDto> createPayment(@RequestBody TransactionDto clientDto) {
+    ResponseEntity<TransactionDto> createPayment(@RequestBody TransactionDto dto) {
 
         if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Transaction createdTransaction;
+        Transaction result;
         try {
-            createdTransaction = transactionService.createPayment(clientDto.getDBModel());
+             result = transactionService.createPayment(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
-            return ResponseEntity.badRequest().body(clientDto);
+            return ResponseEntity.badRequest().body(dto);
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/transaction/" + createdTransaction.getId())).body(createdTransaction.getDto());
+        return ResponseEntity.created(URI.create("/transaction/" + result.getId())).body(result.getDto());
     }
 
     //endregion

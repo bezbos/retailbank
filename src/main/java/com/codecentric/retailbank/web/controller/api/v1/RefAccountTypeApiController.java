@@ -109,9 +109,9 @@ public class RefAccountTypeApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefAccountType createdType;
+        RefAccountType result;
         try {
-            createdType = refAccountTypeService.addRefAccountType(dto.getDBModel());
+            result = refAccountTypeService.addRefAccountType(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -119,7 +119,7 @@ public class RefAccountTypeApiController {
         }
 
         //  201 CREATED
-        return ResponseEntity.created(URI.create("/refAccountType/" + createdType.getId())).body(createdType.getDto());
+        return ResponseEntity.created(URI.create("/refAccountType/" + result.getId())).body(result.getDto());
     }
     //endregion
 
@@ -129,9 +129,9 @@ public class RefAccountTypeApiController {
 
         if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        RefAccountType updatedType;
+        RefAccountType result;
         try {
-            updatedType= refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
+            result= refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -139,7 +139,7 @@ public class RefAccountTypeApiController {
         }
 
         //  200 OK
-        return ResponseEntity.ok().location(URI.create("/refAccountType/" + updatedType.getId())).body(updatedType.getDto());
+        return ResponseEntity.ok().location(URI.create("/refAccountType/" + result.getId())).body(result.getDto());
     }
     //endregion
 

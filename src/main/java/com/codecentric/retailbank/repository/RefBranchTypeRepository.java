@@ -194,6 +194,9 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
+        RefBranchType refBranchType = null;
+        ResultSet resultSet = null;
+
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_addRefBranchType = conn.prepareCall("{call addRefBranchType(?,?,?,?,?)}")) {
 
@@ -205,16 +208,39 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
             cs_addRefBranchType.setString(5, model.getIsMediumSuburban());
             cs_addRefBranchType.execute();
 
+            // Transform ResultSet row into a RefBranchType model
+            byte rowCounter = 0;
+            resultSet = cs_addRefBranchType.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefBranchType object
+                refBranchType = new RefBranchType(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refBranchType;
     }
 
     @Override public RefBranchType update(RefBranchType model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
+
+        RefBranchType refBranchType = null;
+        ResultSet resultSet = null;
 
         try (Connection conn = DBUtil.getConnection(DBType.MYSQL_DB);
              CallableStatement cs_updateRefBranchType = conn.prepareCall("{call updateRefBranchType(?,?,?,?,?,?)}")) {
@@ -228,11 +254,31 @@ public class RefBranchTypeRepository extends JDBCRepositoryUtilities implements 
             cs_updateRefBranchType.setString(6, model.getIsMediumSuburban());
             cs_updateRefBranchType.execute();
 
+            // Transform ResultSet row into a RefBranchType model
+            byte rowCounter = 0;
+            resultSet = cs_updateRefBranchType.getResultSet();
+            while (resultSet.next()) {
+
+                // Check if more than one element matches id parameter
+                ++rowCounter;
+                if (rowCounter > 1)
+                    throw new InvalidOperationException("The ResultSet does not contain exactly one row.");
+
+                // Transform ResultSet row into a RefBranchType object
+                refBranchType = new RefBranchType(
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6)
+                );
+            }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
         }
 
-        return model;
+        return refBranchType;
     }
 
     @Override public void insertBatch(Iterable<RefBranchType> models) {
