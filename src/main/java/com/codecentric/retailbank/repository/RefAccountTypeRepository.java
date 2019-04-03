@@ -132,15 +132,15 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
 
                 // Transform ResultSet row into a RefAccountType object
                 refAccountType = new RefAccountType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
-                        );
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)
+                );
             }
         } catch (SQLException ex) {
             DBUtil.showErrorMessage(ex);
@@ -172,15 +172,15 @@ public class RefAccountTypeRepository extends JDBCRepositoryUtilities implements
 
                 // Transform ResultSet row into a RefAccountType object
                 refBranchType = new RefAccountType(
-                                resultSet.getLong(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7),
-                                resultSet.getString(8)
-                        );
+                        resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8)
+                );
 
                 // Check if more than one element matches id parameter
                 ++rowCounter;

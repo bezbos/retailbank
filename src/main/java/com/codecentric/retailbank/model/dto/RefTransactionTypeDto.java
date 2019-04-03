@@ -32,8 +32,8 @@ public class RefTransactionTypeDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isDepositType = isDepositType != null ? isDepositType.equalsIgnoreCase("Y") : false;
-        this.isWithdrawalType = isWithdrawalType != null ? isWithdrawalType.equalsIgnoreCase("Y") : false;
+        this.isDepositType = isDepositType != null && isDepositType.equalsIgnoreCase("Y");
+        this.isWithdrawalType = isWithdrawalType != null && isWithdrawalType.equalsIgnoreCase("Y");
     }
     //endregion
 

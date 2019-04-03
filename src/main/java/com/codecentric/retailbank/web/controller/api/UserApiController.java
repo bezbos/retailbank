@@ -18,10 +18,10 @@ public class UserApiController {
 
     @GetMapping("/api/user/me")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal){
+    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         User user = userRepository.single(userPrincipal.getId());
 
-        if(user == null)
+        if (user == null)
             throw new ResourceNotFoundException("User", "id", userPrincipal.getId());
 
         return user;

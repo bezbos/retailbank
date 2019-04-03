@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
+import static com.codecentric.retailbank.web.controller.api.v1.helpers.Constant.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -44,7 +44,7 @@ public class AddressApiController {
     //region HTTP GET
     @GetMapping({"/addresses", "/addresses/{page}"})
     ResponseEntity<PageableList<AddressDto>> addresses(@PathVariable("page") Optional<Integer> page,
-                                @RequestParam("line1") Optional<String> line1) {
+                                                       @RequestParam("line1") Optional<String> line1) {
 
         if (line1.isPresent()) {
             List<Address> addresses = addressService.getManyByLine1(line1.get());
@@ -151,7 +151,7 @@ public class AddressApiController {
         try {
             result = addressService.addAddress(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
             return ResponseEntity.badRequest().body(dto);
         }
@@ -169,9 +169,9 @@ public class AddressApiController {
 
         Address result;
         try {
-             result = addressService.updateAddress(dto.getDBModel());
+            result = addressService.updateAddress(dto.getDBModel());
         } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
+            ex.printStackTrace();
             //  400 BAD REQUEST
             return ResponseEntity.badRequest().body(dto);
         }
@@ -190,7 +190,7 @@ public class AddressApiController {
         try {
             addressService.deleteAddress(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
             return ResponseEntity.badRequest().build();
         }

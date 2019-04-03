@@ -96,7 +96,7 @@ public class RefTransactionTypeApiController {
     @PostMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> createRefTransactionType(@RequestBody RefTransactionTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefTransactionType result;
         try {
@@ -116,7 +116,7 @@ public class RefTransactionTypeApiController {
     @PutMapping("/refTransactionType")
     ResponseEntity<RefTransactionTypeDto> updateRefTransactionType(@RequestBody RefTransactionTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefTransactionType result;
         try {
@@ -136,7 +136,7 @@ public class RefTransactionTypeApiController {
     @DeleteMapping("/refTransactionType/{id}")
     ResponseEntity<RefTransactionTypeDto> deleteRefTransactionType(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refTransactionTypeService.deleteRefTransactionType(id);

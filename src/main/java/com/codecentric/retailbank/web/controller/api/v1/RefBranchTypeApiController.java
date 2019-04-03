@@ -101,11 +101,11 @@ public class RefBranchTypeApiController {
     @PostMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> createRefBranchType(@RequestBody RefBranchTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefBranchType result;
         try {
-            result= refBranchTypeService.addRefBranchType(dto.getDBModel());
+            result = refBranchTypeService.addRefBranchType(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -121,7 +121,7 @@ public class RefBranchTypeApiController {
     @PutMapping("/refBranchType")
     ResponseEntity<RefBranchTypeDto> updateRefBranchType(@RequestBody RefBranchTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefBranchType result;
         try {
@@ -141,7 +141,7 @@ public class RefBranchTypeApiController {
     @DeleteMapping("/refBranchType/{id}")
     ResponseEntity<RefBranchTypeDto> deleteRefBranchType(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refBranchTypeService.deleteRefBranchType(id);

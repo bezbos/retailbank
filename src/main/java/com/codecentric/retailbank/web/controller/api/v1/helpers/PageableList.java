@@ -2,7 +2,7 @@ package com.codecentric.retailbank.web.controller.api.v1.helpers;
 
 import java.util.List;
 
-import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
+import static com.codecentric.retailbank.web.controller.api.v1.helpers.Constant.PAGE_SIZE;
 
 public class PageableList<T> {
     public Long nextPage;
@@ -27,14 +27,14 @@ public class PageableList<T> {
             int increment = 1;
             if (pageCount > 2)
                 increment = 2;
-            if(pageCount > 2 && currentPage == (pageCount - (increment-1)))
+            if (pageCount > 2 && currentPage == (pageCount - (increment - 1)))
                 increment = 1;
-            if(currentPage == 0 && pageCount == 2)
+            if (currentPage == 0 && pageCount == 2)
                 increment = 2;
             //endregion
 
             this.currentPage = currentPage;
-            this.nextPage = (currentPage == (pageCount - increment) ? (((float) modelsCount % ((float) PAGE_SIZE)) != 0.0f) : true)
+            this.nextPage = (currentPage != (pageCount - increment) || (((float) modelsCount % ((float) PAGE_SIZE)) != 0.0f))
                     ? currentPage + 1
                     : null;
             this.previousPage = currentPage < 1 ? null : currentPage - 1;

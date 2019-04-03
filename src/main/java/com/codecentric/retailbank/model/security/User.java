@@ -76,7 +76,7 @@ public class User {
                 String secret,
                 String authProvider,
                 String authProviderId,
-                Collection<Role> roles){
+                Collection<Role> roles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -201,10 +201,7 @@ public class User {
             return false;
         }
         User user = (User) obj;
-        if (!email.equals(user.email)) {
-            return false;
-        }
-        return true;
+        return email.equals(user.email);
     }
 
     @Override public String toString() {

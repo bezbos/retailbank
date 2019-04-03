@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
+import static com.codecentric.retailbank.web.controller.api.v1.helpers.Constant.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -43,7 +43,7 @@ public class BranchApiController {
     //region HTTP GET
     @GetMapping({"/branches", "/branches/{page}"})
     ResponseEntity<PageableList<BranchDto>> branches(@PathVariable("page") Optional<Integer> page,
-                               @RequestParam("details") Optional<String> details) {
+                                                     @RequestParam("details") Optional<String> details) {
 
         if (details.isPresent()) {
             List<Branch> branches = branchService.getAllBranchesByDetails(details.get());
@@ -159,7 +159,7 @@ public class BranchApiController {
 
         Branch result;
         try {
-             result = branchService.updateBranch(dto.getDBModel());
+            result = branchService.updateBranch(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST

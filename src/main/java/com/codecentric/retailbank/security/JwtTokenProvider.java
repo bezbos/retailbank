@@ -11,7 +11,6 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -40,7 +39,7 @@ public class JwtTokenProvider {
         Map<String, Object> jwtClaims = new HashMap<>();
         jwtClaims.put("id", userPrincipal.getId());
         jwtClaims.put("email", userPrincipal.getEmail());
-        jwtClaims.put("roles", userPrincipal.getAuthorities().stream().map(authority -> ((GrantedAuthority) authority).getAuthority()).collect(Collectors.toList()));
+        jwtClaims.put("roles", userPrincipal.getAuthorities().stream().map(authority -> authority.getAuthority()).collect(Collectors.toList()));
 
         return Jwts.builder()
                 .setClaims(jwtClaims)

@@ -52,10 +52,10 @@ public class Bank {
 
     //region HELPERS
     @JsonIgnore
-    public BankDto getDto(){
+    public BankDto getDto() {
         return new BankDto(
-          this.id,
-          this.details
+                this.id,
+                this.details
         );
     }
     //endregion

@@ -10,26 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class MerchantService implements IMerchantService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final MerchantRepository merchantRepository;
+    @Autowired
+    private MerchantRepository merchantRepository;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public MerchantService(MerchantRepository merchantRepository) {
-        this.merchantRepository = merchantRepository;
-    }
-    //endregion
-
 
     //region READ
     @Override public Merchant getById(Long id) {
@@ -81,10 +73,22 @@ public class MerchantService implements IMerchantService {
 
     //region DELETE
     @Override public void deleteMerchant(Merchant merchant) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         merchantRepository.delete(merchant);
     }
 
     @Override public void deleteMerchant(Long id) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         merchantRepository.deleteById(id);
     }
     //endregion

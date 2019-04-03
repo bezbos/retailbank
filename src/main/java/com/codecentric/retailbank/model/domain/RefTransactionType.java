@@ -109,7 +109,7 @@ public class RefTransactionType {
     }
 
     @JsonIgnore
-    public RefTransactionTypeDto getDto(){
+    public RefTransactionTypeDto getDto() {
         return new RefTransactionTypeDto(
                 this.id,
                 this.code,

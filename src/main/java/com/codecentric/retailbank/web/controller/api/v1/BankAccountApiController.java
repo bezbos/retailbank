@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
+import static com.codecentric.retailbank.web.controller.api.v1.helpers.Constant.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -138,7 +138,7 @@ public class BankAccountApiController {
     @PostMapping("/bankAccount")
     ResponseEntity<BankAccountDto> createBank(@RequestBody BankAccountDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         BankAccount result;
         try {
@@ -158,11 +158,11 @@ public class BankAccountApiController {
     @PutMapping("/bankAccount")
     ResponseEntity<BankAccountDto> updateBank(@RequestBody BankAccountDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         BankAccount result;
         try {
-              result = bankAccountService.updateAccount(dto.getDBModel());
+            result = bankAccountService.updateAccount(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -178,7 +178,7 @@ public class BankAccountApiController {
     @DeleteMapping("/bankAccount/{id}")
     ResponseEntity<BankAccountDto> deleteBank(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             bankAccountService.deleteAccount(id);

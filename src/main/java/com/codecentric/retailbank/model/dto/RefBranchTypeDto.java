@@ -38,9 +38,9 @@ public class RefBranchTypeDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isLargeUrbanType = isLargeUrban != null ? isLargeUrban.equalsIgnoreCase("Y") : false;
-        this.isSmallRuralType = isSmallRural != null ? isSmallRural.equalsIgnoreCase("Y") : false;
-        this.isMediumSuburbanType = isMediumSuburban != null ? isMediumSuburban.equalsIgnoreCase("Y") : false;
+        this.isLargeUrbanType = isLargeUrban != null && isLargeUrban.equalsIgnoreCase("Y");
+        this.isSmallRuralType = isSmallRural != null && isSmallRural.equalsIgnoreCase("Y");
+        this.isMediumSuburbanType = isMediumSuburban != null && isMediumSuburban.equalsIgnoreCase("Y");
     }
     //endregion
 

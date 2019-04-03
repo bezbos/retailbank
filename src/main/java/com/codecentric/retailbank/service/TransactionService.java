@@ -10,12 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class TransactionService implements ITransactionService {
 
     //region FIELDS
@@ -24,7 +22,6 @@ public class TransactionService implements ITransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
     //endregion
-
 
     //region READ
     @Override public Transaction getById(Long id) {
@@ -65,13 +62,5 @@ public class TransactionService implements ITransactionService {
     }
     //endregion
 
-    //region DELETE
-    @Override public void deleteTransaction(Transaction transaction) {
-        transactionRepository.delete(transaction);
-    }
-
-    @Override public void deleteTransaction(Long id) {
-        transactionRepository.deleteById(id);
-    }
-    //endregion
+    // Transactions are strictly immutable. They can only be created and read.
 }

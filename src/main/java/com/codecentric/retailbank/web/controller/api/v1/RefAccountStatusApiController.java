@@ -99,7 +99,7 @@ public class RefAccountStatusApiController {
     @PostMapping("/refAccountStatus")
     ResponseEntity<RefAccountStatusDto> createRefAccountStatus(@RequestBody RefAccountStatusDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefAccountStatus result;
         try {
@@ -119,11 +119,11 @@ public class RefAccountStatusApiController {
     @PutMapping("/refAccountStatus")
     ResponseEntity<RefAccountStatusDto> updateRefAccountStatus(@RequestBody RefAccountStatusDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefAccountStatus result;
         try {
-            result= refAccountStatusService.updateRefAccountStatus(dto.getDBModel());
+            result = refAccountStatusService.updateRefAccountStatus(dto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -139,7 +139,7 @@ public class RefAccountStatusApiController {
     @DeleteMapping("/refAccountStatus/{id}")
     ResponseEntity<RefAccountStatusDto> deleteRefAccountStatus(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refAccountStatusService.deleteRefAccountStatus(id);

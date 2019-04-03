@@ -210,7 +210,7 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
         return transaction;
     }
 
-    public Transaction singleByDetails(String details) throws ArgumentNullException, InvalidOperationException{
+    public Transaction singleByDetails(String details) throws ArgumentNullException, InvalidOperationException {
         if (details == null)
             throw new ArgumentNullException("The details argument must have a value/cannot be null.");
 
@@ -276,7 +276,7 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
     //endregion
 
     //region WRITE
-    public Transaction createPayment(Transaction model){
+    public Transaction createPayment(Transaction model) {
         if (model == null)
             throw new ArgumentNullException("The model argument must have a value/cannot be null.");
 
@@ -408,6 +408,7 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
     //endregion
 
     //region Unused Overrides
+
     /**
      * Use <code>createPayment()</code> instead of this!
      */
@@ -429,13 +430,15 @@ public class TransactionRepository extends JDBCRepositoryUtilities implements JD
      * Use <code>createPayment()</code> instead of this!
      */
     @Deprecated
-    @Override public void insertBatch(Iterable<Transaction> models) { }
+    @Override public void insertBatch(Iterable<Transaction> models) {
+    }
 
     /**
      * Use <code>createPayment()</code> instead of this!
      */
     @Deprecated
-    @Override public void updateBatch(Iterable<Transaction> models) { }
+    @Override public void updateBatch(Iterable<Transaction> models) {
+    }
     //endregion
 
 }

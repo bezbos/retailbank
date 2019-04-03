@@ -12,8 +12,4 @@ public interface ITransactionService {
     ListPage<Transaction> getAllTransactions(int pageIndex, int pageSize);
 
     Transaction createPayment(Transaction transaction);
-
-    void deleteTransaction(Transaction transaction);
-
-    void deleteTransaction(Long id);
 }

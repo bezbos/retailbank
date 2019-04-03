@@ -107,7 +107,7 @@ public class RefAccountTypeApiController {
     @PostMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> createRefAccountType(@RequestBody RefAccountTypeDto dto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefAccountType result;
         try {
@@ -127,11 +127,11 @@ public class RefAccountTypeApiController {
     @PutMapping("/refAccountType")
     ResponseEntity<RefAccountTypeDto> updateRefAccountType(@RequestBody RefAccountTypeDto clientDto) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         RefAccountType result;
         try {
-            result= refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
+            result = refAccountTypeService.updateRefAccountType(clientDto.getDBModel());
         } catch (Exception e) {
             e.printStackTrace();
             //  400 BAD REQUEST
@@ -147,7 +147,7 @@ public class RefAccountTypeApiController {
     @DeleteMapping("/refAccountType/{id}")
     ResponseEntity<RefAccountTypeDto> deleteRefAccountType(@PathVariable("id") Long id) {
 
-        if(!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!UsersUtil.isAdmin()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
             refAccountTypeService.deleteRefAccountType(id);

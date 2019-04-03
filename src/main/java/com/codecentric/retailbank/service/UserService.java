@@ -10,12 +10,9 @@ import com.codecentric.retailbank.repository.security.RoleRepository;
 import com.codecentric.retailbank.repository.security.UserRepository;
 import com.codecentric.retailbank.repository.security.VerificationTokenRepository;
 import com.codecentric.retailbank.service.interfaces.IUserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -23,32 +20,23 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-@Transactional
 public class UserService implements IUserService {
 
     //region FIELDS
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private UserRepository userRepository;
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final VerificationTokenRepository verificationTokenRepository;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    //endregion
-
-
-    //region CONSTRUCTOR
-    @Autowired public UserService(UserRepository userRepository,
-                                  RoleRepository roleRepository,
-                                  VerificationTokenRepository verificationTokenRepository,
-                                  PasswordResetTokenRepository passwordResetTokenRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.verificationTokenRepository = verificationTokenRepository;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
-    }
     //endregion
 
 

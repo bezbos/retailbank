@@ -44,11 +44,11 @@ public class RefAccountTypeDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isCheckingType = isCheckingType != null ? isCheckingType.equalsIgnoreCase("Y") : false;
-        this.isSavingsType = isSavingsType != null ? isSavingsType.equalsIgnoreCase("Y") : false;
-        this.isCertificateOfDepositType = isSavingsType != null ? isCertificateOfDepositType.equalsIgnoreCase("Y") : false;
-        this.isMoneyMarketType = isMoneyMarketType != null ? isMoneyMarketType.equalsIgnoreCase("Y") : false;
-        this.isIndividualRetirementType = isIndividualRetirementType != null ? isIndividualRetirementType.equalsIgnoreCase("Y") : false;
+        this.isCheckingType = isCheckingType != null && isCheckingType.equalsIgnoreCase("Y");
+        this.isSavingsType = isSavingsType != null && isSavingsType.equalsIgnoreCase("Y");
+        this.isCertificateOfDepositType = isSavingsType != null && isCertificateOfDepositType.equalsIgnoreCase("Y");
+        this.isMoneyMarketType = isMoneyMarketType != null && isMoneyMarketType.equalsIgnoreCase("Y");
+        this.isIndividualRetirementType = isIndividualRetirementType != null && isIndividualRetirementType.equalsIgnoreCase("Y");
     }
     //endregion
 

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.codecentric.retailbank.constants.Constant.PAGE_SIZE;
+import static com.codecentric.retailbank.web.controller.api.v1.helpers.Constant.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -44,7 +44,7 @@ public class BankApiController {
     //region HTTP GET
     @GetMapping({"/banks", "/banks/{page}"})
     ResponseEntity<PageableList<BankDto>> banks(@PathVariable("page") Optional<Integer> page,
-                            @RequestParam("details") Optional<String> details) {
+                                                @RequestParam("details") Optional<String> details) {
 
         if (details.isPresent()) {
             List<Bank> banks = bankService.getAllBanksByDetails(details.get());
@@ -97,7 +97,7 @@ public class BankApiController {
                 //  404 NOT FOUND
                 ? ResponseEntity.notFound().build()
                 //  200 OK
-                : ResponseEntity.ok().location(URI.create("/bank/"+id)).body(bankDto);
+                : ResponseEntity.ok().location(URI.create("/bank/" + id)).body(bankDto);
     }
 
     @GetMapping("/bank")
@@ -125,7 +125,7 @@ public class BankApiController {
         try {
             result = bankService.addBank(dto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
             return ResponseEntity.badRequest().body(dto);
         }
@@ -145,7 +145,7 @@ public class BankApiController {
         try {
             result = bankService.updateBank(clientDto.getDBModel());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
             return ResponseEntity.badRequest().body(clientDto);
         }
@@ -164,7 +164,7 @@ public class BankApiController {
         try {
             bankService.deleteBank(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
             //  400 BAD REQUEST
             return ResponseEntity.badRequest().build();
         }

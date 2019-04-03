@@ -100,15 +100,15 @@ public class RefAccountStatus {
         this.code = code;
         this.description = description;
 
-        if(isActive != null)
+        if (isActive != null)
             this.isActive = isActive.booleanValue() == true ? "Y" : "N";
 
-        if(isClosed != null)
-            this.isClosed = isClosed.booleanValue() == true ? "Y" : "N";;
+        if (isClosed != null)
+            this.isClosed = isClosed.booleanValue() == true ? "Y" : "N";
     }
 
     @JsonIgnore
-    public RefAccountStatusDto getDto(){
+    public RefAccountStatusDto getDto() {
         return new RefAccountStatusDto(
                 this.id,
                 this.code,

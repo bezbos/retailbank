@@ -41,7 +41,7 @@ class TransactionServiceMockTest {
         Merchant merchant = new Merchant(1L);
         RefTransactionType type = new RefTransactionType();
 
-        Transaction mockTransaction = new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction Name");
+        Transaction mockTransaction = new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction Name");
         doReturn(mockTransaction).when(repository).single(1L);
 
         // Execute the service call
@@ -61,7 +61,7 @@ class TransactionServiceMockTest {
         Merchant merchant = new Merchant(1L);
         RefTransactionType type = new RefTransactionType();
 
-        Transaction mockTransaction = new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction Name");
+        Transaction mockTransaction = new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction Name");
         doReturn(mockTransaction).when(repository).singleByDetails("Transaction Name");
 
         // Execute the service call
@@ -83,9 +83,9 @@ class TransactionServiceMockTest {
         RefTransactionType type = new RefTransactionType();
 
         List<Transaction> mockTransactions = new ArrayList<>();
-        mockTransactions.add(new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 1"));
-        mockTransactions.add(new Transaction(2L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 2"));
-        mockTransactions.add(new Transaction(3L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 3"));
+        mockTransactions.add(new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 1"));
+        mockTransactions.add(new Transaction(2L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 2"));
+        mockTransactions.add(new Transaction(3L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 3"));
         doReturn(mockTransactions).when(repository).all();
 
         // Execute the service call
@@ -104,10 +104,10 @@ class TransactionServiceMockTest {
         Merchant merchant = new Merchant(1L);
         RefTransactionType type = new RefTransactionType();
 
-        Transaction mockTransaction1 = new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 1");
-        Transaction mockTransaction2 = new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 2");
-        Transaction mockTransaction3 = new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 3");
-        Transaction mockTransaction4 = new Transaction(1L,sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 4");
+        Transaction mockTransaction1 = new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 1");
+        Transaction mockTransaction2 = new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 2");
+        Transaction mockTransaction3 = new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 3");
+        Transaction mockTransaction4 = new Transaction(1L, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Transaction 4");
 
         ListPage<Transaction> secondPageMock = new ListPage<>();
         List<Transaction> bankModels = new ArrayList<>();

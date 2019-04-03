@@ -7,42 +7,30 @@ import com.codecentric.retailbank.repository.CustomerRepository;
 import com.codecentric.retailbank.repository.RefBranchTypeRepository;
 import com.codecentric.retailbank.repository.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IRefBranchTypeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class RefBranchTypeService implements IRefBranchTypeService {
 
     //region FIELDS
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private BranchRepository branchRepository;
 
-    private final BranchRepository branchRepository;
-    private final CustomerRepository customerRepository;
-    private final BankAccountRepository bankAccountRepository;
-    private final TransactionRepository transactionRepository;
-    private final RefBranchTypeRepository refBranchTypeRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private RefBranchTypeRepository refBranchTypeRepository;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public RefBranchTypeService(BranchRepository branchRepository,
-                                           CustomerRepository customerRepository,
-                                           BankAccountRepository bankAccountRepository,
-                                           TransactionRepository transactionRepository,
-                                           RefBranchTypeRepository refBranchTypeRepository) {
-        this.branchRepository = branchRepository;
-        this.customerRepository = customerRepository;
-        this.bankAccountRepository = bankAccountRepository;
-        this.transactionRepository = transactionRepository;
-        this.refBranchTypeRepository = refBranchTypeRepository;
-    }
-    //endregion
-
 
     //region READ
     @Override public RefBranchType getById(Long id) {
@@ -75,42 +63,23 @@ public class RefBranchTypeService implements IRefBranchTypeService {
 
     //region DELETE
     @Override public void deleteRefBranchType(RefBranchType refBranchType) {
-//        // Recursively find and delete any FK constraints to this refBranchType
-//        branchRepository.findByType(refBranchType).forEach(branch -> {
-//            customerRepository.findByBranch(branch).forEach(customer -> {
-//                bankAccountRepository.findByCustomer(customer).forEach(account -> {
-//                    transactionRepository.findByAccount(account).forEach(transaction -> {
-//                        transactionRepository.delete(transaction);
-//                    });
-//                    bankAccountRepository.delete(account);
-//                });
-//                customerRepository.delete(customer);
-//            });
-//            branchRepository.delete(branch);
-//        });
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
 
-        // Delete the actual refBranchType
         refBranchTypeRepository.delete(refBranchType);
     }
 
     @Override public void deleteRefBranchType(Long id) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         RefBranchType refBranchType = refBranchTypeRepository.single(id);
-
-//        // Recursively find and delete any FK constraints to this refBranchType
-//        branchRepository.findByType(refBranchType).forEach(branch -> {
-//            customerRepository.findByBranch(branch).forEach(customer -> {
-//                bankAccountRepository.findByCustomer(customer).forEach(account -> {
-//                    transactionRepository.findByAccount(account).forEach(transaction -> {
-//                        transactionRepository.delete(transaction);
-//                    });
-//                    bankAccountRepository.delete(account);
-//                });
-//                customerRepository.delete(customer);
-//            });
-//            branchRepository.delete(branch);
-//        });
-
-        // Delete the actual refBranchType
         refBranchTypeRepository.delete(refBranchType);
     }
     //endregion

@@ -4,30 +4,18 @@ import com.codecentric.retailbank.model.domain.Branch;
 import com.codecentric.retailbank.repository.BranchRepository;
 import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.interfaces.IBranchService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class BranchService implements IBranchService {
 
     //region FIELDS
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    private final BranchRepository branchRepository;
+    @Autowired
+    private BranchRepository branchRepository;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public BranchService(BranchRepository branchRepository) {
-        this.branchRepository = branchRepository;
-    }
-    //endregion
-
 
     //region READ
     @Override public Branch getById(Long id) {
@@ -70,10 +58,22 @@ public class BranchService implements IBranchService {
 
     //region DELETE
     @Override public void deleteBranch(Branch branch) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         branchRepository.delete(branch);
     }
 
     @Override public void deleteBranch(Long id) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         branchRepository.deleteById(id);
     }
     //endregion

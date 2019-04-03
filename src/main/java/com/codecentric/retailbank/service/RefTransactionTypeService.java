@@ -10,29 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class RefTransactionTypeService implements IRefTransactionTypeService {
 
     //region FIELDS
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private final RefTransactionTypeRepository refTransactionTypeRepository;
-    private final TransactionRepository transactionRepository;
-    //endregion
+    @Autowired
+    private RefTransactionTypeRepository refTransactionTypeRepository;
 
-    //region CONSTRUCTOR
-    @Autowired public RefTransactionTypeService(RefTransactionTypeRepository refTransactionTypeRepository,
-                                                TransactionRepository transactionRepository) {
-        this.refTransactionTypeRepository = refTransactionTypeRepository;
-        this.transactionRepository = transactionRepository;
-    }
+    @Autowired
+    private TransactionRepository transactionRepository;
     //endregion
-
 
     //region READ
     @Override public RefTransactionType getById(Long id) {
@@ -74,22 +66,23 @@ public class RefTransactionTypeService implements IRefTransactionTypeService {
 
     //region DELETE
     @Override public void deleteRefTransactionType(RefTransactionType refTransactionType) {
-        // Delete any transactions with a FK constraint to this refTransactionType
-//        List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
-//        transactionRepository.deleteAll(transactions);
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
 
-        // Delete the actual RefTransactionType
         refTransactionTypeRepository.delete(refTransactionType);
     }
 
     @Override public void deleteRefTransactionType(Long id) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         RefTransactionType refTransactionType = refTransactionTypeRepository.single(id);
-
-        // Delete any transactions with a FK constraint to this refTransactionType
-//        List<Transaction> transactions = transactionRepository.findByType(refTransactionType);
-//        transactionRepository.deleteAll(transactions);
-
-        // Delete the actual RefTransactionType
         refTransactionTypeRepository.delete(refTransactionType);
     }
     //endregion

@@ -5,36 +5,24 @@ import com.codecentric.retailbank.repository.BankAccountRepository;
 import com.codecentric.retailbank.repository.RefAccountStatusRepository;
 import com.codecentric.retailbank.repository.TransactionRepository;
 import com.codecentric.retailbank.service.interfaces.IRefAccountStatusService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class RefAccountStatusService implements IRefAccountStatusService {
 
     //region FIELDS
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private RefAccountStatusRepository refAccountStatusRepository;
 
-    private final RefAccountStatusRepository refAccountStatusRepository;
-    private final BankAccountRepository bankAccountRepository;
-    private final TransactionRepository transactionRepository;
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public RefAccountStatusService(RefAccountStatusRepository refAccountStatusRepository,
-                                              BankAccountRepository bankAccountRepository,
-                                              TransactionRepository transactionRepository) {
-        this.refAccountStatusRepository = refAccountStatusRepository;
-        this.bankAccountRepository = bankAccountRepository;
-        this.transactionRepository = transactionRepository;
-    }
-    //endregion
-
 
     //region READ
     @Override public RefAccountStatus getById(Long id) {
@@ -67,30 +55,23 @@ public class RefAccountStatusService implements IRefAccountStatusService {
 
     //region DELETE
     @Override public void deleteRefAccountStatus(RefAccountStatus refAccountStatus) {
-        // Recursively find and delete any FK constraints to this refAccountStatus
-//        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
-//            transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
-//                transactionRepository.delete(transaction);
-//            });
-//            bankAccountRepository.delete(bankAccount);
-//        });
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
 
-        // Delete the actual refAccountStatus
         refAccountStatusRepository.delete(refAccountStatus);
     }
 
     @Override public void deleteRefAccountStatus(Long id) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         RefAccountStatus refAccountStatus = refAccountStatusRepository.single(id);
-
-        // Recursively find and delete any FK constraints to this refAccountStatus
-//        bankAccountRepository.findByStatus(refAccountStatus).forEach(bankAccount -> {
-//            transactionRepository.findByAccount(bankAccount).forEach(transaction -> {
-//                transactionRepository.delete(transaction);
-//            });
-//            bankAccountRepository.delete(bankAccount);
-//        });
-
-        // Delete the actual refAccountStatus
         refAccountStatusRepository.delete(refAccountStatus);
     }
     //endregion

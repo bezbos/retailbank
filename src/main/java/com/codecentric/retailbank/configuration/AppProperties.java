@@ -11,7 +11,7 @@ public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
 
-    public static class Auth{
+    public static class Auth {
         private String jwtSecret;
         private long jwtExpirationInMs;
 
@@ -32,7 +32,7 @@ public class AppProperties {
         }
     }
 
-    public static final class OAuth2{
+    public static final class OAuth2 {
         private List<String> authorizedRedirectUris = new ArrayList<>();
 
         public List<String> getAuthorizedRedirectUris() {

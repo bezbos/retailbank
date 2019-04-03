@@ -35,8 +35,8 @@ public class RefAccountStatusDto {
         this.id = id;
         this.code = code;
         this.description = description;
-        this.isActiveStatus = isActiveStatus != null ? isActiveStatus.equalsIgnoreCase("Y") : false;
-        this.isClosedStatus = isClosedStatus != null ? isClosedStatus.equalsIgnoreCase("Y") : false;
+        this.isActiveStatus = isActiveStatus != null && isActiveStatus.equalsIgnoreCase("Y");
+        this.isClosedStatus = isClosedStatus != null && isClosedStatus.equalsIgnoreCase("Y");
     }
     //endregion
 
@@ -84,7 +84,7 @@ public class RefAccountStatusDto {
 
     //region HELPERS
     @JsonIgnore
-    public RefAccountStatus getDBModel(){
+    public RefAccountStatus getDBModel() {
         return new RefAccountStatus(
                 this.id,
                 this.code,

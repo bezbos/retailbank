@@ -168,7 +168,7 @@ class BankAccountApiControllerMockTest {
         RefAccountType type = new RefAccountType();
         Customer customer = new Customer();
 
-        BankAccount mockBankAccount = new BankAccount(1L,status, type, customer, BigDecimal.ZERO, "BankAccount Name");
+        BankAccount mockBankAccount = new BankAccount(1L, status, type, customer, BigDecimal.ZERO, "BankAccount Name");
 
         // Setup mocked service
         doReturn(mockBankAccount).when(bankAccountService).getById(1L);

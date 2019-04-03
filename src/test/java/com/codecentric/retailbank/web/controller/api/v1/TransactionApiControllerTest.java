@@ -109,7 +109,7 @@ class TransactionApiControllerTest {
         RefTransactionTypeDto type = new RefTransactionTypeDto();
 
         TransactionDto postTransaction = new TransactionDto(null, sender, receiver, merchant, type, null, BigDecimal.valueOf(1L), "Posted Transaction");
-        Transaction mockTransaction = new Transaction(1L, sender.getDBModel(), receiver.getDBModel(), merchant.getDBModel(), type.getDBModel(), null, BigDecimal.valueOf(1L),"Posted Transaction");
+        Transaction mockTransaction = new Transaction(1L, sender.getDBModel(), receiver.getDBModel(), merchant.getDBModel(), type.getDBModel(), null, BigDecimal.valueOf(1L), "Posted Transaction");
         doReturn(mockTransaction).when(transactionService).createPayment(any());
 
         // Execute the POST request

@@ -1,6 +1,6 @@
 package com.codecentric.retailbank.model.security;
 
-public enum  AuthProvider {
+public enum AuthProvider {
     local,
     facebook,
     google,

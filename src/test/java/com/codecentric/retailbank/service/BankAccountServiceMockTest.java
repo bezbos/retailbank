@@ -79,9 +79,9 @@ class BankAccountServiceMockTest {
         Customer customer = new Customer(1L, null, null, "Personal", "Contact");
 
         List<BankAccount> mockBankAccounts = new ArrayList<>();
-        mockBankAccounts.add(new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 1"));
-        mockBankAccounts.add(new BankAccount(2L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 2"));
-        mockBankAccounts.add(new BankAccount(3L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 3"));
+        mockBankAccounts.add(new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 1"));
+        mockBankAccounts.add(new BankAccount(2L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 2"));
+        mockBankAccounts.add(new BankAccount(3L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 3"));
         doReturn(mockBankAccounts).when(bankAccountRepository).all();
 
         // Execute the bankAccountService call
@@ -99,9 +99,9 @@ class BankAccountServiceMockTest {
         RefAccountType type = new RefAccountType(1L, "01-TEST", "Desc", "Y", "N", "N", "N", "N");
         Customer customer = new Customer(1L, null, null, "Personal", "Contact");
 
-        BankAccount mockBankAccount1 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 1");
-        BankAccount mockBankAccount2 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 2");
-        BankAccount mockBankAccount3 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 3");
+        BankAccount mockBankAccount1 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 1");
+        BankAccount mockBankAccount2 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 2");
+        BankAccount mockBankAccount3 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 3");
 
         List<BankAccount> mockBankAccountList = new ArrayList<>();
         mockBankAccountList.add(mockBankAccount1);
@@ -128,10 +128,10 @@ class BankAccountServiceMockTest {
         RefAccountType type = new RefAccountType(1L, "01-TEST", "Desc", "Y", "N", "N", "N", "N");
         Customer customer = new Customer(1L, null, null, "Personal", "Contact");
 
-        BankAccount mockBankAccount1 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 1");
-        BankAccount mockBankAccount2 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 2");
-        BankAccount mockBankAccount3 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 3");
-        BankAccount mockBankAccount4 = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount 4");
+        BankAccount mockBankAccount1 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 1");
+        BankAccount mockBankAccount2 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 2");
+        BankAccount mockBankAccount3 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 3");
+        BankAccount mockBankAccount4 = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount 4");
 
         ListPage<BankAccount> secondPageMock = new ListPage<>();
         List<BankAccount> bankAccountModels = new ArrayList<>();
@@ -156,7 +156,7 @@ class BankAccountServiceMockTest {
         RefAccountType type = new RefAccountType(1L, "01-TEST", "Desc", "Y", "N", "N", "N", "N");
         Customer customer = new Customer(1L, null, null, "Personal", "Contact");
 
-        BankAccount mockBankAccount = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount Name");
+        BankAccount mockBankAccount = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount Name");
         doReturn(mockBankAccount).when(bankAccountRepository).add(mockBankAccount);
 
         // Execute the bankAccountService call
@@ -175,7 +175,7 @@ class BankAccountServiceMockTest {
         RefAccountType type = new RefAccountType(1L, "01-TEST", "Desc", "Y", "N", "N", "N", "N");
         Customer customer = new Customer(1L, null, null, "Personal", "Contact");
 
-        BankAccount mockBankAccount = new BankAccount(1L,status, type, customer, BigDecimal.valueOf(1L), "BankAccount Name");
+        BankAccount mockBankAccount = new BankAccount(1L, status, type, customer, BigDecimal.valueOf(1L), "BankAccount Name");
         doReturn(mockBankAccount).when(bankAccountRepository).update(mockBankAccount);
 
         // Execute the bankAccountService call

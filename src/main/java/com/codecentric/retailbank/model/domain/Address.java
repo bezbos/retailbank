@@ -33,11 +33,9 @@ public class Address {
     @Size(max = 255)
     private String otherDetails;
     //endregion
-    
-    //region CONSTRUCTORS
-    public Address() {
 
-    }
+    //region CONSTRUCTORS
+    public Address() { }
 
     public Address(Long id) {
         this.id = id;

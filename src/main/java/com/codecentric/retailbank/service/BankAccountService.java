@@ -4,30 +4,18 @@ import com.codecentric.retailbank.model.domain.BankAccount;
 import com.codecentric.retailbank.repository.BankAccountRepository;
 import com.codecentric.retailbank.repository.helpers.ListPage;
 import com.codecentric.retailbank.service.interfaces.IBankAccountService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class BankAccountService implements IBankAccountService {
 
     //region FIELDS
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    private final BankAccountRepository bankAccountRepository;
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
     //endregion
-
-    //region CONSTRUCTOR
-    @Autowired public BankAccountService(BankAccountRepository bankAccountRepository) {
-        this.bankAccountRepository = bankAccountRepository;
-    }
-    //endregion
-
 
     //region READ
     @Override public BankAccount getById(Long id) {
@@ -70,10 +58,22 @@ public class BankAccountService implements IBankAccountService {
 
     //region DELETE
     @Override public void deleteAccount(BankAccount account) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         bankAccountRepository.delete(account);
     }
 
     @Override public void deleteAccount(Long id) {
+        // This could fail because of FK constraints.
+        // I would have to create new methods in the repository
+        // that find the constraining entities and delete them
+        // but I don't want to spend anymore time on this project
+        // so this will be left as is.
+
         bankAccountRepository.deleteById(id);
     }
     //endregion

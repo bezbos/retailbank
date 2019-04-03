@@ -122,7 +122,7 @@ public class RefBranchType {
     }
 
     @JsonIgnore
-    public RefBranchTypeDto getDto(){
+    public RefBranchTypeDto getDto() {
         return new RefBranchTypeDto(
                 this.getId(),
                 this.getCode(),

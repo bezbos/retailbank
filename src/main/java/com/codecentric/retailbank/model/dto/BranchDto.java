@@ -88,7 +88,7 @@ public class BranchDto {
 
     //region HELPERS
     @JsonIgnore
-    public Branch getDBModel(){
+    public Branch getDBModel() {
         return new Branch(
                 this.id,
                 this.address != null ? this.address.getDBModel() : null,

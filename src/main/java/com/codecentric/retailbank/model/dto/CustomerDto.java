@@ -104,7 +104,7 @@ public class CustomerDto {
 
     //region HELPERS
     @JsonIgnore
-    public Customer getDBModel(){
+    public Customer getDBModel() {
         return new Customer(
                 this.id,
                 this.address != null ? this.address.getDBModel() : null,

@@ -113,7 +113,7 @@ public class BankAccount {
         return new BankAccountDto(
                 this.id,
                 this.status != null ? this.status.getDto() : null,
-                this.type != null ? this.type.getDto(): null,
+                this.type != null ? this.type.getDto() : null,
                 this.customer != null ? this.customer.getDto() : null,
                 this.balance,
                 this.details

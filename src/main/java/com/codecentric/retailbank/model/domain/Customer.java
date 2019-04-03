@@ -103,7 +103,7 @@ public class Customer {
     //endregion
 
     //region HELPERS
-    public CustomerDto getDto(){
+    public CustomerDto getDto() {
         return new CustomerDto(
                 this.id,
                 this.address != null ? this.address.getDto() : null,
