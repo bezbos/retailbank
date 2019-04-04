@@ -32,7 +32,7 @@
 ### Security
 * I'm using JWT for authorization and authentication as they work so nicely with React.
 * Normal users can only read data. Only admins are authorized for all APIs.
-* OAUTH2 single sign in via Google is implemented, although it works only when I run my React project in development. It doesn't work in the production build of the React App because of the lack of Server Side Rendering support.
+* OAUTH2 single sign in via Google is implemented, although it works only when I run my React project in development. It doesn't work in the production build of the React App because of the lack of Server Side Rendering implementation.
 
 ### REST Controllers
 * I version my API using the popular `/api{versionNumber}/` convention.
