@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  mysql-server:
+    image: mysql:8.0.20
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bankcentric
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - 3307:3306
+    networks:
+      - custom-net1
+
+  backend:
+    image: retailbank
+    ports:
+      - "8080:8080"
+    networks:
+      - custom-net1
+    depends_on:
+      - mysql-server
+
+networks:
+  custom-net1:
+    driver: bridge

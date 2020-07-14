@@ -15,7 +15,7 @@ public class DBUtil {
     //region MYSQL
     private static final String MY_SQL_USERNAME = "root";
     private static final String MY_SQL_PASSWORD = "root";
-    private static final String MY_SQL_CONNECTION_STRING = "jdbc:mysql://localhost:3306/bankcentric";
+    private static final String MY_SQL_CONNECTION_STRING = "jdbc:mysql://host.docker.internal:3307/bankcentric";
     //endregion
 
     public static Connection getConnection(DBType dbType) throws SQLException {
